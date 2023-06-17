@@ -55,16 +55,13 @@ class _SplashScreenState extends State<SplashScreen> {
         "status": status.toString(),
         "userID": Utils.userID,
       };
-      print(query);
       var response = await Query.queryData(query);
-      print(response);
       if (jsonDecode(response) == 'false') {
         // Handle error case
       } else {
         // Handle success case
       }
     } catch (e) {
-      print(e);
       // Handle error case
     }
   }

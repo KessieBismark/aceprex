@@ -226,7 +226,6 @@ class LibraryController extends GetxController
     try {
       var data = {"action": "get_library", "userID": Utils.userID};
       var result = await Query.queryData(data);
-      print(result);
       var empJson = json.decode(result);
       if (empJson == 'false') {
       } else {
