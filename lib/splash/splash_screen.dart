@@ -23,12 +23,6 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-//  AwesomeNotifications().setListeners(
-//         onActionReceivedMethod:         NotificationController.onActionReceivedMethod('ghgh'),
-//         onNotificationCreatedMethod:    NotificationController.onNotificationCreatedMethod,
-//         onNotificationDisplayedMethod:  NotificationController.onNotificationDisplayedMethod,
-//         onDismissActionReceivedMethod:  NotificationController.onDismissActionReceivedMethod
-//     );
 
     _mockCheckForSession().then((status) {
       if (status) {
@@ -88,7 +82,7 @@ class _SplashScreenState extends State<SplashScreen> {
         children: <Widget>[
           Shimmer.fromColors(
             period: const Duration(milliseconds: 1500),
-            baseColor: Colors.blue.shade700, //const Color(0xff7f00ff),
+            baseColor: primaryColor, //const Color(0xff7f00ff),
             highlightColor: light, //const Color(0xffe100ff),
             child: Container(
               padding: const EdgeInsets.all(16.0),
@@ -101,9 +95,10 @@ class _SplashScreenState extends State<SplashScreen> {
                     fontFamily: poppinsBold,
                     shadows: <Shadow>[
                       Shadow(
-                          blurRadius: 18.0,
-                          color: Colors.black87,
-                          offset: Offset.fromDirection(120, 12))
+                        blurRadius: 18.0,
+                        color: Colors.black87,
+                        offset: Offset.fromDirection(120, 12),
+                      )
                     ],
                   ),
                 ),

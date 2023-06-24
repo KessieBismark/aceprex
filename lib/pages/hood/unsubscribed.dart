@@ -81,10 +81,6 @@ class UnSubscribedDetails extends GetView<HoodController> {
                     ),
                   ),
                 ),
-                // Container(
-                //   padding: const EdgeInsets.all(8),
-                //   child: const Text('LatLongWidget(location: location)'),
-                // ),
               ],
             ),
           ),
@@ -99,7 +95,7 @@ class UnSubscribedDetails extends GetView<HoodController> {
                   child: title.toLabel(bold: true, fontsize: 17)),
               Align(
                   alignment: Alignment.topLeft,
-                  child: author.toLabel(bold: true, color: Colors.blue)),
+                  child: author.toLabel(bold: true, color: primaryLight)),
               Row(
                 children: [
                   date.dateTimeFormatShortString().toLabel(color: lightGrey),
@@ -140,8 +136,11 @@ class UnSubscribedDetails extends GetView<HoodController> {
                     Icons.check,
                     size: 15,
                   ),
-                  color: green,
+                  color: secondaryColor,
                 ),
+              ),
+              const SizedBox(
+                height: 20,
               )
             ],
           ).padding9,

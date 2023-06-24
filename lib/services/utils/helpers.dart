@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
@@ -7,7 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/color.dart';
 import '../constants/constant.dart';
-import 'notify.dart';
 
 class Utils {
   static bool isLogged = false;
@@ -24,6 +22,7 @@ class Utils {
   static var unReadChat = 0.obs;
   static bool isIntroShow = false;
   static List<String> notifyMeg = [];
+  static var imageSet=false.obs; 
 
   static getInto() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -34,21 +33,25 @@ class Utils {
     return result;
   }
 
-  static sendNotification(
-      {required String title,
-      required channelKey,
-      required String body,
-      String? groupKey}) {
-    AwesomeNotifications().createNotification(
-        content: NotificationContent(
-            id: createUniqueId(),
-            channelKey: channelKey,
-            title: title,
-            groupKey: groupKey,
-            body: body));
+  // static sendNotification(
+  //     {required String title,
+  //     required channelKey,
+  //     required String body,
+  //     Map<String, String?>? payload,
+  //     String? groupKey}) {
+  //   AwesomeNotifications().createNotification(
+  //       content: NotificationContent(
+  //           id: createUniqueId(),
+  //           channelKey: channelKey,
+  //           title: title,
+  //           groupKey: groupKey,
+  //           body: body,
+  //           payload: payload,
+            
+  //           ));
 
-    // AwesomeNotifications().setListeners(onActionReceivedMethod: onActionReceivedMethod)  .listen((event) {});
-  }
+  //   // AwesomeNotifications().setListeners(onActionReceivedMethod: onActionReceivedMethod)  .listen((event) {});
+  // }
 
   static bool isUrl(String string) {
     Uri? uri = Uri.tryParse(string);

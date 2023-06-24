@@ -26,14 +26,16 @@ class SignUpPage extends GetView<SController> {
             children: [
               Container(
                 height: 200,
-                decoration: BoxDecoration(
-                    color: Colors.blue[100],
-                    borderRadius: const BorderRadius.only(
-                        bottomRight: Radius.circular(900))),
+                decoration: const BoxDecoration(
+                  color: primaryLight,
+                  borderRadius: BorderRadius.only(
+                    bottomRight: Radius.circular(900),
+                  ),
+                ),
               ),
               Center(
                 child: SizedBox(
-                  height: 600,
+                  height: 500,
                   child: Stack(
                     children: [
                       Align(
@@ -162,7 +164,7 @@ class SignUpPage extends GetView<SController> {
                                                   MaterialStateProperty.all(2),
                                               backgroundColor:
                                                   MaterialStateProperty.all(
-                                                      blue),
+                                                      primaryLight),
                                               padding:
                                                   MaterialStateProperty.all(
                                                       const EdgeInsets
@@ -202,11 +204,11 @@ class SignUpPage extends GetView<SController> {
                                         ),
                                         InkWell(
                                           onTap: () => Get.offAllNamed('/auth'),
-                                          child: Text(
+                                          child: const Text(
                                             'Login',
                                             style: TextStyle(
                                                 fontSize: 13,
-                                                color: blue,
+                                                color: primaryLight,
                                                 fontWeight: FontWeight.w700),
                                           ),
                                         )

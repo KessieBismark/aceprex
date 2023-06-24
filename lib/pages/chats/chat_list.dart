@@ -46,7 +46,7 @@ class ChatList extends GetView<ChatUIController> {
                           },
                           icon: Icon(
                             FontAwesomeIcons.penToSquare,
-                            color: dark,
+                            color: light,
                             size: 20,
                           ),
                         ),
@@ -64,7 +64,7 @@ class ChatList extends GetView<ChatUIController> {
                                   icon: Icon(
                                     FontAwesomeIcons.filter,
                                     size: 20,
-                                    color: dark,
+                                    color: light,
                                   ),
                                 )
                               : IconButton(
@@ -84,7 +84,7 @@ class ChatList extends GetView<ChatUIController> {
                                   },
                                   icon: Icon(
                                     Icons.filter_list,
-                                    color: dark,
+                                    color: light,
                                   ),
                                 ),
                         ),
@@ -111,7 +111,7 @@ class ChatList extends GetView<ChatUIController> {
                                           to: data.id,
                                           name: data.name,
                                           isOnline: data.isOnline,
-                                          avatar: data.fromImage,
+                                          avatar: fileUrl + data.fromImage!,
                                         ));
                                   },
                                   leading: Utils.isUrl(data.fromImage!)
@@ -119,12 +119,13 @@ class ChatList extends GetView<ChatUIController> {
                                           onTap: () => Get.to(
                                             () => ChatProfile(
                                                 title: data.name,
-                                                image: data.fromImage!),
+                                                image:
+                                                    fileUrl + data.fromImage!),
                                           ),
                                           child: CircleAvatar(
                                             maxRadius: 20,
-                                            backgroundImage:
-                                                NetworkImage(data.fromImage!),
+                                            backgroundImage: NetworkImage(
+                                                fileUrl + data.fromImage!),
                                           ),
                                         )
                                       : const CircleAvatar(
@@ -155,7 +156,7 @@ class ChatList extends GetView<ChatUIController> {
                                                           data.toID
                                                                   .toString() ==
                                                               Utils.userID
-                                                      ? Colors.blue
+                                                      ? primaryLight
                                                       : grey,
                                                   fontSize: 12),
                                             ),
@@ -165,7 +166,7 @@ class ChatList extends GetView<ChatUIController> {
                                             data.unRead > 0
                                                 ? Badge(
                                                     backgroundColor:
-                                                        Colors.blue,
+                                                        primaryLight,
                                                     label: data.unRead
                                                         .toString()
                                                         .toLabel(),
@@ -209,7 +210,7 @@ class ChatList extends GetView<ChatUIController> {
                                               to: data.id,
                                               name: data.name,
                                               isOnline: data.isOnline,
-                                              avatar: data.fromImage,
+                                              avatar: fileUrl + data.fromImage!,
                                             ));
                                       },
                                       leading: Utils.isUrl(data.fromImage!)
@@ -217,12 +218,13 @@ class ChatList extends GetView<ChatUIController> {
                                               onTap: () => Get.to(
                                                 () => ChatProfile(
                                                     title: data.name,
-                                                    image: data.fromImage!),
+                                                    image: fileUrl +
+                                                        data.fromImage!),
                                               ),
                                               child: CircleAvatar(
                                                 maxRadius: 20,
                                                 backgroundImage: NetworkImage(
-                                                    data.fromImage!),
+                                                    fileUrl + data.fromImage!),
                                               ),
                                             )
                                           : const CircleAvatar(
@@ -254,7 +256,7 @@ class ChatList extends GetView<ChatUIController> {
                                                               data.toID
                                                                       .toString() ==
                                                                   Utils.userID
-                                                          ? Colors.blue
+                                                          ? primaryLight
                                                           : grey,
                                                       fontSize: 12),
                                                 ),
@@ -264,7 +266,7 @@ class ChatList extends GetView<ChatUIController> {
                                                 data.unRead > 0
                                                     ? Badge(
                                                         backgroundColor:
-                                                            Colors.blue,
+                                                            primaryLight,
                                                         label: data.unRead
                                                             .toString()
                                                             .toLabel(),
@@ -308,7 +310,7 @@ SizedBox searchTextField(BuildContext context) {
     width: myWidth(context, 1.7),
     height: 40,
     child: TextField(
-      style: TextStyle(color: dark),
+      style: TextStyle(color: light),
       controller: controller.searchController,
       onChanged: (text) {
         if (text.isNotEmpty) {
@@ -345,16 +347,16 @@ SizedBox searchTextField(BuildContext context) {
                   },
                   icon: Icon(
                     Icons.clear,
-                    color: grey,
+                    color: light,
                   ),
                 )
               : Icon(
                   Icons.search,
-                  color: grey,
+                  color: light,
                 ),
         ),
         filled: true,
-        fillColor: Colors.blue[100],
+        fillColor: primaryLight,
         contentPadding:
             const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
         hintText: 'Enter any keyword',
@@ -373,7 +375,7 @@ SizedBox searchTextField(BuildContext context) {
         ),
         floatingLabelBehavior: FloatingLabelBehavior.never,
         labelText: 'Search',
-        labelStyle: TextStyle(color: grey),
+        labelStyle: TextStyle(color: light),
       ),
     ),
   );

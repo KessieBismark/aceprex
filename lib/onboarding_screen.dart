@@ -1,5 +1,3 @@
-import 'services/constants/color.dart';
-import 'services/utils/helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -8,6 +6,8 @@ import 'intro_screens/intro_1.dart';
 import 'intro_screens/intro_2.dart';
 import 'intro_screens/intro_3.dart';
 import 'intro_screens/intro_4.dart';
+import 'services/constants/color.dart';
+import 'services/utils/helpers.dart';
 
 class OnBoardingScreen extends GetView<BoardController> {
   const OnBoardingScreen({super.key});
@@ -47,9 +47,9 @@ class OnBoardingScreen extends GetView<BoardController> {
                           child: Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                                color: Colors.blue[100],
+                                color: primaryColor,
                                 borderRadius: BorderRadius.circular(50)),
-                            child: Icon(Icons.skip_next, color: dark, size: 16),
+                            child: Icon(Icons.skip_next, color: light, size: 16),
                           ),
                         )
                       : GestureDetector(
@@ -62,10 +62,10 @@ class OnBoardingScreen extends GetView<BoardController> {
                           child: Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                                color: Colors.blue[100],
+                                color: primaryColor,
                                 borderRadius: BorderRadius.circular(50)),
                             child: Icon(Icons.arrow_back_ios,
-                                color: dark, size: 16),
+                                color: light, size: 16),
                           ),
                         ),
                 ),
@@ -73,7 +73,7 @@ class OnBoardingScreen extends GetView<BoardController> {
                   controller: controller.pageController,
                   count: 4,
                   effect:
-                      ExpandingDotsEffect(activeDotColor: Colors.blue[100]!),
+                      const ExpandingDotsEffect(activeDotColor: primaryColor),
                   onDotClicked: (index) {
                     controller.pageController.animateToPage(index,
                         duration: const Duration(
@@ -98,19 +98,19 @@ class OnBoardingScreen extends GetView<BoardController> {
                         ? Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: Colors.blue[100],
+                              color: primaryColor,
                               borderRadius: BorderRadius.circular(50),
                             ),
-                            child: Icon(Icons.done, color: dark, size: 16),
+                            child: Icon(Icons.done, color: light, size: 16),
                           )
                         : Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: Colors.blue[100],
+                              color: primaryColor,
                               borderRadius: BorderRadius.circular(50),
                             ),
                             child: Icon(Icons.arrow_forward_ios,
-                                color: dark, size: 16),
+                                color: light, size: 16),
                           ),
                   ),
                 )

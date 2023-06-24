@@ -4,10 +4,10 @@ import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart
 import '../../services/constants/color.dart';
 import '../../services/widgets/extension.dart';
 
-class BlogDetails extends StatelessWidget {
+class NewDetails extends StatelessWidget {
   final String title;
   final dynamic content;
-  const BlogDetails({super.key, required this.title, this.content});
+  const NewDetails({super.key, required this.title, this.content});
 
   @override
   Widget build(BuildContext context) {

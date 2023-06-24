@@ -7,9 +7,11 @@ import 'package:flutter_background_service_android/flutter_background_service_an
 import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/helpers.dart';
 import '../utils/query.dart';
+import 'notification.dart';
 
 Future<void> initializeService() async {
   final service = FlutterBackgroundService();
+
   await service.configure(
       iosConfiguration: IosConfiguration(
         autoStart: true,
@@ -42,82 +44,101 @@ void onStart(ServiceInstance service) async {
     service.stopSelf();
   });
 
-  
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String userID = '';
-    if (prefs.containsKey("userID")) {
-      userID = prefs.getString("userID")!;
-    }
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String userID = '';
+  if (prefs.containsKey("userID")) {
+    userID = prefs.getString("userID")!;
+  }
 
+  Future<void> fetchNewChatMessage() async {
+    try {
+      var data = {"action": "push_notification", "userID": userID};
+      var response = await Query.queryData(data);
+      if (jsonDecode(response) != 'false') {
+        List<dynamic> jsonData = jsonDecode(response);
+        for (var entry in jsonData) {
+          //   final id = entry['id'];
+          // final senderName =
+          //     entry['senderName']; // Replace with actual sender name key
+          // final message = entry['message']; // Replace with actual message key
+          // final senderID = entry['senderID'];
 
+          final id = entry['chatID'];
 
-    Future<void> fetchNewChatMessage() async {
-      try {
-        var data = {"action": "push_notification", "userID": userID};
-
-        var response = await Query.queryData(data);
-        print(response);
-
-        if (jsonDecode(response) != 'false') {
-          List<dynamic> jsonData = jsonDecode(response);
-
-          for (var entry in jsonData) {
-            final senderName =
-                entry['senderName']; // Replace with actual sender name key
-            final message = entry['message']; // Replace with actual message key
-            final senderID = entry['senderID'];
-            // Display notification
-            Utils.sendNotification(
-                channelKey: 'chat',
-                title: senderName,
-                body: message,
-                groupKey: senderID);
-          }
+          final senderName = entry['senderName'];
+          final message = entry['message'];
+          final avatar = entry['message'] ?? '';
+          final isOnline = entry['message'];
+          final senderID = entry['senderID'].toString();
+          // Display notification
+          NotificationService.showNotification(
+              id: id,
+              title: senderName,
+              body: message,
+              channelKey: 'chat',
+              groupKey: senderID,
+              payload: ({
+                "type": "chat",
+                "avatar": avatar,
+                "name": senderName,
+                "to": senderID.toString(),
+                "isOnline": isOnline.toString()
+              }));
+          // Utils.sendNotification(
+          //     channelKey: 'chat',
+          //     title: senderName,
+          //     body: message,
+          //     groupKey: senderID);
         }
-      } catch (e) {
-        print(e);
-        return;
       }
+    } catch (e) {
+      print(e);
+      return;
     }
+  }
 
-    Future<void> fetchNotifications() async {
-      try {
-        var data = {"action": "get_unread_notifications", "userID": userID};
+  Future<void> fetchNotifications() async {
+    try {
+      var data = {"action": "get_unread_notifications", "userID": userID};
+      var response = await Query.queryData(data);
+      if (jsonDecode(response) != 'false') {
+        List<dynamic> jsonData = jsonDecode(response);
+        for (var entry in jsonData) {
+          final id = entry['id'];
+          final title = entry['title']; // Replace with actual sender name key
+          final message = entry['message']; // Replace with actual message key
+          final senderID = entry['senderID'];
+          // Display notification
+          NotificationService.showNotification(
+              id: id,
+              title: title,
+              body: message,
+              channelKey: 'notification',
+              groupKey: senderID,
+              payload: ({"type": "notification"}));
 
-        var response = await Query.queryData(data);
-        if (jsonDecode(response) != 'false') {
-          List<dynamic> jsonData = jsonDecode(response);
-
-          for (var entry in jsonData) {
-            final title = entry['title']; // Replace with actual sender name key
-            final message = entry['message']; // Replace with actual message key
-            final senderID = entry['senderID'];
-            // Display notification
-            Utils.sendNotification(
-                channelKey: 'notification',
-                title: title,
-                body: message,
-                groupKey: senderID);
-          }
+          // Utils.sendNotification(
+          //     channelKey: 'notification',
+          //     title: title,
+          //     body: message,
+          //     groupKey: senderID);
         }
-      } catch (e) {
-        print(e);
-        return;
       }
+    } catch (e) {
+      print(e);
+      return;
     }
+  }
 
-    Timer.periodic(const Duration(seconds: 30), (timer) async {
-      Utils.checkInternet().then((value) async {
-        if (value) {
-          await fetchNewChatMessage();
-          await fetchNotifications();
-        }
-      });
+  Timer.periodic(const Duration(seconds: 30), (timer) async {
+    Utils.checkInternet().then((value) async {
+      if (value) {
+        await fetchNewChatMessage();
+        await fetchNotifications();
+      }
     });
-
-
-    service.invoke('update');
-  
+  });
+  service.invoke('update');
 }
 
 // // Future<void> initializeNotifications() async {

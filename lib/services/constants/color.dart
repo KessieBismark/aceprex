@@ -16,6 +16,7 @@ Color grey = Colors.grey.shade700;
 Color blue = Colors.blue;
 Color green = Colors.green;
 
-const primaryColor = Color(0xFF557C4D);
-const secondaryColor = Color(0xFF2A2D3E);
+const primaryColor = Color(0xFF485484);
+const primaryLight = Color.fromARGB(255, 125, 144, 221);
+const secondaryColor = Color(0xFF425cbb);
 const bgColor = Color(0xFFEBECF0);

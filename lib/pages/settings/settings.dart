@@ -1,12 +1,13 @@
-import 'change_password.dart';
-import '../../services/constants/color.dart';
-import '../../services/utils/helpers.dart';
-import '../../services/widgets/extension.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../services/constants/color.dart';
+import '../../services/constants/constant.dart';
+import '../../services/utils/helpers.dart';
 import '../../services/utils/themes.dart';
+import '../../services/widgets/extension.dart';
 import '../chats/image_viewer.dart';
+import 'change_password.dart';
 import 'component/controller.dart';
 
 class Settings extends GetView<SettingsController> {
@@ -20,16 +21,16 @@ class Settings extends GetView<SettingsController> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        backgroundColor: Colors.blue[200],
+        backgroundColor: primaryColor,
         elevation: 0,
-        title: "Settings".toLabel(color: dark),
+        title: "Settings".toLabel(color: light),
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
           },
-          icon: const Icon(
+          icon: Icon(
             Icons.arrow_back_ios,
-            color: Colors.black,
+            color: light,
           ),
         ),
       ),
@@ -52,16 +53,21 @@ class Settings extends GetView<SettingsController> {
                         ? CircleAvatar(
                             maxRadius: 70,
                             backgroundImage:
-                                AssetImage(Utils.userAvatar.value))
-                        : Utils.isUrl(Utils.userAvatar.value)
-                            ?  InkWell(
-                                      onTap: () => Get.to(() => ImageViewer(
-                                          imageUrl: Utils.userAvatar.value,
-                                          tag: Utils.userName)),
-                                      child: CircleAvatar(
-                                  maxRadius: 70,
-                                  backgroundImage: NetworkImage(Utils.userAvatar.value)),
-                            )
+                                AssetImage(fileUrl + Utils.userAvatar.value),
+                          )
+                        : Utils.isUrl(fileUrl + Utils.userAvatar.value)
+                            ? InkWell(
+                                onTap: () => Get.to(
+                                  () => ImageViewer(
+                                      imageUrl:
+                                          fileUrl + Utils.userAvatar.value,
+                                      tag: Utils.userName),
+                                ),
+                                child: CircleAvatar(
+                                    maxRadius: 70,
+                                    backgroundImage: NetworkImage(
+                                        fileUrl + Utils.userAvatar.value)),
+                              )
                             : const CircleAvatar(
                                 maxRadius: 70,
                                 backgroundImage:

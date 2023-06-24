@@ -27,7 +27,7 @@ class LoginController extends GetxController {
     Utils.checkInternet().then((value) {
       if (!value) {
         Utils().showError("There's no internet connection");
-         loading.value = false ;
+        loading.value = false;
         return;
       }
     });
@@ -50,7 +50,7 @@ class LoginController extends GetxController {
           Utils.userName = res[0]['name'];
           Utils.userRole = res[0]['role'];
           Utils.userEmail = res[0]['email'];
-          Utils.userAvatar.value = res[0]['avatar'];
+          Utils.userAvatar.value = 'users-avatar/${res[0]['avatar']}';
           Utils.setLogin(
               userID: Utils.userID,
               userName: Utils.userName,

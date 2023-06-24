@@ -1,4 +1,5 @@
 class ChatList {
+  final int chatID;
   final int id;
   final String name;
   final int isOnline;
@@ -11,7 +12,7 @@ class ChatList {
   final int unRead;
 
   ChatList(
-      {required this.id,
+      {required this.chatID,required this.id,
       required this.name,
       required this.isOnline,
       required this.fromID,
@@ -24,6 +25,7 @@ class ChatList {
 
   factory ChatList.fromJson(Map<String, dynamic> map) {
     return ChatList(
+      chatID: map['chatID'],
       id: map['id'],
       unRead: map['unread'],
       fromID: map['from_id'],

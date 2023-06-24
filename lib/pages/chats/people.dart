@@ -18,18 +18,17 @@ class PeopleView extends GetView<ChatUIController> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.blue[200],
+        backgroundColor: primaryColor,
         leading: IconButton(
           onPressed: () {
             controller.searchController.clear();
             Navigator.pop(context);
           },
-          icon: const Icon(
+          icon: Icon(
             Icons.arrow_back_ios,
-            color: Colors.black,
+            color: light,
           ),
         ),
         actions: [searchTextField(context).padding9],
@@ -90,12 +89,12 @@ class PeopleView extends GetView<ChatUIController> {
                               leading: Utils.isUrl(data.avatar!)
                                   ? InkWell(
                                       onTap: () => Get.to(() => ImageViewer(
-                                          imageUrl: data.avatar!,
+                                          imageUrl:fileUrl + data.avatar!,
                                           tag: data.name)),
                                       child: CircleAvatar(
                                           maxRadius: 20,
                                           backgroundImage:
-                                              NetworkImage(data.avatar!)),
+                                              NetworkImage(fileUrl +data.avatar!)),
                                     )
                                   : const CircleAvatar(
                                       maxRadius: 20,
@@ -115,7 +114,7 @@ class PeopleView extends GetView<ChatUIController> {
                                   ? const Icon(
                                       Icons.circle,
                                       size: 15,
-                                      color: Colors.blue,
+                                      color: primaryLight,
                                     )
                                   : null),
                           const Divider(
@@ -138,7 +137,7 @@ SizedBox searchTextField(BuildContext context) {
     width: myWidth(context, 1.3),
     height: 40,
     child: TextField(
-      style: TextStyle(color: dark),
+      style: TextStyle(color: light),
       controller: controller.searchController,
       onChanged: (text) {
         if (text.isNotEmpty) {
@@ -171,15 +170,15 @@ SizedBox searchTextField(BuildContext context) {
                 },
                 icon: Icon(
                   Icons.clear,
-                  color: grey,
+                  color: light,
                 ),
               )
             : Icon(
                 Icons.search,
-                color: grey,
+                color: light,
               )),
         filled: true,
-        fillColor: Colors.blue[100],
+        fillColor: primaryLight,
         contentPadding:
             const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
         hintText: 'Enter a person\'s name',
@@ -201,7 +200,7 @@ SizedBox searchTextField(BuildContext context) {
         ),
         floatingLabelBehavior: FloatingLabelBehavior.never,
         labelText: 'Search',
-        labelStyle: TextStyle(color: grey),
+        labelStyle: TextStyle(color: light),
       ),
     ),
   );

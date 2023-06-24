@@ -26,10 +26,10 @@ class LoginPage extends GetView<LoginController> {
             children: [
               Container(
                 height: 230,
-                decoration: BoxDecoration(
-                    color: Colors.blue[100],
-                    borderRadius: const BorderRadius.only(
-                        bottomRight: Radius.circular(900))),
+                decoration: const BoxDecoration(
+                    color: primaryLight,
+                    borderRadius:
+                        BorderRadius.only(bottomRight: Radius.circular(900))),
               ),
               Center(
                 child: SizedBox(
@@ -122,13 +122,13 @@ class LoginPage extends GetView<LoginController> {
                                   const SizedBox(height: 15),
                                   InkWell(
                                     onTap: () {},
-                                    child: Align(
+                                    child: const Align(
                                       alignment: Alignment.centerRight,
                                       child: Text(
                                         'Forgot password?',
                                         style: TextStyle(
                                             fontSize: 12,
-                                            color: blue,
+                                            color: primaryLight,
                                             // ThemeService().isSavedDarkMode()
                                             //     ? Colors.white.withOpacity(.8)
                                             //     : dark,
@@ -161,14 +161,15 @@ class LoginPage extends GetView<LoginController> {
                                             elevation:
                                                 MaterialStateProperty.all(2),
                                             backgroundColor:
-                                                MaterialStateProperty.all(blue),
+                                                MaterialStateProperty.all(primaryLight),
                                             // ThemeService().isSavedDarkMode()
                                             //     ? MaterialStateProperty.all(trans)
                                             //     : MaterialStateProperty.all(blue),
                                             padding: MaterialStateProperty.all(
-                                                const EdgeInsets.symmetric(
-                                                    horizontal: 100,
-                                                    vertical: 20)),
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 100,
+                                                  vertical: 20),
+                                            ),
                                             textStyle:
                                                 MaterialStateProperty.all(
                                                     const TextStyle(
@@ -205,11 +206,11 @@ class LoginPage extends GetView<LoginController> {
                                           InkWell(
                                             onTap: () =>
                                                 Get.offAllNamed('/signup'),
-                                            child: Text(
+                                            child: const Text(
                                               'Sign up',
                                               style: TextStyle(
                                                   fontSize: 13,
-                                                  color: blue,
+                                                  color: primaryLight,
                                                   // ThemeService().isSavedDarkMode()
                                                   //     ? Colors.white.withOpacity(.8)
                                                   //     : blue,
@@ -222,7 +223,7 @@ class LoginPage extends GetView<LoginController> {
                                           onTap: () =>
                                               Get.offAllNamed('/start-up'),
                                           child: "Back"
-                                              .toLabel(color: Colors.blue))
+                                              .toLabel(color: primaryLight))
                                     ],
                                   )
                                 ],

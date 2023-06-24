@@ -14,10 +14,13 @@ class HoodController extends GetxController
     with GetSingleTickerProviderStateMixin {
   List<UnsubscribedHood> unSubscribed = <UnsubscribedHood>[];
   List<UnsubscribedHood> unSubscribedList = <UnsubscribedHood>[];
+  List<HoodModel> hoodData = <HoodModel>[];
+  List<HoodModel> hoodList = <HoodModel>[];
   List<SubscribedHood> subscribed = <SubscribedHood>[];
   List<SubscribedHood> subscribedList = <SubscribedHood>[];
   final searchController = TextEditingController();
   var loadData = false.obs;
+  var loadHood = false.obs;
   var loadSub = false.obs;
   final isSearching = false.obs;
   var subBool = false.obs;
@@ -62,9 +65,9 @@ class HoodController extends GetxController
         return;
       }
     });
-     isInternet.value = true;
+    isInternet.value = true;
     getUnSubscribed();
-    getSubscribed();
+    getHood();
   }
 
   checkSaved(String fileID) async {
@@ -121,6 +124,7 @@ class HoodController extends GetxController
         "attachment": fileID.toString(),
       };
       var result = await Query.queryData(query);
+      print(result);
       if (jsonDecode(result) == 'true') {
         if (isSaveLocal) {
           LibraryController().savePDF(
@@ -219,16 +223,42 @@ class HoodController extends GetxController
     }
   }
 
-  getSubscribed() {
+  getHood() {
     loadData.value = true;
-    fetchSubscribed().then((value) {
+    fetchHood().then((value) {
+      hoodData = [];
+      hoodData.addAll(value);
+      hoodList = [];
+      hoodList = hoodData;
+      loadData.value = false;
+    });
+  }
+
+  getSubscribed(int hoodID) {
+    loadHood.value = true;
+    fetchSubscribed(hoodID).then((value) {
       subscribed = [];
       subscribed.addAll(value);
       subscribedList = [];
       subscribedList = subscribed;
-      loadData.value = false;
+      loadHood.value = false;
     });
   }
+
+  Map<int, String> monthLabels = {
+    DateTime.january: "Jan",
+    DateTime.february: "Feb",
+    DateTime.march: "March",
+    DateTime.april: "April",
+    DateTime.may: "May",
+    DateTime.june: "June",
+    DateTime.july: "July",
+    DateTime.august: "Aug",
+    DateTime.september: "Sep",
+    DateTime.october: "Oct",
+    DateTime.november: "Nov",
+    DateTime.december: "Dec",
+  };
 
   replyComment(String reply, int hood) async {
     Utils.checkInternet().then((value) {
@@ -460,16 +490,39 @@ class HoodController extends GetxController
     }
   }
 
-  Future<List<SubscribedHood>> fetchSubscribed() async {
+  Future<List<SubscribedHood>> fetchSubscribed(int hoodID) async {
     var permission = <SubscribedHood>[];
     try {
-      var data = {"action": "get_subscribed_hoods", "userID": Utils.userID};
+      var data = {
+        "action": "get_subscribed_hoods",
+        "hoodID": hoodID.toString()
+      };
       var result = await Query.queryData(data);
       var empJson = json.decode(result);
       if (empJson == 'false') {
       } else {
         for (var empJson in empJson) {
           permission.add(SubscribedHood.fromJson(empJson));
+        }
+      }
+      return permission;
+    } catch (e) {
+      // ignore: avoid_print
+      print(e);
+      return permission;
+    }
+  }
+
+  Future<List<HoodModel>> fetchHood() async {
+    var permission = <HoodModel>[];
+    try {
+      var data = {"action": "get_hoods", "userID": Utils.userID};
+      var result = await Query.queryData(data);
+      var empJson = json.decode(result);
+      if (empJson == 'false') {
+      } else {
+        for (var empJson in empJson) {
+          permission.add(HoodModel.fromJson(empJson));
         }
       }
       return permission;

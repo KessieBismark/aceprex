@@ -1,68 +1,82 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:aceprex/pages/chats/chat_list.dart';
-import 'package:aceprex/pages/library/library.dart';
-import 'package:aceprex/pages/notification/notifications.dart';
-import 'package:aceprex/services/isolate_services/back_service.dart';
-import 'package:aceprex/services/utils/helpers.dart';
-import 'package:aceprex/services/utils/query.dart';
+import 'services/isolate_services/notification.dart';
+import 'services/utils/helpers.dart';
+import 'services/utils/notify.dart';
+import 'services/utils/query.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:workmanager/workmanager.dart';
 import 'services/config/binding.dart';
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-
 import 'services/config/routes.dart';
 import 'services/utils/themes.dart';
 
 void main() async {
-  sqfliteFfiInit();
-
-  AwesomeNotifications().initialize(
-    'resource://drawable/res_logo',
-    [
-      NotificationChannel(
-          channelKey: 'chat',
-          channelName: 'Basic Notification',
-          defaultColor: Colors.teal,
-          importance: NotificationImportance.High,
-          channelShowBadge: true,
-          channelDescription: 'aceprex'),
-      NotificationChannel(
-          channelKey: 'notification',
-          channelName: 'Basic Notification',
-          defaultColor: Colors.teal,
-          importance: NotificationImportance.High,
-          channelShowBadge: true,
-          channelDescription: 'aceprex'),
-      NotificationChannel(
-          channelKey: 'library',
-          channelName: 'Basic Notification',
-          defaultColor: Colors.teal,
-          importance: NotificationImportance.High,
-          channelShowBadge: true,
-          channelDescription: 'aceprex')
-    ],
-  );
-  ReceivedAction? receivedAction = await AwesomeNotifications()
-      .getInitialNotificationAction(removeFromActionEvents: false);
-  if (receivedAction?.channelKey == 'chat') {
-    Get.to(() => const ChatList());
-  } else if (receivedAction?.channelKey == 'notification') {
-    Get.to(() => const Notifications());
-  } else if (receivedAction?.channelKey == 'library') {
-    Get.to(() => const Library());
-  }
-
   WidgetsFlutterBinding.ensureInitialized();
-  initializeService();
-  // BackgroundService.initializeService();
-  HttpOverrides.global = MyHttpOverrides();
+
+  Workmanager().initialize(callbackDispatcher, isInDebugMode: false);
+  Workmanager().registerPeriodicTask(
+    'backgroundTask',
+    'backgroundTask',
+    frequency: const Duration(milliseconds: 900000), // Run task every 24 hours
+  );
+
+  sqfliteFfiInit();
+  await NotificationService.initializeNotification();
+
+  // AwesomeNotifications().initialize
+  //  (
+  //   'resource://drawable/res_logo',
+  //   [
+  //     NotificationChannel(
+  //         channelKey: 'chat',
+  //         channelName: 'Basic Notification',
+  //         defaultColor: Colors.teal,
+  //         importance: NotificationImportance.High,
+  //         channelShowBadge: true,
+  //       //  onlyAlertOnce: true,
+  //         channelDescription: 'aceprex'),
+  //     NotificationChannel(
+  //         channelKey: 'notification',
+  //         channelName: 'Basic Notification',
+  //         defaultColor: Colors.teal,
+  //         importance: NotificationImportance.High,
+  //         channelShowBadge: true,
+  //               //    onlyAlertOnce: true,
+  //         channelDescription: 'aceprex'),
+  //     NotificationChannel(
+  //         channelKey: 'library',
+  //         channelName: 'Basic Notification',
+  //         defaultColor: Colors.teal,
+  //         importance: NotificationImportance.High,
+  //         channelShowBadge: true,
+  //                 //  onlyAlertOnce: true,
+  //         channelDescription: 'aceprex')
+  //   ],
+  // );
+
+  // ReceivedAction? receivedAction = await AwesomeNotifications()
+  //     .getInitialNotificationAction(removeFromActionEvents: false);
+  // if (receivedAction?.channelKey == 'chat') {
+  //         AwesomeNotifications().decrementGlobalBadgeCounter();
+  //   Get.to(() => const ChatList());
+  // } else if (receivedAction?.channelKey == 'notification') {
+  //         AwesomeNotifications().decrementGlobalBadgeCounter();
+  //   Get.to(() => const Notifications());
+  // } else if (receivedAction?.channelKey == 'library') {
+  //         AwesomeNotifications().decrementGlobalBadgeCounter();
+  //   Get.to(() => const Library());
+  // }else{
+  //         AwesomeNotifications().decrementGlobalBadgeCounter();
+  //   Get.toNamed('/dash');
+  // }
+
+  // HttpOverrides.global = MyHttpOverrides();
 
   await Permission.storage.isDenied.then((value) {
     if (value) {
@@ -130,7 +144,7 @@ class _MyAppState extends State<MyApp> {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       initialBinding: AllBindings(),
-      title: 'aceprex',
+      title: 'AcePrex',
       theme: Themes().lightTheme,
       getPages: Routes.routes,
       darkTheme: Themes().darkTheme,
@@ -139,6 +153,87 @@ class _MyAppState extends State<MyApp> {
       defaultTransition: Transition.fadeIn,
     );
   }
+}
+
+@pragma(
+    'vm:entry-point') // Mandatory if the App is obfuscated or using Flutter 3.1+
+void callbackDispatcher() {
+  Workmanager().executeTask((task, inputData) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String userID = '';
+    List<String> chatMeg = [];
+    if (prefs.containsKey("userID")) {
+      userID = prefs.getString("userID")!;
+    }
+    if (prefs.containsKey('chatMeg')) {
+      chatMeg = prefs.getString("chatMeg")!.split(',');
+    }
+
+    try {
+      var data = {"action": "push_notification", "userID": userID};
+      var response = await Query.queryData(data);
+      if (jsonDecode(response) != 'false') {
+        List<dynamic> jsonData = jsonDecode(response);
+        for (var entry in jsonData) {
+          final date = entry['created_at'];
+          // final id = entry['chatID'];
+          final senderName = entry['senderName'];
+          final message = entry['message'];
+          final avatar = entry['message'] ?? '';
+          final isOnline = entry['message'];
+          final senderID = entry['senderID'].toString();
+          // Display notification
+          if (!chatMeg.contains('$message$date')) {
+            if (userID != senderID) {
+              NotificationService.showNotification(
+                  id: createUniqueId() ,
+                  title: senderName,
+                  body: message,
+                  channelKey: 'chat',
+                  groupKey: senderID,
+                  payload: ({
+                    "type": "chat",
+                    "avatar": avatar,
+                    "name": senderName,
+                    "to": senderID.toString(),
+                    "isOnline": isOnline.toString()
+                  }));
+            }
+          }
+          chatMeg.add('$message$date');
+          prefs.setString("chatMeg", chatMeg.join(','));
+        }
+      }
+    } catch (e) {
+      print(e);
+    }
+
+    // try {
+    //   var data = {"action": "get_unread_notifications", "userID": userID};
+    //   var response = await Query.queryData(data);
+    //           print(response);
+
+    //   if (jsonDecode(response) != 'false') {
+    //     List<dynamic> jsonData = jsonDecode(response);
+    //     for (var entry in jsonData) {
+    //       final title = entry['title']; // Replace with actual sender name key
+    //       final message = entry['message']; // Replace with actual message key
+    //       final senderID = entry['senderID'].toString();
+    //       // Display notification
+
+    //       Utils.sendNotification(
+    //           channelKey: 'notification',
+    //           title: title,
+    //           body: message,
+    //           groupKey: senderID);
+    //     }
+    //   }
+    // } catch (e) {
+    //   print(e);
+    // }
+
+    return Future.value(true);
+  });
 }
 
 class AppLifecycleObserver with WidgetsBindingObserver {

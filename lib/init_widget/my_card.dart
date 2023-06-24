@@ -56,7 +56,7 @@ class MyCard extends StatelessWidget {
                             shape: BoxShape.rectangle,
                             image: DecorationImage(
                               fit: BoxFit.fill,
-                              image: NetworkImage(imageLink),
+                              image: NetworkImage(fileUrl + imageLink),
                               onError: (exception, stackTrace) =>
                                   const Text("Image loading error!"),
                             ),
@@ -72,7 +72,7 @@ class MyCard extends StatelessWidget {
                               ),
                               author
                                   .toAutoLabel(
-                                    color: Colors.blue,
+                                    color: primaryLight,
                                   )
                                   .vPadding6,
                               SizedBox(
@@ -128,29 +128,25 @@ class MyCard extends StatelessWidget {
           Positioned(
             left: 30,
             child: Container(
-              decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                      color: dark,
-                      offset: const Offset(
-                          0, 3), // Specifies the position of the shadow
-                      blurRadius: 3, // Specifies the blur radius of the shadow
-                      spreadRadius:
-                          0, // Specifies the spread radius of the shadow
-                    ),
-                  ],
-                  color: Colors.blue[200],
-                  borderRadius: BorderRadius.circular(20)),
+              decoration: BoxDecoration(boxShadow: [
+                BoxShadow(
+                  color: dark,
+                  offset: const Offset(
+                      0, 3), // Specifies the position of the shadow
+                  blurRadius: 3, // Specifies the blur radius of the shadow
+                  spreadRadius: 0, // Specifies the spread radius of the shadow
+                ),
+              ], color: primaryLight, borderRadius: BorderRadius.circular(20)),
               child: Row(
                 children: [
                   Icon(
                     FontAwesomeIcons.clock,
                     size: 15,
-                    color: dark,
+                    color: light,
                   ).hMargin3,
                   Text(
                     date,
-                    style: TextStyle(color: dark),
+                    style: TextStyle(color: light),
                   ),
                 ],
               ).hPadding6.vPadding3,

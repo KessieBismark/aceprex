@@ -1,3 +1,4 @@
+import '../../home_page/component/controller.dart';
 import '../../services/constants/constant.dart';
 import 'component/model.dart';
 import 'image_viewer.dart';
@@ -11,12 +12,12 @@ import 'package:grouped_list/grouped_list.dart';
 import '../../services/constants/color.dart';
 import 'component/chat_controller.dart';
 
-class ChatUI extends GetView<ChatPlaceController> {
+class ChatNotifyUI extends GetView<ChatPlaceController> {
   final String? avatar;
   final String name;
   final int to;
   final int isOnline;
-  const ChatUI({
+  const ChatNotifyUI({
     super.key,
     required this.to,
     required this.name,
@@ -26,103 +27,97 @@ class ChatUI extends GetView<ChatPlaceController> {
 
   @override
   Widget build(BuildContext context) {
-    // controller.chsa?.cancel();
     controller.getUserChat(to);
     controller.setSeen(to);
     controller.startChatTimer(to);
 
-    return 
-        Scaffold(
-            resizeToAvoidBottomInset: true,
-            appBar: AppBar(
-              elevation: 0,
-              automaticallyImplyLeading: false,
-              backgroundColor:primaryColor,
-              flexibleSpace: SafeArea(
-                child: Container(
-                  
-                  padding: const EdgeInsets.only(right: 16),
-                  child: Row(
+    return Scaffold(
+      resizeToAvoidBottomInset: true,
+      appBar: AppBar(
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        backgroundColor: primaryColor,
+        flexibleSpace: SafeArea(
+          child: Container(
+            padding: const EdgeInsets.only(right: 16),
+            child: Row(
+              children: <Widget>[
+                IconButton(
+                  onPressed: () {
+                    controller.chatTimer?.cancel();
+                    controller.onClose();
+                    controller.setSeen(to);
+                    HomeController().tabIndex.value = 3;
+                    Get.offNamed('/dash');
+                  },
+                  icon: Icon(
+                    Icons.arrow_back_ios,
+                    color: light,
+                  ),
+                ),
+                const SizedBox(
+                  width: 2,
+                ),
+                Utils.isUrl(avatar!)
+                    ? InkWell(
+                        onTap: () => ImageViewer(imageUrl:fileUrl + avatar!, tag: name),
+                        child: CircleAvatar(
+                            maxRadius: 20,
+                            backgroundImage: NetworkImage(fileUrl +avatar!)),
+                      )
+                    : const CircleAvatar(
+                        maxRadius: 20,
+                        backgroundImage:
+                            AssetImage('assets/images/profile.png'),
+                      ),
+                const SizedBox(
+                  width: 12,
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      IconButton(
-                        onPressed: () {
-                          controller.chatTimer?.cancel();
-                          controller.onClose();
-                              controller.setSeen(to);
-                          Navigator.pop(context);
-                        },
-                        icon:  Icon(
-                          Icons.arrow_back_ios,
-                          color: light,
-                        ),
+                      Text(
+                        name,
+                        style: TextStyle(
+                            color: light,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600),
                       ),
                       const SizedBox(
-                        width: 2,
+                        height: 6,
                       ),
-                      Utils.isUrl(avatar!)
-                          ? InkWell(
-                              onTap: () =>
-                                  ImageViewer(imageUrl:fileUrl + avatar!, tag: name),
-                              child: CircleAvatar(
-                                  maxRadius: 20,
-                                  backgroundImage: NetworkImage(fileUrl +avatar!)),
-                            )
-                          : const CircleAvatar(
-                              maxRadius: 20,
-                              backgroundImage:
-                                  AssetImage('assets/images/profile.png'),
-                            ),
-                      const SizedBox(
-                        width: 12,
-                      ),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Text(
-                              name,
-                              style: TextStyle(
-                                  color: light,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600),
-                            ),
-                            const SizedBox(
-                              height: 6,
-                            ),
-                            Text(
-                              isOnline == 1 ? 'Online' : 'Offline',
-                              style: TextStyle(
-                                  color: Colors.grey.shade400, fontSize: 13),
-                            ),
-                          ],
-                        ),
+                      Text(
+                        isOnline == 1 ? 'Online' : 'Offline',
+                        style: TextStyle(
+                            color: Colors.grey.shade400, fontSize: 13),
                       ),
                     ],
                   ),
                 ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+        child: Column(
+          children: [
+            Expanded(
+              child: Obx(
+                () => controller.chatBool.value ? chatSpace() : chatSpace(),
               ),
             ),
-            body: GestureDetector(
-              onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
-              child: Column(
-                children: [
-                  Expanded(
-                      child: Obx(
-                    () => controller.chatBool.value ? chatSpace() : chatSpace(),
-                  )),
-                  //  Expanded(
-                  //     child: Obx(
-                  //   () => chatSpace(controller.chatLength.value) ,
-                  // )),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  bottomWidgets(),
-                ],
-              ),
-            ),);
-    
+            const SizedBox(
+              height: 10,
+            ),
+            bottomWidgets(),
+          ],
+        ),
+      ),
+    );
   }
 
   chatSpace() {
@@ -176,7 +171,7 @@ class ChatUI extends GetView<ChatPlaceController> {
           decoration: BoxDecoration(
             image: DecorationImage(image: NetworkImage(fileUrl +data.attachment!)),
             borderRadius: BorderRadius.circular(20),
-            color: (data.from.toString() != Utils.userID ? grey :primaryLight),
+            color: (data.from.toString() != Utils.userID ? grey : primaryLight),
           ),
         ),
       ).hMargin3.vPadding9,
@@ -186,6 +181,7 @@ class ChatUI extends GetView<ChatPlaceController> {
   Container bottomWidgets() {
     return Container(
       padding: const EdgeInsets.only(left: 10, bottom: 10, top: 10),
+      //height: 60,
       width: double.infinity,
       decoration: BoxDecoration(
         border: Border(
@@ -227,7 +223,6 @@ class ChatUI extends GetView<ChatPlaceController> {
               controller: controller.messageController,
               decoration: const InputDecoration(
                   hintText: "Type your message here...",
-                  //hintStyle: TextStyle(color: Colors.black54),
                   border: InputBorder.none),
             ),
           ),

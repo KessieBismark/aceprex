@@ -55,7 +55,7 @@ class ShimmerSubscribed extends StatelessWidget {
           context,
           2,
         ),
-        height: 200,
+        height: 150,
       ),
     );
   }

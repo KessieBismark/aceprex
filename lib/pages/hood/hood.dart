@@ -1,12 +1,13 @@
-import '../../services/constants/color.dart';
-import '../../services/constants/constant.dart';
-import '../../services/widgets/extension.dart';
+import 'package:aceprex/pages/hood/attachment.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
+
 import '../../init_widget/top_nav.dart';
-import '../../services/utils/helpers.dart';
+import '../../services/constants/color.dart';
+import '../../services/constants/constant.dart';
+import '../../services/widgets/extension.dart';
 import '../../services/widgets/glass.dart';
 import '../../services/widgets/shimmer_placeholders.dart';
 import 'component/controller.dart';
@@ -24,13 +25,13 @@ class Hood extends GetView<HoodController> {
     return SafeArea(
       child: Scaffold(
         extendBody: true,
-        body: RefreshIndicator(
-          onRefresh: () async {
-            await controller.reload();
+        body: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).requestFocus(FocusNode());
           },
-          child: GestureDetector(
-            onTap: () {
-              FocusScope.of(context).requestFocus(FocusNode());
+          child: RefreshIndicator(
+            onRefresh: () async {
+              await controller.reload();
             },
             child: Column(
               children: [
@@ -49,50 +50,44 @@ class Hood extends GetView<HoodController> {
                     ],
                   ),
                 ),
-                Flexible(
-                  child: ListView(
-                    scrollDirection: Axis.vertical,
-                    children: [
-                      Obx(() => controller.loadSub.value
-                          ? Container()
-                          : controller.unSubscribedList.isNotEmpty
-                              ? Align(
-                                      alignment: Alignment.topLeft,
-                                      child: "New Hood(s)"
-                                          .toLabel(bold: true, fontsize: 17))
-                                  .padding9
-                              : Container()),
-                      Obx(() => controller.loadSub.value
-                          ? SizedBox(
-                              height: 124,
-                              child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: 4,
-                                itemBuilder: (BuildContext context, index) =>
-                                    categoryItemShimmer(context).margin9,
-                              ))
-                          : !controller.isInternet.value
-                              ? Container()
-                              : controller.unSubscribedList.isNotEmpty
-                                  ? SizedBox(
-                                      height: 124,
-                                      child: ListView.builder(
-                                        scrollDirection: Axis.horizontal,
-                                        itemCount:
-                                            controller.unSubscribedList.length,
-                                        itemBuilder:
-                                            (BuildContext context, index) =>
-                                                Hero(
+                Obx(() => controller.loadSub.value
+                    ? Container()
+                    : controller.unSubscribedList.isNotEmpty
+                        ? Align(
+                                alignment: Alignment.topLeft,
+                                child: "New Hood(s)"
+                                    .toLabel(bold: true, fontsize: 17))
+                            .padding9
+                        : Container()),
+                Obx(() => controller.loadSub.value
+                    ? SizedBox(
+                        height: 126,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: 4,
+                          itemBuilder: (BuildContext context, index) =>
+                          categoryItemShimmer(context).margin9,
+                        ),
+                      )
+                    : !controller.isInternet.value
+                        ? Container()
+                        : controller.unSubscribedList.isNotEmpty
+                            ?  SizedBox(
+                                    width: double.infinity,
+                                    height: 126,
+                                    child: ListView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: controller.unSubscribedList.length,
+                                      itemBuilder: (BuildContext context, index) =>
+                                         Hero(
                                           transitionOnUserGestures: true,
-                                          tag: controller
-                                              .unSubscribedList[index].id,
+                                          tag:
+                                              controller.unSubscribedList[index].id,
                                           child: CategoryItem(
-                                            subscribe: () =>
-                                                controller.subscribe(
+                                            subscribe: () => controller.subscribe(
+                                              controller.unSubscribedList[index].id,
                                               controller
-                                                  .unSubscribedList[index].id,
-                                              controller.unSubscribedList[index]
-                                                  .title,
+                                                  .unSubscribedList[index].title,
                                               controller.unSubscribedList[index]
                                                   .principal,
                                             ),
@@ -104,20 +99,17 @@ class Hood extends GetView<HoodController> {
                                                     .unSubscribedList[index]
                                                     .comment,
                                                 date: controller
-                                                    .unSubscribedList[index]
-                                                    .date,
+                                                    .unSubscribedList[index].date,
                                                 title: controller
-                                                    .unSubscribedList[index]
-                                                    .title,
-                                                image: controller
-                                                    .unSubscribedList[index]
-                                                    .image,
+                                                    .unSubscribedList[index].title,
+                                                image: fileUrl +
+                                                    controller
+                                                        .unSubscribedList[index]
+                                                        .image,
                                                 author: controller
-                                                    .unSubscribedList[index]
-                                                    .author,
+                                                    .unSubscribedList[index].author,
                                                 rating: controller
-                                                    .unSubscribedList[index]
-                                                    .rate,
+                                                    .unSubscribedList[index].rate,
                                                 description: controller
                                                     .unSubscribedList[index]
                                                     .description,
@@ -133,13 +125,13 @@ class Hood extends GetView<HoodController> {
                                                 .unSubscribedList[index].author,
                                             rate: controller
                                                 .unSubscribedList[index].rate,
-                                            image: controller
-                                                .unSubscribedList[index].image,
+                                            image: fileUrl +
+                                                controller
+                                                    .unSubscribedList[index].image,
                                           )
                                               .animate()
                                               .fadeIn(
-                                                  duration: 900.ms,
-                                                  delay: 100.ms)
+                                                  duration: 900.ms, delay: 100.ms)
                                               .shimmer(
                                                   blendMode: BlendMode.srcOver,
                                                   color: Colors.white12)
@@ -149,138 +141,88 @@ class Hood extends GetView<HoodController> {
                                               .margin9,
                                         ),
                                       ),
-                                    )
-                                  : Container()),
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: "Subscribed Hood(s)"
-                            .toLabel(bold: true, fontsize: 17),
-                      ).margin9,
-                      Obx(
-                        () => !controller.isInternet.value
-                            ? Expanded(
-                                child: Center(
-                                child: TextButton(
-                                  child: "Tap to refresh".toLabel(),
-                                  onPressed: () => controller.reload(),
-                                ),
-                              ),)
-                            : controller.loadData.value
-                                ? GridView.builder(
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
+                              )
+                            : Container()),
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: "Subscribed Hood(s)".toLabel(bold: true, fontsize: 17),
+                ).margin9,
+                Obx(
+                  () => !controller.isInternet.value
+                      ? Container(
+                          alignment: Alignment.center,
+                          child: TextButton(
+                            child: "Tap to refresh".toLabel(),
+                            onPressed: () => controller.reload(),
+                          ),
+                        )
+                      : controller.loadData.value
+                          ? Expanded(
+                              child: GridView.builder(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  gridDelegate:
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2,
+                                    childAspectRatio: 0.90,
+                                    crossAxisSpacing: 2.0,
+                                    mainAxisSpacing: 2.0,
+                                  ),
+                                  itemCount: 4,
+                                  itemBuilder: (BuildContext context, index) =>
+                                      const ShimmerSubscribed()),
+                            )
+                          : controller.hoodList.isEmpty
+                              ? const Center(
+                                  child: Text('You have no subscription!'))
+                              : Expanded(
+                                  child: GridView.builder(
                                     shrinkWrap: true,
                                     gridDelegate:
                                         const SliverGridDelegateWithFixedCrossAxisCount(
                                       crossAxisCount: 2,
-                                      childAspectRatio: 1.1,
-                                      crossAxisSpacing: 5.0,
-                                      mainAxisSpacing: 20.0,
+                                      childAspectRatio: 0.90,
+                                      crossAxisSpacing: 2.0,
+                                      mainAxisSpacing: 2.0,
                                     ),
-                                    itemCount: 6,
-                                    itemBuilder:
-                                        (BuildContext context, index) =>
-                                            const ShimmerSubscribed())
-                                : controller.subscribedList.isEmpty
-                                    ? const Center(
-                                        child:
-                                            Text('You have no subscription!'))
-                                    : GridView.builder(
-                                        physics:
-                                            const NeverScrollableScrollPhysics(),
-                                        shrinkWrap: true,
-                                        gridDelegate:
-                                            const SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: 2,
-                                          childAspectRatio: 0.95,
-                                          crossAxisSpacing: 2.0,
-                                          mainAxisSpacing: 2.0,
-                                        ),
-                                        itemCount:
-                                            controller.subscribedList.length,
-                                        itemBuilder: (BuildContext context,
-                                                index) =>
-                                            Subscribed(
-                                          ontap: () {
-                                            controller.checkSaved(controller
-                                                .subscribedList[index].id
-                                                .toString());
-                                            controller.getLikesDislike(
-                                                controller
-                                                    .subscribedList[index].id);
-                                            controller.read(controller
-                                                .subscribedList[index].id);
-                                            if (controller.subscribedList[index]
-                                                .fileLink.isNotEmpty) {
-                                              Get.to(() => SubscribedView(
-                                                    principal: controller
-                                                        .subscribedList[index]
-                                                        .principal,
-                                                    title: controller
-                                                        .subscribedList[index]
-                                                        .title,
-                                                    fileLink: controller
-                                                        .subscribedList[index]
-                                                        .fileLink,
-                                                    likes: controller
-                                                        .subscribedList[index]
-                                                        .likes,
-                                                    dislike: controller
-                                                        .subscribedList[index]
-                                                        .disLike,
-                                                    comment: controller
-                                                        .subscribedList[index]
-                                                        .comment,
-                                                    id: controller
-                                                        .subscribedList[index]
-                                                        .id,
-                                                    author: controller
-                                                        .subscribedList[index]
-                                                        .author,
-                                                    fileID: controller
-                                                        .subscribedList[index]
-                                                        .fileID,
-                                                    imagPath: controller
-                                                        .subscribedList[index]
-                                                        .image,
-                                                    pdfPath: controller
-                                                        .subscribedList[index]
-                                                        .fileLink,
-                                                    description: controller
-                                                        .subscribedList[index]
-                                                        .describtion,
-                                                  ));
-                                            } else {
-                                              Utils().showError(
-                                                  "File link is incorrect");
-                                            }
-                                          },
-                                          title: controller
-                                              .subscribedList[index].title,
-                                          image: controller
-                                              .subscribedList[index].image,
-                                          author: controller
-                                              .subscribedList[index].author,
-                                        )
-                                                .animate()
-                                                .fadeIn(
-                                                    duration: 900.ms,
-                                                    delay: 200.ms)
-                                                .shimmer(
-                                                    blendMode:
-                                                        BlendMode.srcOver,
-                                                    color: Colors.white12)
-                                                .move(
-                                                    begin: const Offset(-16, 0),
-                                                    curve: Curves.easeOutQuad)
-                                                .padding9,
-                                      ),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      )
-                    ],
-                  ),
+                                    itemCount: controller.hoodList.length,
+                                    itemBuilder: (BuildContext context,
+                                            index) =>
+                                        Subscribed(
+                                      ontap: () {
+                                        controller.getSubscribed(
+                                            controller.hoodList[index].id);
+                                        Get.to(
+                                            Attachments(
+                                              authorID: controller
+                                                  .hoodList[index].authorID,
+                                              hood: controller
+                                                  .hoodList[index].name,
+                                              hoodID:
+                                                  controller.hoodList[index].id,
+                                            ),
+                                            transition: Transition.fadeIn);
+                                      },
+                                      title: controller.hoodList[index].name,
+                                      image: fileUrl +
+                                          controller.hoodList[index].image,
+                                      author: controller.hoodList[index].author,
+                                    )
+                                            .animate()
+                                            .fadeIn(
+                                                duration: 900.ms, delay: 200.ms)
+                                            .shimmer(
+                                                blendMode: BlendMode.srcOver,
+                                                color: Colors.white12)
+                                            .move(
+                                                begin: const Offset(-16, 0),
+                                                curve: Curves.easeOutQuad)
+                                            .padding9,
+                                  ),
+                                ),
+                ),
+                const SizedBox(
+                  height: 20,
                 )
               ],
             ),
@@ -350,7 +292,7 @@ class Hood extends GetView<HoodController> {
       width: width,
       height: 40,
       child: TextField(
-        style: TextStyle(color: dark),
+        style: TextStyle(color: light),
         controller: controller.searchController,
         onChanged: (text) {
           if (text.isNotEmpty) {
@@ -371,17 +313,21 @@ class Hood extends GetView<HoodController> {
               }).toList();
             });
 
-            Future.delayed(const Duration(microseconds: 300)).then((value) {
-              controller.subscribedList = controller.subscribed.where((data) {
-                var title = data.title.toLowerCase();
-                var author = data.author.toLowerCase();
-                var date = data.date;
+            Future.delayed(const Duration(microseconds: 300)).then(
+              (value) {
+                controller.hoodList = controller.hoodData.where(
+                  (data) {
+                    var title = data.name.toLowerCase();
+                    var author = data.author.toLowerCase();
+                    var date = data.date;
 
-                return title.contains(text.toLowerCase()) ||
-                    author.contains(text.toLowerCase()) ||
-                    date.toString().contains(text);
-              }).toList();
-            });
+                    return title.contains(text.toLowerCase()) ||
+                        author.contains(text.toLowerCase()) ||
+                        date.toString().contains(text);
+                  },
+                ).toList();
+              },
+            );
             controller.loadSub.value = false;
             controller.loadData.value = false;
           } else {
@@ -411,19 +357,19 @@ class Hood extends GetView<HoodController> {
                   },
                   icon: Icon(
                     Icons.clear,
-                    color: grey,
+                    color: light,
                   ),
                 )
               : Icon(
                   Icons.search,
-                  color: grey,
+                  color: light,
                 )),
           filled: true,
-          fillColor: Colors.blue[100],
+          fillColor: primaryLight,
           contentPadding:
               const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
           hintText: 'Enter any keyword',
-          hintStyle: const TextStyle(color: Colors.grey),
+          hintStyle: TextStyle(color: light),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30.0),
             borderSide: BorderSide.none, // Remove the border edges
@@ -438,7 +384,7 @@ class Hood extends GetView<HoodController> {
           ),
           floatingLabelBehavior: FloatingLabelBehavior.never,
           labelText: 'Search',
-          labelStyle: TextStyle(color: grey),
+          labelStyle: TextStyle(color: light),
         ),
       ),
     );

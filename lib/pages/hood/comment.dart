@@ -32,10 +32,10 @@ class CommentsScreen extends GetView<HoodController> {
             onPressed: () => Get.back(),
             icon: Icon(
               Icons.arrow_back_ios,
-              color: dark,
+              color: light,
             )),
-        backgroundColor: Colors.blue[200],
-        title: title.toLabel(color: dark),
+        backgroundColor:primaryColor,
+        title: title.toLabel(color: light),
       ),
       body: RefreshIndicator(
         onRefresh: () async {
@@ -48,9 +48,9 @@ class CommentsScreen extends GetView<HoodController> {
               Column(
                 children: [
                   Align(
-                          alignment: Alignment.topLeft,
-                          child: "Enter your comment here".toLabel())
-                      .padding9,
+                    alignment: Alignment.topLeft,
+                    child: "Enter your comment here".toLabel(),
+                  ).padding9,
                   MEdit(
                     controller: controller.replyText,
                     hint: "Reply here",
@@ -59,14 +59,17 @@ class CommentsScreen extends GetView<HoodController> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Obx(() => MButton(
-                            isLoading: controller.saveReply.value,
-                            onTap: () {
-                              controller.replyComment(
-                                  controller.replyText.text, hoodID);
-                            },
-                            title: "Send",
-                          )),
+                      Obx(
+                        () => MButton(
+                          isLoading: controller.saveReply.value,
+                          onTap: () {
+                            controller.replyComment(
+                                controller.replyText.text, hoodID);
+                          },
+                          color: primaryLight,
+                          title: "Send",
+                        ),
+                      ),
                     ],
                   ).padding9
                 ],
@@ -142,7 +145,7 @@ class CommentWidget extends StatelessWidget {
                     },
                     child: Row(
                       children: [
-                        "Reply".toLabel(color: Colors.blue),
+                        "Reply".toLabel(color: primaryLight),
                         const Icon(
                           Icons.reply,
                           size: 15,

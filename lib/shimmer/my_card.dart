@@ -1,3 +1,4 @@
+import 'package:aceprex/services/constants/color.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -21,8 +22,8 @@ class ShimerMyCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(25),
               child: GlassContainer(
                 widget: Shimmer.fromColors(
-                  baseColor: const Color.fromARGB(115, 158, 158, 158),
-                  highlightColor: Colors.grey.shade100,
+                  baseColor:lightGrey,
+                  highlightColor: Colors.grey.shade300,
                   enabled: true,
                   child: Column(children: [
                     const SizedBox(
@@ -80,12 +81,12 @@ class ShimerMyCard extends StatelessWidget {
           Positioned(
             left: 30,
             child: Shimmer.fromColors(
-              baseColor: const Color.fromARGB(193, 158, 158, 158),
-              highlightColor: Colors.grey.shade100,
+              baseColor: lightGrey,
+              highlightColor: Colors.grey.shade300,
               enabled: true,
               child: Container(
                   height: 25,
-                  width: myWidth(context, 2.5),
+                  width: myWidth(context, 2.3),
                   decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20)),

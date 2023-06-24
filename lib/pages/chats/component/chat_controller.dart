@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:aceprex/pages/startup/startup.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
@@ -24,12 +25,16 @@ class ChatPlaceController extends GetxController {
   var isSendFile = false.obs;
   var isDownload = false.obs;
 
+  //var chatLength = 0.obs;
+
   @override
   void onInit() {
     super.onInit();
+    if (Utils.userID.isEmpty) {
+      Get.to(() => const StartUp());
+    }
     chatData.clear();
   }
-  
 
   Map<int, String> weekdayLabels = {
     DateTime.monday: "Mon",
@@ -50,7 +55,7 @@ class ChatPlaceController extends GetxController {
   void startChatTimer(int person) {
     // Fetch messages every 2 seconds
     chatTimer?.cancel();
-    chatTimer = Timer.periodic(const Duration(seconds: 5), (_) {
+    chatTimer = Timer.periodic(const Duration(seconds: 2), (_) {
       Utils.checkInternet().then((value) {
         if (value) {
           if (!chatDataPull && !chatDataPull) {
@@ -66,14 +71,16 @@ class ChatPlaceController extends GetxController {
       chatData.clear();
       if (value.isNotEmpty) {
         chatData.addAll(value);
-         chatData.sort((a, b) => b.date.compareTo(a.date));
+        // chatData.sort((a, b) => b.date.compareTo(a.date));
         // if (chatData.isNotEmpty) {
         //   chatChanges.value = chatData.join(',');
         // } else {
         //   chatData.clear();
         // }
+        // chatLength.value = chatData.length;
         chatBool.value = true;
         chatBool.value = false;
+        setSeen(person);
       }
 
       chatDataPull = false;

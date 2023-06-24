@@ -39,14 +39,14 @@ class LibViewLocal extends StatelessWidget {
               onPressed: () => Get.back(),
               icon: Icon(
                 Icons.arrow_back_ios,
-                color: dark,
+                color: light,
               )),
           title: Text(
             title,
-            style: TextStyle(color: dark),
+            style: TextStyle(color: light),
           ),
           elevation: 0,
-          backgroundColor: Colors.blue[100],
+          backgroundColor: primaryColor,
         ),
         body: SfPdfViewer.file(
           File(fileLink),
@@ -64,7 +64,7 @@ class LibViewLocal extends StatelessWidget {
             Bubble(
               title: "Next",
               iconColor: Colors.white,
-              bubbleColor: Colors.blue,
+              bubbleColor:primaryLight,
               icon: Icons.arrow_forward_ios,
               titleStyle: const TextStyle(fontSize: 14, color: Colors.white),
               onPress: () {
@@ -76,7 +76,7 @@ class LibViewLocal extends StatelessWidget {
             Bubble(
               title: "Previous",
               iconColor: Colors.white,
-              bubbleColor: Colors.blue,
+              bubbleColor: primaryLight,
               icon: Icons.arrow_back_ios,
               titleStyle: const TextStyle(fontSize: 14, color: Colors.white),
               onPress: () {
@@ -88,7 +88,7 @@ class LibViewLocal extends StatelessWidget {
             Bubble(
               title: "Bookmark",
               iconColor: Colors.white,
-              bubbleColor: Colors.blue,
+              bubbleColor: primaryLight,
               icon: Icons.bookmark,
               titleStyle: const TextStyle(fontSize: 14, color: Colors.white),
               onPress: () {
@@ -97,21 +97,17 @@ class LibViewLocal extends StatelessWidget {
               },
             ),
           ],
-
           // animation controller
           animation: controller.animation!,
-
           // On pressed change animation state
           onPress: () => controller.animationController!.isCompleted
               ? controller.animationController!.reverse()
               : controller.animationController!.forward(),
-
           // Floating Action button Icon color
           iconColor: Colors.white,
-
           // Flaoting Action button Icon
           iconData: Icons.group_work,
-          backGroundColor: Colors.blue,
+          backGroundColor:primaryLight,
         ));
   }
 }

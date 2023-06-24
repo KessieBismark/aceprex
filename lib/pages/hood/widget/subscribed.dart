@@ -27,14 +27,14 @@ class Subscribed extends StatelessWidget {
           borderRadius: 5,
           widget: Column(
             children: [
-              const SizedBox(
-                height: 10,
-              ),
+              // const SizedBox(
+              //   height: 10,
+              // ),
               Container(
                 height: myHeight(context, 7),
-                width: myWidth(context, 2.5),
+                //  width: myWidth(context, 2.5),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
+                  // borderRadius: BorderRadius.,
                   shape: BoxShape.rectangle,
                   image: DecorationImage(
                     fit: BoxFit.fill,
@@ -66,7 +66,7 @@ class Subscribed extends StatelessWidget {
             context,
             2,
           ),
-          height: 200,
+          height: 150,
         ),
       ),
     );

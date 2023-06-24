@@ -1,5 +1,7 @@
 import 'dart:io';
-import 'package:aceprex/services/widgets/waiting.dart';
+import 'package:aceprex/services/utils/themes.dart';
+
+import '../../services/widgets/waiting.dart';
 import '../../services/widgets/extension.dart';
 import '../../services/widgets/glass.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -27,59 +29,65 @@ class Library extends GetView<LibraryController> {
           onRefresh: () async {
             await controller.reload();
           },
-          child: DefaultTabController(
-            length: 2, // Number of tabs
-            child: Column(
-              children: [
-            TopBar(
-              title: "Libraries",
-              widget: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          child: GestureDetector(
+            onTap: () {
+              FocusScope.of(context).requestFocus(FocusNode());
+            },
+            child: DefaultTabController(
+              length: 2, // Number of tabs
+              child: Column(
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      searchTextField(context),
-                    ],
-                  ).hMargin9.hMargin9,
-                  TabBar(
-                    indicatorColor: Colors.orangeAccent,
-                    tabs: [
-                      Tab(
-                        child: "Online".toLabel(
-                          color: dark,
+                  TopBar(
+                    title: "Libraries",
+                    widget: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            searchTextField(context),
+                          ],
+                        ).hMargin9.hMargin9,
+                        TabBar(
+                          indicatorWeight: 5,
+                          indicatorColor: primaryLight,
+                          tabs: [
+                            Tab(
+                              child: "Online".toLabel(
+                                color: light,
+                              ),
+                            ),
+                            Tab(
+                              child: "Offline".toLabel(
+                                color: light,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      Tab(
-                        child: "Offline".toLabel(
-                          color: dark,
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: TabBarView(
+                      children: [
+                        Obx(() => !controller.isInternet.value
+                            ? Center(
+                                child: TextButton(
+                                  child: "Tap to refresh".toLabel(),
+                                  onPressed: () => controller.reload(),
+                                ),
+                              )
+                            : controller.loadData.value
+                                ? onLineListShimmer()
+                                : onLineList()),
+                        Obx(() => controller.loadLocal.value
+                            ? onLineListShimmer()
+                            : onffLineList()),
+                      ],
+                    ),
                   ),
                 ],
               ),
-            ),
-            Expanded(
-              child: TabBarView(
-                children: [
-                  Obx(() => !controller.isInternet.value
-                      ? Center(
-                      child: TextButton(
-                        child: "Tap to refresh".toLabel(),
-                        onPressed: () => controller.reload(),
-                      ),
-                        )
-                      : controller.loadData.value
-                          ? onLineListShimmer()
-                          : onLineList()),
-                  Obx(() => controller.loadLocal.value
-                      ? onLineListShimmer()
-                      : onffLineList()),
-                ],
-              ),
-            ),
-              ],
             ),
           ),
         ),
@@ -114,7 +122,7 @@ class Library extends GetView<LibraryController> {
               leading: SizedBox(
                 width: 80,
                 child: CachedNetworkImage(
-                  imageUrl: data.image,
+                  imageUrl: fileUrl + data.image,
                   fit: BoxFit.cover,
                   placeholder: (context, url) => Shimmer.fromColors(
                     baseColor: const Color.fromARGB(115, 158, 158, 158),
@@ -138,7 +146,7 @@ class Library extends GetView<LibraryController> {
                 children: [
                   Text(
                     data.author,
-                    style: const TextStyle(color: Colors.blue),
+                    style: const TextStyle(color: primaryLight),
                   ),
                 ],
               ),
@@ -151,19 +159,21 @@ class Library extends GetView<LibraryController> {
                       () => controller.checkLdb.value
                           ? controller.checkLocalDB(data.id)
                               ? Container()
-                              : Obx(() => controller.saveLocal.value
+                              : Obx(() => controller.saveLocal.value &&
+                                      controller.deleteOnline == data.id
                                   ? const MWaiting()
                                   : Tooltip(
                                       message: "Save to phone",
                                       child: IconButton(
                                           onPressed: () async {
+                                            controller.deleteOnline = data.id;
                                             controller.savePDF(
                                                 data.id.toString(),
                                                 data.title,
                                                 data.author,
                                                 data.description,
-                                                data.fileLink,
-                                                data.image);
+                                               fileUrl +   data.fileLink,
+                                                fileUrl + data.image);
                                           },
                                           icon: const Icon(
                                               Icons.save_alt_rounded)),
@@ -171,20 +181,25 @@ class Library extends GetView<LibraryController> {
                           : controller.checkLocalDB(data.id)
                               ? Container()
                               : Obx(
-                                  () => controller.saveLocal.value
+                                  () => controller.saveLocal.value &&
+                                          controller.deleteOnline == data.id
                                       ? const MWaiting()
                                       : Tooltip(
                                           message: "Save to phone",
                                           child: IconButton(
-                                            color: dark,
+                                            color:
+                                                ThemeService().isSavedDarkMode()
+                                                    ? light
+                                                    : dark,
                                             onPressed: () async {
+                                              controller.deleteOnline = data.id;
                                               controller.savePDF(
                                                   data.id.toString(),
                                                   data.title,
                                                   data.author,
                                                   data.description,
-                                                  data.fileLink,
-                                                  data.image);
+                                                fileUrl +    data.fileLink,
+                                              fileUrl +    data.image);
                                             },
                                             icon: const Icon(
                                                 Icons.save_alt_rounded),
@@ -252,7 +267,7 @@ class Library extends GetView<LibraryController> {
                 children: [
                   Text(
                     data.author,
-                    style: const TextStyle(color: Colors.blue),
+                    style: const TextStyle(color: primaryLight),
                   ),
                 ],
               ),
@@ -319,10 +334,10 @@ class Library extends GetView<LibraryController> {
 SizedBox searchTextField(BuildContext context) {
   final controller = Get.find<LibraryController>();
   return SizedBox(
-    width: myWidth(context, 1.4),
+    width: myWidth(context, 1.2),
     height: 40,
     child: TextField(
-      style: TextStyle(color: dark),
+      style: TextStyle(color: light),
       controller: controller.searchController,
       onChanged: (text) {
         if (text.isNotEmpty) {
@@ -344,11 +359,9 @@ SizedBox searchTextField(BuildContext context) {
           controller.isSearching.value = false;
           controller.loadLocal.value = false;
         }
-
         if (text.isNotEmpty) {
           controller.isSearching.value = true;
           controller.loadData.value = true;
-
           Future.delayed(const Duration(microseconds: 300)).then(
             (value) {
               controller.libraryList = controller.library.where(
@@ -384,20 +397,20 @@ SizedBox searchTextField(BuildContext context) {
                   },
                   icon: Icon(
                     Icons.clear,
-                    color: grey,
+                    color: light,
                   ),
                 )
               : Icon(
                   Icons.search,
-                  color: grey,
+                  color: light,
                 ),
         ),
         filled: true,
-        fillColor: Colors.blue[100],
+        fillColor: primaryLight,
         contentPadding:
             const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
         hintText: 'Enter any keyword',
-        hintStyle: const TextStyle(color: Colors.grey),
+        hintStyle: TextStyle(color: light),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30.0),
           borderSide: BorderSide.none, // Remove the border edges
@@ -415,7 +428,7 @@ SizedBox searchTextField(BuildContext context) {
         ),
         floatingLabelBehavior: FloatingLabelBehavior.never,
         labelText: 'Search',
-        labelStyle: TextStyle(color: grey),
+        labelStyle: TextStyle(color: light),
       ),
     ),
   );

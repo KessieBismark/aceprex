@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import '../../../services/isolate_services/notification.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:dio/dio.dart';
 
 import 'package:flutter/material.dart';
@@ -10,7 +12,9 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:http/http.dart' as http;
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import '../../../services/utils/helpers.dart';
+import '../../../services/utils/notify.dart';
 import '../../../services/utils/query.dart';
+import '../../startup/startup.dart';
 import 'local_db.dart';
 import 'model.dart';
 
@@ -40,6 +44,9 @@ class LibraryController extends GetxController
   @override
   void onInit() {
     super.onInit();
+    if (Utils.userID.isEmpty) {
+      Get.to(() => const StartUp());
+    }
     pdfController = PdfViewerController();
     animateController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 260));
@@ -125,49 +132,72 @@ class LibraryController extends GetxController
       }
     });
     saveID = dataId;
+    try {
+      NotificationService.showNotification(
+          id: createUniqueId(),
+          title: title,
+          body: 'Downloading Hood',
+          channelKey: 'library download',
+          notificationLayout: NotificationLayout.ProgressBar,
+          payload: ({"type": "library"}));
+      saveLocal.value = true;
+      final directory = await getApplicationDocumentsDirectory();
+      final pdfDirectory =
+          await Directory('${directory.path}/pdf').create(recursive: true);
+      final imageDirectory = await Directory('${directory.path}/pdfimages')
+          .create(recursive: true);
 
-    saveLocal.value = true;
-    final directory = await getApplicationDocumentsDirectory();
-    final pdfDirectory =
-        await Directory('${directory.path}/pdf').create(recursive: true);
-    final imageDirectory =
-        await Directory('${directory.path}/pdfimages').create(recursive: true);
+      final pdfFileName = path.basename(pdfPath);
+      final imageFileName = generateValidFileName(imagePath);
 
-    final pdfFileName = path.basename(pdfPath);
-    final imageFileName = generateValidFileName(imagePath);
+      final pdfFile = File('${pdfDirectory.path}/$pdfFileName');
+      final imageFile = File('${imageDirectory.path}/$imageFileName');
 
-    final pdfFile = File('${pdfDirectory.path}/$pdfFileName');
-    final imageFile = File('${imageDirectory.path}/$imageFileName');
+      final dio = Dio();
+      await dio.download(pdfPath, pdfFile.path);
 
-    final dio = Dio();
-    await dio.download(pdfPath, pdfFile.path);
+      final response = await http.get(Uri.parse(imagePath));
+      await imageFile.writeAsBytes(response.bodyBytes);
 
-    final response = await http.get(Uri.parse(imagePath));
-    await imageFile.writeAsBytes(response.bodyBytes);
+      final pdf = PDFModel(
+        libraryId: int.parse(dataId),
+        title: title,
+        author: author,
+        description: description,
+        pdfPath: pdfFile.path,
+        imagePath: imageFile.path,
+      );
 
-    final pdf = PDFModel(
-      libraryId: int.parse(dataId),
-      title: title,
-      author: author,
-      description: description,
-      pdfPath: pdfFile.path,
-      imagePath: imageFile.path,
-    );
-
-    final db = DatabaseHelper.instance;
-    final id = await db.insertPDF(pdf);
-    pdfs.add(pdf.copyWith(id: id));
-    saveLocal.value = false;
-    Utils.sendNotification(
-        title: 'Save to library',
+      final db = DatabaseHelper.instance;
+      final id = await db.insertPDF(pdf);
+      pdfs.add(pdf.copyWith(id: id));
+      saveLocal.value = false;
+      AwesomeNotifications()
+          .cancelNotificationsByChannelKey('library download');
+      NotificationService.showNotification(
+        id: id,
+        title: title,
+        body: 'Hood has been saved to your local library successfully',
         channelKey: 'library',
-        body: 'Hood has been saved to your local library successfully');
-    fetchPDFs();
-    checkLocalDB(int.parse(dataId));
-
-    loadData.value = true;
-    loadData.value = false;
-    checkLdb.value = checkLdb.value;
+        payload: ({
+          "type": "library",
+          "title": title,
+          "fileLink": pdfFile.path,
+          "id": dataId,
+          "author": author,
+          "image": imageFile.path,
+          "description": description
+        }),
+      );
+      fetchPDFs();
+      checkLocalDB(int.parse(dataId));
+      loadData.value = true;
+      loadData.value = false;
+      checkLdb.value = checkLdb.value;
+    } catch (e) {
+      saveLocal.value = false;
+      debugPrint(e.toString());
+    }
   }
 
   deleteOnlineLib(int id, int attachment) async {

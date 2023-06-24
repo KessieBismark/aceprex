@@ -34,6 +34,36 @@ class UnsubscribedHood {
   }
 }
 
+class HoodModel {
+  final int id;
+  final int authorID;
+  final String author;
+  final String name;
+  final String description;
+  final String image;
+  final DateTime date;
+
+  HoodModel(
+      {required this.id,
+      required this.authorID,
+      required this.author,
+      required this.name,
+      required this.description,
+      required this.image,
+      required this.date});
+
+  factory HoodModel.fromJson(Map<String, dynamic> map) {
+    return HoodModel(
+        id: map['id'],
+        authorID: map['principal'],
+        author: map['author'],
+        name: map['title'],
+        description: map['description'],
+        image: map['image'],
+        date: DateTime.parse(map['date']));
+  }
+}
+
 class SubscribedHood {
   final int id;
   final String title;
@@ -44,7 +74,7 @@ class SubscribedHood {
   final int principal;
   final String describtion;
   final String image;
-  final String date;
+  final DateTime date;
   final int fileID;
   final String fileLink;
 
@@ -73,7 +103,7 @@ class SubscribedHood {
         describtion: map['description'],
         image: map['image'],
         author: map['author'],
-        date: map['date'],
+        date: DateTime.parse( map['date']),
         fileID: map['attachment_id'],
         fileLink: map['fileLink']);
   }

@@ -22,27 +22,27 @@ class TabButton extends StatelessWidget {
       onTap: ontap,
       child: Container(
         decoration: BoxDecoration(
-            boxShadow: [
-              const BoxShadow(
-                color: Colors.grey,
-                offset: Offset(0, 1), // Specifies the position of the shadow
-                blurRadius: 6, // Specifies the blur radius of the shadow
-                spreadRadius: 0, // Specifies the spread radius of the shadow
-              ),
-              BoxShadow(
-                color: dark,
-                offset:
-                    const Offset(0, 1), // Specifies the position of the shadow
-                blurRadius: 6, // Specifies the blur radius of the shadow
-                spreadRadius: 0, // Specifies the spread radius of the shadow
-              ),
-            ],
-            color: active ? Colors.blue[400] : Colors.blue[200],
+            // boxShadow: [
+            //   const BoxShadow(
+            //     color: Colors.grey,
+            //     offset: Offset(0, 1), // Specifies the position of the shadow
+            //     blurRadius: 6, // Specifies the blur radius of the shadow
+            //     spreadRadius: 0, // Specifies the spread radius of the shadow
+            //   ),
+            //   BoxShadow(
+            //     color: lightGrey,
+            //     offset:
+            //         const Offset(0, 1), // Specifies the position of the shadow
+            //     blurRadius: 6, // Specifies the blur radius of the shadow
+            //     spreadRadius: 0, // Specifies the spread radius of the shadow
+            //   ),
+            // ],
+            color: active ? secondaryColor :primaryLight,
             borderRadius: BorderRadius.circular(30)),
         child: Center(
           child: Text(
             text,
-            style: TextStyle(color:  active ? Colors.white: dark,),
+            style: TextStyle(color:  light),
           ).hPadding9,
         ),
       ),

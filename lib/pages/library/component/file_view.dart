@@ -1,4 +1,5 @@
-import 'package:aceprex/services/widgets/waiting.dart';
+import '../../../services/constants/constant.dart';
+import '../../../services/widgets/waiting.dart';
 
 import 'controller.dart';
 import 'package:floating_action_bubble/floating_action_bubble.dart';
@@ -37,14 +38,14 @@ class LibView extends StatelessWidget {
               onPressed: () => Get.back(),
               icon: Icon(
                 Icons.arrow_back_ios,
-                color: dark,
+                color: light,
               )),
           title: Text(
             title,
-            style: TextStyle(color: dark),
+            style: TextStyle(color: light),
           ),
           elevation: 0,
-          backgroundColor: Colors.blue[100],
+          backgroundColor: primaryColor,
           actions: <Widget>[
             libCon.checkLocalDB(id)
                 ? Container()
@@ -54,7 +55,7 @@ class LibView extends StatelessWidget {
                         : Tooltip(
                             message: "Save to phone",
                             child: IconButton(
-                                color: dark,
+                                color: light,
                                 onPressed: () async {
                                   libCon.savePDF(id.toString(), title, author,
                                       description, fileLink, imagPath);
@@ -64,7 +65,7 @@ class LibView extends StatelessWidget {
           ],
         ),
         body: SfPdfViewer.network(
-          fileLink,
+        fileUrl +  fileLink,
           controller: libCon.pdfController,
           key: libCon.pdfKey,
           enableDoubleTapZooming: true,
@@ -79,7 +80,7 @@ class LibView extends StatelessWidget {
             Bubble(
               title: "Next",
               iconColor: Colors.white,
-              bubbleColor: Colors.blue,
+              bubbleColor: primaryLight,
               icon: Icons.arrow_forward_ios,
               titleStyle: const TextStyle(fontSize: 14, color: Colors.white),
               onPress: () {
@@ -91,7 +92,7 @@ class LibView extends StatelessWidget {
             Bubble(
               title: "Previous",
               iconColor: Colors.white,
-              bubbleColor: Colors.blue,
+              bubbleColor: primaryLight,
               icon: Icons.arrow_back_ios,
               titleStyle: const TextStyle(fontSize: 14, color: Colors.white),
               onPress: () {
@@ -103,7 +104,7 @@ class LibView extends StatelessWidget {
             Bubble(
               title: "Bookmark",
               iconColor: Colors.white,
-              bubbleColor: Colors.blue,
+              bubbleColor: primaryLight,
               icon: Icons.bookmark,
               titleStyle: const TextStyle(fontSize: 14, color: Colors.white),
               onPress: () {
@@ -126,7 +127,7 @@ class LibView extends StatelessWidget {
 
           // Flaoting Action button Icon
           iconData: Icons.group_work,
-          backGroundColor: Colors.blue,
+          backGroundColor: primaryLight,
         ));
   }
 }

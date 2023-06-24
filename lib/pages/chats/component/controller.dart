@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
+import '../../../services/isolate_services/notification.dart';
+
 import '../../../services/utils/helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -105,10 +107,26 @@ class ChatUIController extends GetxController {
         if (chatList[i].lastMessageSeen == 0 &&
             !Utils.notifyMeg.contains(
                 ('${chatList[i].lastMessage}${chatList[i].lastDate}'))) {
-          Utils.sendNotification(
-              title: chatList[i].name,
-              channelKey: 'chat',
-              body: chatList[i].lastMessage!);
+          if (Utils.userID != chatList[i].fromID.toString()) {
+            NotificationService.showNotification(
+                id: chatList[i].chatID,
+                title: chatList[i].name,
+                body: chatList[i].lastMessage!.isEmpty
+                    ? 'image file'
+                    : chatList[i].lastMessage!,
+                channelKey: 'chat',
+                payload: ({
+                  "type": "chat",
+                  "avatar": chatList[i].fromImage!,
+                  "name": chatList[i].name,
+                  "to": chatList[i].fromID.toString(),
+                  "isOnline": chatList[i].isOnline.toString()
+                }));
+            // Utils.sendNotification(
+            //     title: chatList[i].name,
+            //     channelKey: 'chat',
+            //     body: chatList[i].lastMessage!.isEmpty?'image file': chatList[i].lastMessage!);
+          }
           Utils.notifyMeg
               .add('${chatList[i].lastMessage}${chatList[i].lastDate}');
         }
