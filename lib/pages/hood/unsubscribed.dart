@@ -61,23 +61,30 @@ class UnSubscribedDetails extends GetView<HoodController> {
                   child: HeroWidget(
                     trans: true,
                     tag: id,
-                    child: CachedNetworkImage(
-                      imageUrl: image,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => Shimmer.fromColors(
-                        baseColor: const Color.fromARGB(115, 158, 158, 158),
-                        highlightColor: Colors.grey.shade100,
-                        enabled: true,
-                        child: Container(
-                          height: myHeight(context, 2),
-                          width: double.infinity,
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
+                    child: ColorFiltered(
+                      colorFilter: ColorFilter.mode(
+                        Colors.black
+                            .withOpacity(0.3), // Adjust opacity as desired
+                        BlendMode.srcATop,
+                      ),
+                      child: CachedNetworkImage(
+                        imageUrl: image,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => Shimmer.fromColors(
+                          baseColor: const Color.fromARGB(115, 158, 158, 158),
+                          highlightColor: Colors.grey.shade100,
+                          enabled: true,
+                          child: Container(
+                            height: myHeight(context, 2),
+                            width: double.infinity,
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                            ),
                           ),
                         ),
+                        errorWidget: (context, url, error) =>
+                            const Center(child: Icon(Icons.error)),
                       ),
-                      errorWidget: (context, url, error) =>
-                          const Center(child: Icon(Icons.error)),
                     ),
                   ),
                 ),

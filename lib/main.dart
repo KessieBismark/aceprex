@@ -23,58 +23,17 @@ void main() async {
   Workmanager().registerPeriodicTask(
     'backgroundTask',
     'backgroundTask',
+    constraints: Constraints(
+        networkType: NetworkType.connected,
+        requiresBatteryNotLow: true,
+        requiresDeviceIdle: true,
+        requiresStorageNotLow: true),
+
     frequency: const Duration(milliseconds: 900000), // Run task every 24 hours
   );
 
   sqfliteFfiInit();
   await NotificationService.initializeNotification();
-
-  // AwesomeNotifications().initialize
-  //  (
-  //   'resource://drawable/res_logo',
-  //   [
-  //     NotificationChannel(
-  //         channelKey: 'chat',
-  //         channelName: 'Basic Notification',
-  //         defaultColor: Colors.teal,
-  //         importance: NotificationImportance.High,
-  //         channelShowBadge: true,
-  //       //  onlyAlertOnce: true,
-  //         channelDescription: 'aceprex'),
-  //     NotificationChannel(
-  //         channelKey: 'notification',
-  //         channelName: 'Basic Notification',
-  //         defaultColor: Colors.teal,
-  //         importance: NotificationImportance.High,
-  //         channelShowBadge: true,
-  //               //    onlyAlertOnce: true,
-  //         channelDescription: 'aceprex'),
-  //     NotificationChannel(
-  //         channelKey: 'library',
-  //         channelName: 'Basic Notification',
-  //         defaultColor: Colors.teal,
-  //         importance: NotificationImportance.High,
-  //         channelShowBadge: true,
-  //                 //  onlyAlertOnce: true,
-  //         channelDescription: 'aceprex')
-  //   ],
-  // );
-
-  // ReceivedAction? receivedAction = await AwesomeNotifications()
-  //     .getInitialNotificationAction(removeFromActionEvents: false);
-  // if (receivedAction?.channelKey == 'chat') {
-  //         AwesomeNotifications().decrementGlobalBadgeCounter();
-  //   Get.to(() => const ChatList());
-  // } else if (receivedAction?.channelKey == 'notification') {
-  //         AwesomeNotifications().decrementGlobalBadgeCounter();
-  //   Get.to(() => const Notifications());
-  // } else if (receivedAction?.channelKey == 'library') {
-  //         AwesomeNotifications().decrementGlobalBadgeCounter();
-  //   Get.to(() => const Library());
-  // }else{
-  //         AwesomeNotifications().decrementGlobalBadgeCounter();
-  //   Get.toNamed('/dash');
-  // }
 
   // HttpOverrides.global = MyHttpOverrides();
 
@@ -186,7 +145,7 @@ void callbackDispatcher() {
           if (!chatMeg.contains('$message$date')) {
             if (userID != senderID) {
               NotificationService.showNotification(
-                  id: createUniqueId() ,
+                  id: createUniqueId(),
                   title: senderName,
                   body: message,
                   channelKey: 'chat',
@@ -207,30 +166,6 @@ void callbackDispatcher() {
     } catch (e) {
       print(e);
     }
-
-    // try {
-    //   var data = {"action": "get_unread_notifications", "userID": userID};
-    //   var response = await Query.queryData(data);
-    //           print(response);
-
-    //   if (jsonDecode(response) != 'false') {
-    //     List<dynamic> jsonData = jsonDecode(response);
-    //     for (var entry in jsonData) {
-    //       final title = entry['title']; // Replace with actual sender name key
-    //       final message = entry['message']; // Replace with actual message key
-    //       final senderID = entry['senderID'].toString();
-    //       // Display notification
-
-    //       Utils.sendNotification(
-    //           channelKey: 'notification',
-    //           title: title,
-    //           body: message,
-    //           groupKey: senderID);
-    //     }
-    //   }
-    // } catch (e) {
-    //   print(e);
-    // }
 
     return Future.value(true);
   });
