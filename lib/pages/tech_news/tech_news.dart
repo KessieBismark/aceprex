@@ -14,37 +14,35 @@ class TechNews extends GetView<TechNewsController> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: RefreshIndicator(
-          onRefresh: () async {
-            controller.getData();
+        onRefresh: () async {
+          controller.getData();
+        },
+        child: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).requestFocus(FocusNode());
           },
-          child: GestureDetector(
-            onTap: () {
-              FocusScope.of(context).requestFocus(FocusNode());
-            },
-            child: Column(
-              children: [
-                TopBar(
-                  title: "News",
-                  widget: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          searchTextField(context),
-                          // IconButton(
-                          //     onPressed: () {},
-                          //     icon: Icon(Icons.calendar_today, color: light))
-                        ],
-                      ).hMargin9.hMargin9,
-                      const SizedBox(
-                        height: 10,
-                      )
-                    ],
-                  ),
+          child: Column(
+            children: [
+              TopBar(
+                title: "News",
+                widget: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        searchTextField(context),
+                      ],
+                    ).hMargin9.hMargin9,
+                    const SizedBox(
+                      height: 10,
+                    )
+                  ],
                 ),
-                Expanded(
-                  child: Obx(() => !controller.isInternet.value
+              ),
+              Expanded(
+                child: Obx(
+                  () => !controller.isInternet.value
                       ? Expanded(
                           child: Center(
                             child: TextButton(
@@ -59,11 +57,13 @@ class TechNews extends GetView<TechNewsController> {
                               ? Container(
                                   alignment: Alignment.center,
                                   child: "No News Article!".toLabel())
-                              : NewsView(data: controller.techNewsList)),
-                )
-              ],
-            ),
-          )),
+                              : NewsView(data: controller.techNewsList),
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -133,14 +133,11 @@ SizedBox searchTextField(BuildContext context) {
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30.0),
-          // borderSide: const BorderSide(color: Colors.grey),
           borderSide: BorderSide.none, // Remove the border edges
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30.0),
           borderSide: BorderSide.none, // Remove the border edges
-
-          // borderSide: BorderSide(color: grey),
         ),
         floatingLabelBehavior: FloatingLabelBehavior.never,
         labelText: 'Search',

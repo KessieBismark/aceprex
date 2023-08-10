@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:awesome_notifications/awesome_notifications.dart';
+
 import 'services/isolate_services/notification.dart';
 import 'services/utils/helpers.dart';
 import 'services/utils/notify.dart';
@@ -44,6 +46,7 @@ void main() async {
   });
 
   await GetStorage.init();
+  AwesomeNotifications().resetGlobalBadge();
 
   runApp(const MyApp());
 }

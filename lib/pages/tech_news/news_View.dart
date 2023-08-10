@@ -53,7 +53,7 @@ class NewsView extends StatelessWidget {
                     BlendMode.srcATop,
                   ),
                   child: CachedNetworkImage(
-                    imageUrl:fileUrl + data[index].image,
+                    imageUrl: fileUrl + data[index].image,
                     placeholder: (context, url) => const MWaiting(),
                     errorWidget: (context, url, error) =>
                         const Icon(Icons.error),
@@ -91,8 +91,8 @@ class NewsView extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox.expand(
-                        //height: 80,
+                      SizedBox(
+                        height: 80,
                         child: Text(
                           maxLines: null,
                           overflow: TextOverflow.fade,

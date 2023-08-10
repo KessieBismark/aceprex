@@ -63,8 +63,7 @@ class UnSubscribedDetails extends GetView<HoodController> {
                     tag: id,
                     child: ColorFiltered(
                       colorFilter: ColorFilter.mode(
-                        Colors.black
-                            .withOpacity(0.3), // Adjust opacity as desired
+                        Colors.black.withOpacity(0.3),
                         BlendMode.srcATop,
                       ),
                       child: CachedNetworkImage(

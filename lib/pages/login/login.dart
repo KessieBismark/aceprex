@@ -1,3 +1,5 @@
+import 'package:aceprex/pages/login/reset.dart';
+
 import '../../services/utils/helpers.dart';
 import '../../services/utils/themes.dart';
 import '../../services/widgets/extension.dart';
@@ -121,7 +123,10 @@ class LoginPage extends GetView<LoginController> {
                                       )),
                                   const SizedBox(height: 15),
                                   InkWell(
-                                    onTap: () {},
+                                    onTap: () {
+                                      controller.clearData();
+                                      Get.to(() => const Reset());
+                                    },
                                     child: const Align(
                                       alignment: Alignment.centerRight,
                                       child: Text(
@@ -161,7 +166,8 @@ class LoginPage extends GetView<LoginController> {
                                             elevation:
                                                 MaterialStateProperty.all(2),
                                             backgroundColor:
-                                                MaterialStateProperty.all(primaryLight),
+                                                MaterialStateProperty.all(
+                                                    primaryLight),
                                             // ThemeService().isSavedDarkMode()
                                             //     ? MaterialStateProperty.all(trans)
                                             //     : MaterialStateProperty.all(blue),
