@@ -1,9 +1,10 @@
 name: aceprex
 description: Aceprex INC.
 
-publish_to: 'none' 
+publish_to: 'none'
 
-version: 2.7.0+1
+
+version: 3.0.0+1
 
 environment:
   sdk: '>=3.0.3 <4.0.0'
@@ -21,9 +22,6 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_animate: ^4.1.1+1
-  flutter_background_service: ^2.4.6
-  flutter_background_service_ios: ^2.4.0
-  flutter_background_service_platform_interface: ^2.2.0
   flutter_image_compress: ^2.0.3
   flutter_launcher_icons: ^0.13.1
   flutter_rating_bar: ^4.0.1

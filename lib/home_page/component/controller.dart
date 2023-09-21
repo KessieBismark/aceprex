@@ -37,7 +37,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
 
   void changeTabIndex(int index) {
     tabIndex.value = index;
-    update();
+    // update();
   }
 
 

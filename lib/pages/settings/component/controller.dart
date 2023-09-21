@@ -62,9 +62,9 @@ class SettingsController extends GetxController {
           Utils().showError(jsonDecode(result));
         } else {
           var data = jsonDecode(result);
-          Utils.userAvatar.value = 'users-avatar/ $data';
+          Utils.userAvatar.value = 'users-avatar/$data';
           SharedPreferences prefs = await SharedPreferences.getInstance();
-          prefs.setString("userAvatar", 'users-avatar/ $data');
+          prefs.setString("userAvatar", 'users-avatar/$data');
           Utils.imageSet.value = true;
           imgSaved.value = true;
           imgSaved.value = false;

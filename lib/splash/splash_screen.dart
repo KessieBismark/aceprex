@@ -25,7 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
 
     _mockCheckForSession().then((status) {
-      if (status) {
+      if (!status) {
         Utils.getLogin().then((result) {
           if (result) {
             // FlutterBackgroundService().invoke('setAsForeground');

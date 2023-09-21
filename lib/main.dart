@@ -37,8 +37,6 @@ void main() async {
   sqfliteFfiInit();
   await NotificationService.initializeNotification();
 
-  // HttpOverrides.global = MyHttpOverrides();
-
   await Permission.storage.isDenied.then((value) {
     if (value) {
       Permission.storage.request();
@@ -126,48 +124,47 @@ void callbackDispatcher() {
     List<String> chatMeg = [];
     if (prefs.containsKey("userID")) {
       userID = prefs.getString("userID")!;
-    }
-    if (prefs.containsKey('chatMeg')) {
-      chatMeg = prefs.getString("chatMeg")!.split(',');
-    }
-
-    try {
-      var data = {"action": "push_notification", "userID": userID};
-      var response = await Query.queryData(data);
-      if (jsonDecode(response) != 'false') {
-        List<dynamic> jsonData = jsonDecode(response);
-        for (var entry in jsonData) {
-          final date = entry['created_at'];
-          // final id = entry['chatID'];
-          final senderName = entry['senderName'];
-          final message = entry['message'];
-          final avatar = entry['message'] ?? '';
-          final isOnline = entry['message'];
-          final senderID = entry['senderID'].toString();
-          // Display notification
-          if (!chatMeg.contains('$message$date')) {
-            if (userID != senderID) {
-              NotificationService.showNotification(
-                  id: createUniqueId(),
-                  title: senderName,
-                  body: message,
-                  channelKey: 'chat',
-                  groupKey: senderID,
-                  payload: ({
-                    "type": "chat",
-                    "avatar": avatar,
-                    "name": senderName,
-                    "to": senderID.toString(),
-                    "isOnline": isOnline.toString()
-                  }));
-            }
-          }
-          chatMeg.add('$message$date');
-          prefs.setString("chatMeg", chatMeg.join(','));
-        }
+      if (prefs.containsKey('chatMeg')) {
+        chatMeg = prefs.getString("chatMeg")!.split(',');
       }
-    } catch (e) {
-      print(e);
+      try {
+        var data = {"action": "push_notification", "userID": userID};
+        var response = await Query.queryData(data);
+        if (jsonDecode(response) != 'false') {
+          List<dynamic> jsonData = jsonDecode(response);
+          for (var entry in jsonData) {
+            final date = entry['created_at'];
+            // final id = entry['chatID'];
+            final senderName = entry['senderName'];
+            final message = entry['message'];
+            final avatar = entry['message'] ?? '';
+            final isOnline = entry['message'];
+            final senderID = entry['senderID'].toString();
+            // Display notification
+            if (!chatMeg.contains('$message$date')) {
+              if (userID != senderID) {
+                NotificationService.showNotification(
+                    id: createUniqueId(),
+                    title: senderName,
+                    body: message,
+                    channelKey: 'chat',
+                    groupKey: senderID,
+                    payload: ({
+                      "type": "chat",
+                      "avatar": avatar,
+                      "name": senderName,
+                      "to": senderID.toString(),
+                      "isOnline": isOnline.toString()
+                    }));
+              }
+            }
+            chatMeg.add('$message$date');
+            prefs.setString("chatMeg", chatMeg.join(','));
+          }
+        }
+      } catch (e) {
+        print(e);
+      }
     }
 
     return Future.value(true);

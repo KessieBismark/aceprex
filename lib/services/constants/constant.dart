@@ -18,7 +18,7 @@ const String pacifico = 'Pacifico';
 const String poppins = 'Poppins';
 const String poppinsBold = 'PoppinsBold';
 
-const String fileUrl = 'https://test.clusteritsolutions.com/storage/';
+const String fileUrl = 'https://aceprex.com/storage/';
 
 const double pdfFont = 8;
 const double pdfFontHeader = 7;

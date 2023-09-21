@@ -155,7 +155,7 @@ class LoginPage extends GetView<LoginController> {
                                               return;
                                             }
                                             if (GetUtils.isEmail(
-                                                controller.email.text)) {
+                                                controller.email.text.trim())) {
                                               controller.login();
                                             } else {
                                               Utils().showError(

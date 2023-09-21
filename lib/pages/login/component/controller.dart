@@ -130,7 +130,7 @@ class LoginController extends GetxController {
       try {
         var query = {
           "action": "login",
-          "email": email.text,
+          "email": email.text.trim(),
           "password": pass.text
         };
         var response = await Query.queryData(query);
