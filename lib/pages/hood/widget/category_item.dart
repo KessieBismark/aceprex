@@ -1,3 +1,5 @@
+import 'package:aceprex/services/constants/constant.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -69,14 +71,15 @@ class UnSubscribed extends StatelessWidget {
           Container(
             // height: myHeight(context, 10),
             width: 140,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               //borderRadius: BorderRadius.circular(5),
               shape: BoxShape.rectangle,
-              image: DecorationImage(
-                fit: BoxFit.fill,
-                image: NetworkImage(image),
-                onError: (exception, stackTrace) => const Icon(Icons.info),
-              ),
+            ),
+            child: CachedNetworkImage(
+              imageUrl: fileUrl + image,
+              placeholder: (context, url) => const MWaiting(),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
+              fit: BoxFit.fill,
             ),
           ).hMargin3,
           Expanded(
@@ -127,5 +130,3 @@ class UnSubscribed extends StatelessWidget {
     );
   }
 }
-
-

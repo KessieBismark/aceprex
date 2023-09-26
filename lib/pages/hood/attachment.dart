@@ -129,10 +129,15 @@ class Attachments extends GetView<HoodController> {
                   ],
                 ).padding3,
               ),
-              title:
-                  controller.subscribedList[index].author.toLabel(bold: true),
-              subtitle: controller.subscribedList[index].describtion
-                  .toLabel(color: grey),
+              title: controller.subscribedList[index].title.toLabel(bold: true),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  controller.subscribedList[index].author.toLabel(color: grey),
+                  controller.subscribedList[index].describtion
+                      .toLabel(color: grey),
+                ],
+              ),
               trailing: "${controller.subscribedList[index].date.year}"
                   .toLabel(color: grey),
             ).card);

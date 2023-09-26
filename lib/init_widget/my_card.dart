@@ -1,3 +1,5 @@
+import 'package:aceprex/services/widgets/waiting.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -29,6 +31,7 @@ class MyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(imageLink);
     return SizedBox(
       height: 203,
       child: Stack(
@@ -54,12 +57,13 @@ class MyCard extends StatelessWidget {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5),
                             shape: BoxShape.rectangle,
-                            image: DecorationImage(
-                              fit: BoxFit.fill,
-                              image: NetworkImage(fileUrl + imageLink),
-                              onError: (exception, stackTrace) =>
-                                  const Text("Image loading error!"),
-                            ),
+                          ),
+                          child: CachedNetworkImage(
+                            imageUrl: fileUrl + imageLink,
+                            placeholder: (context, url) => const MWaiting(),
+                            errorWidget: (context, url, error) =>
+                                const Icon(Icons.error),
+                            fit: BoxFit.fill,
                           ),
                         ).hPadding3,
                         Flexible(

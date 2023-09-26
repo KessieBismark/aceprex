@@ -24,7 +24,7 @@ class StartUp extends GetView<ArticleController> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: primaryColor,
-         toolbarHeight: 0,
+        toolbarHeight: 0,
         elevation: 0,
         leading: Container(),
       ),
@@ -47,102 +47,6 @@ class StartUp extends GetView<ArticleController> {
                     title: "Articles",
                     widget: Column(
                       children: [
-                        // Row(
-                        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        //   children: [
-                        //     "Categories".toLabel(bold: true, color: light),
-                        //     InkWell(
-                        //         onTap: () {
-                        //           controller.curIndex.value = -1;
-
-                        //           controller.getData();
-                        //           controller.cIndex.value =
-                        //               !controller.cIndex.value;
-                        //         },
-                        //         child: "View All"
-                        //             .toLabel(bold: true, color: light))
-                        //   ],
-                        // ).hPadding9,
-                        // const SizedBox(
-                        //   height: 3,
-                        // ),
-                        // SizedBox(
-                        //   height: 50,
-                        //   child: Obx(
-                        //     () => controller.loadCat.value
-                        //         ? ListView.builder(
-                        //             scrollDirection: Axis.horizontal,
-                        //             itemCount: 5,
-                        //             padding: const EdgeInsets.all(0),
-                        //             itemBuilder: (BuildContext context,
-                        //                     index) =>
-                        //                 BlogCatShimmer(
-                        //                   count: 5,
-                        //                   widget: Container(
-                        //                     height: 30,
-                        //                     width: 130,
-                        //                     decoration: BoxDecoration(
-                        //                         border: Border.all(width: 2),
-                        //                         color: primaryLight,
-                        //                         borderRadius:
-                        //                             BorderRadius.circular(
-                        //                                 30)),
-                        //                   ).padding9,
-                        //                 ))
-                        //         : Obx(() => controller.cIndex.value
-                        //             ? ListView.builder(
-                        //                 padding: const EdgeInsets.all(0),
-                        //                 scrollDirection: Axis.horizontal,
-                        //                 itemCount: controller.category.length,
-                        //                 itemBuilder:
-                        //                     (BuildContext context, index) =>
-                        //                         TabButton(
-                        //                   controller: controller,
-                        //                   index: index,
-                        //                   ontap: () {
-                        //                     controller.curIndex.value = index;
-                        //                     controller.cIndex.value =
-                        //                         !controller.cIndex.value;
-                        //                     controller.getData(
-                        //                         id: controller
-                        //                             .category[index].id);
-                        //                   },
-                        //                   active: index ==
-                        //                           controller.curIndex.value
-                        //                       ? true
-                        //                       : false,
-                        //                   text:
-                        //                       controller.category[index].name,
-                        //                 ),
-                        //               )
-                        //             : ListView.builder(
-                        //                 padding: const EdgeInsets.all(0),
-                        //                 scrollDirection: Axis.horizontal,
-                        //                 itemCount: controller.category.length,
-                        //                 itemBuilder:
-                        //                     (BuildContext context, index) =>
-                        //                         TabButton(
-                        //                   controller: controller,
-                        //                   index: index,
-                        //                   ontap: () {
-                        //                     controller.curIndex.value = index;
-                        //                     controller.cIndex.value =
-                        //                         !controller.cIndex.value;
-                        //                     controller.getData(
-                        //                         id: controller
-                        //                             .category[index].id);
-                        //                   },
-                        //                   active: index ==
-                        //                           controller.curIndex.value
-                        //                       ? true
-                        //                       : false,
-                        //                   text:
-                        //                       controller.category[index].name,
-                        //                 ),
-                        //               )),
-                        //   ),
-                        // ),
-
                         TabBar(
                           indicatorWeight: 5,
                           indicatorColor: primaryLight,
@@ -167,23 +71,31 @@ class StartUp extends GetView<ArticleController> {
               Expanded(
                 child: TabBarView(
                   children: [
-                    Obx(() => !techCon.isInternet.value
-                        ? Expanded(
-                            child: Center(
-                              child: TextButton(
-                                child: "Tap to refresh".toLabel(),
-                                onPressed: () => techCon.reload(),
-                              ),
-                            ),
-                          )
-                        : techCon.loadData.value
-                            ? const NewsViewShimmer()
-                            : techCon.techNewsList.isEmpty
-                                ? Container(
-                                    alignment: Alignment.center,
-                                    child: "No News Article!".toLabel())
-                                : NewsView(data: techCon.techNewsList)),
-                    Obx(
+                    RefreshIndicator(
+                        onRefresh: () async {
+                          techCon.getData();
+                        },
+                        child: Obx(() => !techCon.isInternet.value
+                            ? Expanded(
+                                child: Center(
+                                  child: TextButton(
+                                    child: "Tap to refresh".toLabel(),
+                                    onPressed: () => techCon.reload(),
+                                  ),
+                                ),
+                              )
+                            : techCon.loadData.value
+                                ? const NewsViewShimmer()
+                                : techCon.techNewsList.isEmpty
+                                    ? Container(
+                                        alignment: Alignment.center,
+                                        child: "No News Article!".toLabel())
+                                    : NewsView(data: techCon.techNewsList))),
+                  RefreshIndicator(
+                        onRefresh: () async {
+                          controller. getData();
+                        },
+                        child:   Obx(
                       () => controller.loadData.value
                           ? ListView.builder(
                               itemCount: 6,
@@ -211,8 +123,8 @@ class StartUp extends GetView<ArticleController> {
                                           controller.articleList[index].title,
                                       author:
                                           controller.articleList[index].writer,
-                                      imageLink:
-                                      fileUrl +    controller.articleList[index].image,
+                                      imageLink: fileUrl +
+                                          controller.articleList[index].image,
                                       tag: controller.articleList[index].tag,
                                       views: controller.articleList[index].views
                                           .toString(),
@@ -229,7 +141,7 @@ class StartUp extends GetView<ArticleController> {
                                             curve: Curves.easeOutQuad),
                                   ),
                                 ),
-                    ),
+                    )),
                   ],
                 ),
               ),

@@ -22,161 +22,160 @@ class Hood extends GetView<HoodController> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        extendBody: true,
-        body: GestureDetector(
-          onTap: () {
-            FocusScope.of(context).requestFocus(FocusNode());
-          },
-          child: RefreshIndicator(
-            onRefresh: () async {
-              await controller.reload();
-            },
-            child: Column(
-              children: [
-                TopBar(
-                  title: "Hood",
-                  widget: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(
-                        height: 3,
-                      ),
-                      searchTextField(context, myWidth(context, 1.1)),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                    ],
-                  ),
-                ),
-                Obx(() => controller.loadSub.value
-                    ? Container()
-                    : controller.unSubscribedList.isNotEmpty
-                        ? Align(
-                                alignment: Alignment.topLeft,
-                                child: "New Hood(s)"
-                                    .toLabel(bold: true, fontsize: 17))
-                            .padding9
-                        : Container()),
-                Obx(() => controller.loadSub.value
-                    ? SizedBox(
-                        height: 126,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: 4,
-                          itemBuilder: (BuildContext context, index) =>
-                          categoryItemShimmer(context).margin9,
+    return RefreshIndicator(
+        onRefresh: () async {
+          await controller.reload();
+        },
+        child: SafeArea(
+          child: Scaffold(
+            extendBody: true,
+            body: GestureDetector(
+              onTap: () {
+                FocusScope.of(context).requestFocus(FocusNode());
+              },
+              child: ListView(
+                children: [
+                  TopBar(
+                    title: "Hood",
+                    widget: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          height: 3,
                         ),
-                      )
-                    : !controller.isInternet.value
-                        ? Container()
-                        : controller.unSubscribedList.isNotEmpty
-                            ?  SizedBox(
-                                    width: double.infinity,
-                                    height: 126,
-                                    child: ListView.builder(
-                                      scrollDirection: Axis.horizontal,
-                                      itemCount: controller.unSubscribedList.length,
-                                      itemBuilder: (BuildContext context, index) =>
-                                         Hero(
-                                          transitionOnUserGestures: true,
-                                          tag:
-                                              controller.unSubscribedList[index].id,
-                                          child: CategoryItem(
-                                            subscribe: () => controller.subscribe(
-                                              controller.unSubscribedList[index].id,
-                                              controller
-                                                  .unSubscribedList[index].title,
-                                              controller.unSubscribedList[index]
-                                                  .principal,
-                                            ),
-                                            onTap: () => Get.to(
-                                              () => UnSubscribedDetails(
-                                                id: controller
-                                                    .unSubscribedList[index].id,
-                                                comment: controller
-                                                    .unSubscribedList[index]
-                                                    .comment,
-                                                date: controller
-                                                    .unSubscribedList[index].date,
-                                                title: controller
-                                                    .unSubscribedList[index].title,
-                                                image: fileUrl +
-                                                    controller
-                                                        .unSubscribedList[index]
-                                                        .image,
-                                                author: controller
-                                                    .unSubscribedList[index].author,
-                                                rating: controller
-                                                    .unSubscribedList[index].rate,
-                                                description: controller
-                                                    .unSubscribedList[index]
-                                                    .description,
-                                                principal: controller
-                                                    .unSubscribedList[index]
-                                                    .principal,
-                                              ),
-                                              //transition: Transition.fadeIn
-                                            ),
-                                            title: controller
-                                                .unSubscribedList[index].title,
-                                            author: controller
-                                                .unSubscribedList[index].author,
-                                            rate: controller
-                                                .unSubscribedList[index].rate,
-                                            image: fileUrl +
-                                                controller
-                                                    .unSubscribedList[index].image,
-                                          )
-                                              .animate()
-                                              .fadeIn(
-                                                  duration: 900.ms, delay: 100.ms)
-                                              .shimmer(
-                                                  blendMode: BlendMode.srcOver,
-                                                  color: Colors.white12)
-                                              .move(
-                                                  begin: const Offset(-16, 0),
-                                                  curve: Curves.easeOutQuad)
-                                              .margin9,
-                                        ),
-                                      ),
-                              )
-                            : Container()),
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: "Subscribed Hood(s)".toLabel(bold: true, fontsize: 17),
-                ).margin9,
-                Obx(
-                  () => !controller.isInternet.value
-                      ? Container(
-                          alignment: Alignment.center,
-                          child: TextButton(
-                            child: "Tap to refresh".toLabel(),
-                            onPressed: () => controller.reload(),
+                        searchTextField(context, myWidth(context, 1.1)),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Obx(() => controller.loadSub.value
+                      ? Container()
+                      : controller.unSubscribedList.isNotEmpty
+                          ? Align(
+                                  alignment: Alignment.topLeft,
+                                  child: "New Hood(s)"
+                                      .toLabel(bold: true, fontsize: 17))
+                              .padding9
+                          : Container()),
+                  Obx(() => controller.loadSub.value
+                      ? SizedBox(
+                          height: 126,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: 4,
+                            itemBuilder: (BuildContext context, index) =>
+                                categoryItemShimmer(context).margin9,
                           ),
                         )
-                      : controller.loadData.value
-                          ? Expanded(
-                              child: GridView.builder(
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  gridDelegate:
-                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2,
-                                    childAspectRatio: 0.90,
-                                    crossAxisSpacing: 2.0,
-                                    mainAxisSpacing: 2.0,
+                      : !controller.isInternet.value
+                          ? Container()
+                          : controller.unSubscribedList.isNotEmpty
+                              ? SizedBox(
+                                  width: double.infinity,
+                                  height: 126,
+                                  child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount:
+                                        controller.unSubscribedList.length,
+                                    itemBuilder:
+                                        (BuildContext context, index) => Hero(
+                                      transitionOnUserGestures: true,
+                                      tag:
+                                          controller.unSubscribedList[index].id,
+                                      child: CategoryItem(
+                                        subscribe: () => controller.subscribe(
+                                          controller.unSubscribedList[index].id,
+                                          controller
+                                              .unSubscribedList[index].title,
+                                          controller.unSubscribedList[index]
+                                              .principal,
+                                        ),
+                                        onTap: () => Get.to(
+                                          () => UnSubscribedDetails(
+                                            id: controller
+                                                .unSubscribedList[index].id,
+                                            comment: controller
+                                                .unSubscribedList[index]
+                                                .comment,
+                                            date: controller
+                                                .unSubscribedList[index].date,
+                                            title: controller
+                                                .unSubscribedList[index].title,
+                                            image: fileUrl +
+                                                controller
+                                                    .unSubscribedList[index]
+                                                    .image,
+                                            author: controller
+                                                .unSubscribedList[index].author,
+                                            rating: controller
+                                                .unSubscribedList[index].rate,
+                                            description: controller
+                                                .unSubscribedList[index]
+                                                .description,
+                                            principal: controller
+                                                .unSubscribedList[index]
+                                                .principal,
+                                          ),
+                                          //transition: Transition.fadeIn
+                                        ),
+                                        title: controller
+                                            .unSubscribedList[index].title,
+                                        author: controller
+                                            .unSubscribedList[index].author,
+                                        rate: controller
+                                            .unSubscribedList[index].rate,
+                                        image: fileUrl +
+                                            controller
+                                                .unSubscribedList[index].image,
+                                      )
+                                          .animate()
+                                          .fadeIn(
+                                              duration: 900.ms, delay: 100.ms)
+                                          .shimmer(
+                                              blendMode: BlendMode.srcOver,
+                                              color: Colors.white12)
+                                          .move(
+                                              begin: const Offset(-16, 0),
+                                              curve: Curves.easeOutQuad)
+                                          .margin9,
+                                    ),
                                   ),
-                                  itemCount: 4,
-                                  itemBuilder: (BuildContext context, index) =>
-                                      const ShimmerSubscribed()),
-                            )
-                          : controller.hoodList.isEmpty
-                              ? const Center(
-                                  child: Text('You have no subscription!'))
-                              : Expanded(
-                                  child: GridView.builder(
+                                )
+                              : Container()),
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child:
+                        "Subscribed Hood(s)".toLabel(bold: true, fontsize: 17),
+                  ).margin9,
+                  Obx(
+                    () => !controller.isInternet.value
+                        ? Container(
+                            alignment: Alignment.center,
+                            child: TextButton(
+                              child: "Tap to refresh".toLabel(),
+                              onPressed: () => controller.reload(),
+                            ),
+                          )
+                        : controller.loadData.value
+                            ? GridView.builder(
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  childAspectRatio: 0.90,
+                                  crossAxisSpacing: 2.0,
+                                  mainAxisSpacing: 2.0,
+                                ),
+                                itemCount: 4,
+                                itemBuilder: (BuildContext context, index) =>
+                                    const ShimmerSubscribed())
+                            : controller.hoodList.isEmpty
+                                ? const Center(
+                                    child: Text('You have no subscription!'))
+                                : GridView.builder(
                                     shrinkWrap: true,
                                     gridDelegate:
                                         const SliverGridDelegateWithFixedCrossAxisCount(
@@ -219,18 +218,17 @@ class Hood extends GetView<HoodController> {
                                                 curve: Curves.easeOutQuad)
                                             .padding9,
                                   ),
-                                ),
-                ),
-                const SizedBox(
-                  height: 20,
-                )
-              ],
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  )
+                ],
+              ),
             ),
           ),
-        ),
-        //),
-      ),
-    );
+        ));
+
+    //),
   }
 
   SizedBox categoryItemShimmer(BuildContext context) {

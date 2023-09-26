@@ -13,55 +13,50 @@ class TechNews extends GetView<TechNewsController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: RefreshIndicator(
-        onRefresh: () async {
-          controller.getData();
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).requestFocus(FocusNode());
         },
-        child: GestureDetector(
-          onTap: () {
-            FocusScope.of(context).requestFocus(FocusNode());
-          },
-          child: Column(
-            children: [
-              TopBar(
-                title: "News",
-                widget: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        searchTextField(context),
-                      ],
-                    ).hMargin9.hMargin9,
-                    const SizedBox(
-                      height: 10,
-                    )
-                  ],
-                ),
+        child: Column(
+          children: [
+            TopBar(
+              title: "News",
+              widget: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      searchTextField(context),
+                    ],
+                  ).hMargin9.hMargin9,
+                  const SizedBox(
+                    height: 10,
+                  )
+                ],
               ),
-              Expanded(
-                child: Obx(
-                  () => !controller.isInternet.value
-                      ? Expanded(
-                          child: Center(
-                            child: TextButton(
-                              child: "Tap to refresh".toLabel(),
-                              onPressed: () => controller.reload(),
+            ),
+           Expanded(
+                  child: Obx(
+                    () => !controller.isInternet.value
+                        ? Expanded(
+                            child: Center(
+                              child: TextButton(
+                                child: "Tap to refresh".toLabel(),
+                                onPressed: () => controller.reload(),
+                              ),
                             ),
-                          ),
-                        )
-                      : controller.loadData.value
-                          ? const NewsViewShimmer()
-                          : controller.techNewsList.isEmpty
-                              ? Container(
-                                  alignment: Alignment.center,
-                                  child: "No News Article!".toLabel())
-                              : NewsView(data: controller.techNewsList),
-                ),
-              )
-            ],
-          ),
+                          )
+                        : controller.loadData.value
+                            ? const NewsViewShimmer()
+                            : controller.techNewsList.isEmpty
+                                ? Container(
+                                    alignment: Alignment.center,
+                                    child: "No News Article!".toLabel())
+                                : NewsView(data: controller.techNewsList),
+                  ),
+                )
+          ],
         ),
       ),
     );
