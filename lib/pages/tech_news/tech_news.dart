@@ -36,26 +36,31 @@ class TechNews extends GetView<TechNewsController> {
                 ],
               ),
             ),
-           Expanded(
-                  child: Obx(
-                    () => !controller.isInternet.value
-                        ? Expanded(
-                            child: Center(
-                              child: TextButton(
-                                child: "Tap to refresh".toLabel(),
-                                onPressed: () => controller.reload(),
-                              ),
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  await controller.reload();
+                },
+                child: Obx(
+                  () => !controller.isInternet.value
+                      ? Expanded(
+                          child: Center(
+                            child: TextButton(
+                              child: "Tap to refresh".toLabel(),
+                              onPressed: () => controller.reload(),
                             ),
-                          )
-                        : controller.loadData.value
-                            ? const NewsViewShimmer()
-                            : controller.techNewsList.isEmpty
-                                ? Container(
-                                    alignment: Alignment.center,
-                                    child: "No News Article!".toLabel())
-                                : NewsView(data: controller.techNewsList),
-                  ),
-                )
+                          ),
+                        )
+                      : controller.loadData.value
+                          ? const NewsViewShimmer()
+                          : controller.techNewsList.isEmpty
+                              ? Container(
+                                  alignment: Alignment.center,
+                                  child: "No News Article!".toLabel())
+                              : NewsView(data: controller.techNewsList),
+                ),
+              ),
+            ),
           ],
         ),
       ),

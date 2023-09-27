@@ -124,7 +124,6 @@ class HoodController extends GetxController
         "attachment": fileID.toString(),
       };
       var result = await Query.queryData(query);
-      print(result);
       if (jsonDecode(result) == 'true') {
         if (isSaveLocal) {
           LibraryController().savePDF(

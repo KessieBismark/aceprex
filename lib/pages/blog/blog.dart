@@ -18,152 +18,129 @@ class Blog extends GetView<ArticleController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: RefreshIndicator(
-        onRefresh: () async {
-          await controller.reload();
-        },
-        child: Column(
-          children: [
-            TopBar(
-              title: "Features",
-              widget: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      "Categories".toLabel(bold: true, color: light),
-                      InkWell(
-                          onTap: () {
-                            controller.curIndex.value = -1;
-    
-                            controller.getData();
-                            controller.cIndex.value =
-                                !controller.cIndex.value;
-                          },
-                          child:
-                              "View All".toLabel(bold: true, color: light))
-                    ],
-                  ).hPadding9,
-                  const SizedBox(
-                    height: 3,
+      body: Column(
+        children: [
+          TopBar(
+            title: "Features",
+            widget: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    "Categories".toLabel(bold: true, color: light),
+                    InkWell(
+                        onTap: () {
+                          controller.curIndex.value = -1;
+
+                          controller.getData();
+                          controller.cIndex.value = !controller.cIndex.value;
+                        },
+                        child: "View All".toLabel(bold: true, color: light))
+                  ],
+                ).hPadding9,
+                const SizedBox(
+                  height: 3,
+                ),
+                SizedBox(
+                  height: 50,
+                  child: Obx(
+                    () => !controller.isInternet.value
+                        ? Container()
+                        : controller.loadCat.value
+                            ? ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: 5,
+                                padding: const EdgeInsets.all(0),
+                                itemBuilder: (BuildContext context, index) =>
+                                    BlogCatShimmer(
+                                  count: 5,
+                                  widget: Container(
+                                    height: 30,
+                                    width: 130,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(width: 2),
+                                      color: secondaryColor,
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                  ).padding9,
+                                ),
+                              )
+                            : Obx(() => !controller.isInternet.value
+                                ? Container()
+                                : controller.cIndex.value
+                                    ? ListView.builder(
+                                        padding: const EdgeInsets.all(0),
+                                        scrollDirection: Axis.horizontal,
+                                        itemCount: controller.category.length,
+                                        itemBuilder:
+                                            (BuildContext context, index) =>
+                                                TabButton(
+                                          controller: controller,
+                                          index: index,
+                                          ontap: () {
+                                            controller.curIndex.value = index;
+                                            controller.cIndex.value =
+                                                !controller.cIndex.value;
+                                            controller.getData(
+                                                id: controller
+                                                    .category[index].id);
+                                          },
+                                          active:
+                                              index == controller.curIndex.value
+                                                  ? true
+                                                  : false,
+                                          text: controller.category[index].name,
+                                        ),
+                                      )
+                                    : ListView.builder(
+                                        padding: const EdgeInsets.all(0),
+                                        scrollDirection: Axis.horizontal,
+                                        itemCount: controller.category.length,
+                                        itemBuilder:
+                                            (BuildContext context, index) =>
+                                                TabButton(
+                                          controller: controller,
+                                          index: index,
+                                          ontap: () {
+                                            controller.curIndex.value = index;
+                                            controller.cIndex.value =
+                                                !controller.cIndex.value;
+                                            controller.getData(
+                                                id: controller
+                                                    .category[index].id);
+                                          },
+                                          active:
+                                              index == controller.curIndex.value
+                                                  ? true
+                                                  : false,
+                                          text: controller.category[index].name,
+                                        ),
+                                      )),
                   ),
-                  SizedBox(
-                    height: 50,
-                    child: Obx(
-                      () => !controller.isInternet.value
-                          ? Container()
-                          : controller.loadCat.value
-                              ? ListView.builder(
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: 5,
-                                  padding: const EdgeInsets.all(0),
-                                  itemBuilder: (BuildContext context,
-                                          index) =>
-                                      BlogCatShimmer(
-                                        count: 5,
-                                        widget: Container(
-                                          height: 30,
-                                          width: 130,
-                                          decoration: BoxDecoration(
-                                              border:
-                                                  Border.all(width: 2),
-                                              color: secondaryColor,
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      30),),
-                                        ).padding9,
-                                      ),)
-                              : Obx(() => !controller.isInternet.value
-                                  ? Container()
-                                  : controller.cIndex.value
-                                      ? ListView.builder(
-                                          padding:
-                                              const EdgeInsets.all(0),
-                                          scrollDirection:
-                                              Axis.horizontal,
-                                          itemCount:
-                                              controller.category.length,
-                                          itemBuilder:
-                                              (BuildContext context,
-                                                      index) =>
-                                                  TabButton(
-                                            controller: controller,
-                                            index: index,
-                                            ontap: () {
-                                              controller.curIndex.value =
-                                                  index;
-                                              controller.cIndex.value =
-                                                  !controller
-                                                      .cIndex.value;
-                                              controller.getData(
-                                                  id: controller
-                                                      .category[index]
-                                                      .id);
-                                            },
-                                            active: index ==
-                                                    controller
-                                                        .curIndex.value
-                                                ? true
-                                                : false,
-                                            text: controller
-                                                .category[index].name,
-                                          ),
-                                        )
-                                      : ListView.builder(
-                                          padding:
-                                              const EdgeInsets.all(0),
-                                          scrollDirection:
-                                              Axis.horizontal,
-                                          itemCount:
-                                              controller.category.length,
-                                          itemBuilder:
-                                              (BuildContext context,
-                                                      index) =>
-                                                  TabButton(
-                                            controller: controller,
-                                            index: index,
-                                            ontap: () {
-                                              controller.curIndex.value =
-                                                  index;
-                                              controller.cIndex.value =
-                                                  !controller
-                                                      .cIndex.value;
-                                              controller.getData(
-                                                  id: controller
-                                                      .category[index]
-                                                      .id);
-                                            },
-                                            active: index ==
-                                                    controller
-                                                        .curIndex.value
-                                                ? true
-                                                : false,
-                                            text: controller
-                                                .category[index].name,
-                                          ),
-                                        )),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  )
-                ],
-              ),
+                ),
+                const SizedBox(
+                  height: 10,
+                )
+              ],
             ),
-            Expanded(
+          ),
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: () async {
+                await controller.reload();
+              },
               child: Obx(
                 () => !controller.isInternet.value
                     ? Center(
-                    child: TextButton(
-                      child: "Tap to refresh".toLabel(),
-                      onPressed: () => controller.reload(),
-                    ),
+                        child: TextButton(
+                          child: "Tap to refresh".toLabel(),
+                          onPressed: () => controller.reload(),
+                        ),
                       )
                     : controller.loadData.value
                         ? ListView.builder(
                             itemCount: 6,
-                            itemBuilder: (context, index) =>
-                                const LodingCard())
+                            itemBuilder: (context, index) => const LodingCard())
                         : controller.articleList.isEmpty
                             ? Container(
                                 alignment: Alignment.center,
@@ -182,8 +159,7 @@ class Blog extends GetView<ArticleController> {
                                           content: controller
                                               .articleList[index].content,
                                         )),
-                                    title:
-                                        controller.articleList[index].title,
+                                    title: controller.articleList[index].title,
                                     author:
                                         controller.articleList[index].writer,
                                     imageLink:
@@ -206,8 +182,8 @@ class Blog extends GetView<ArticleController> {
                               ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
