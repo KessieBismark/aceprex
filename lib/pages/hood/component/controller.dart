@@ -529,7 +529,7 @@ class HoodController extends GetxController
       return permission;
     } catch (e) {
       // ignore: avoid_print
-      print(e);
+       print(e);
       return permission;
     }
   }
