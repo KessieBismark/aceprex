@@ -92,7 +92,7 @@ class HoodController extends GetxController
     } catch (e) {
       // ignore: avoid_print
       inLibrary.value = false;
-      print(e);
+       print.call(e);
       return false;
     }
   }
@@ -139,7 +139,7 @@ class HoodController extends GetxController
     } catch (e) {
       // ignore: avoid_print
       isLibrary.value = false;
-      print(e);
+       print.call(e);
     }
   }
 
@@ -194,7 +194,7 @@ class HoodController extends GetxController
     } catch (e) {
       // ignore: avoid_print
       saveReply.value = false;
-      print(e);
+       print.call(e);
     }
   }
 
@@ -218,7 +218,7 @@ class HoodController extends GetxController
       likesLoad.value = false;
       // ignore: avoid_print
       saveReply.value = false;
-      print(e);
+       print.call(e);
     }
   }
 
@@ -292,7 +292,7 @@ class HoodController extends GetxController
     } catch (e) {
       // ignore: avoid_print
       saveReply.value = false;
-      print(e);
+       print.call(e);
     }
   }
 
@@ -328,7 +328,7 @@ class HoodController extends GetxController
     } catch (e) {
       // ignore: avoid_print
       saveReply.value = false;
-      print(e);
+       print.call(e);
     }
   }
 
@@ -362,7 +362,7 @@ class HoodController extends GetxController
     } catch (e) {
       // ignore: avoid_print
       subBool.value = false;
-      print(e);
+       print.call(e);
     }
   }
 
@@ -397,7 +397,7 @@ class HoodController extends GetxController
     } catch (e) {
       // ignore: avoid_print
       subBool.value = false;
-      print(e);
+       print.call(e);
     }
   }
 
@@ -425,7 +425,7 @@ class HoodController extends GetxController
     } catch (e) {
       // ignore: avoid_print
       subBool.value = false;
-      print(e);
+       print.call(e);
     }
   }
 
@@ -498,7 +498,7 @@ class HoodController extends GetxController
       };
       var result = await Query.queryData(data);
       var empJson = json.decode(result);
-      print(empJson);
+       print.call(empJson);
       if (empJson == 'false') {
       } else {
         for (var empJson in empJson) {

@@ -144,9 +144,10 @@ class Settings extends GetView<SettingsController> {
                     Text("Misc", style: headingStyle),
                   ],
                 ),
-                const ListTile(
-                  leading: Icon(Icons.file_open_outlined),
-                  title: Text("Terms of Service"),
+                ListTile(
+                  onTap: () => controller.launchPUrl(),
+                  leading: const Icon(Icons.file_open_outlined),
+                  title: const Text("Privacy Policy"),
                 ),
               ],
             ),

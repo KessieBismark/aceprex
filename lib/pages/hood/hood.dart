@@ -55,7 +55,7 @@ class Hood extends GetView<HoodController> {
                       : controller.unSubscribedList.isNotEmpty
                           ? Align(
                                   alignment: Alignment.topLeft,
-                                  child: "New Hood(s)"
+                                  child: "New Pub(s)"
                                       .toLabel(bold: true, fontsize: 17))
                               .padding9
                           : Container()),
@@ -103,7 +103,7 @@ class Hood extends GetView<HoodController> {
                                                 .unSubscribedList[index].date,
                                             title: controller
                                                 .unSubscribedList[index].title,
-                                            image: fileUrl +
+                                            image: 
                                                 controller
                                                     .unSubscribedList[index]
                                                     .image,
@@ -147,7 +147,7 @@ class Hood extends GetView<HoodController> {
                   Align(
                     alignment: Alignment.topLeft,
                     child:
-                        "Subscribed Hood(s)".toLabel(bold: true, fontsize: 17),
+                        "Subscribed Pub(s)".toLabel(bold: true, fontsize: 17),
                   ).margin9,
                   Obx(
                     () => !controller.isInternet.value

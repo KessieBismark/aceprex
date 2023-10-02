@@ -49,7 +49,7 @@ class TechNewsController extends GetxController {
     try {
       var data = {"action": "get_tech_news"};
       var result = await Query.queryData(data);
-      print(result);
+       print.call(result);
       var empJson = json.decode(result);
       if (empJson == 'false') {
       } else {

@@ -1,6 +1,5 @@
 import 'package:aceprex/pages/tech_news/component/controller.dart';
 
-import '../../services/constants/constant.dart';
 import '../../services/utils/helpers.dart';
 import '../../services/widgets/extension.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +11,7 @@ import '../../services/constants/color.dart';
 import '../../shimmer/my_card.dart';
 import '../blog/blog_details.dart';
 import '../blog/component/controller.dart';
-import '../tech_news/news_View.dart';
+import '../tech_news/news_view.dart';
 
 final techCon = Get.put(TechNewsController());
 
@@ -91,57 +90,61 @@ class StartUp extends GetView<ArticleController> {
                                         alignment: Alignment.center,
                                         child: "No News Article!".toLabel())
                                     : NewsView(data: techCon.techNewsList))),
-                  RefreshIndicator(
+                    RefreshIndicator(
                         onRefresh: () async {
-                          controller. getData();
+                          controller.getData();
                         },
-                        child:   Obx(
-                      () => controller.loadData.value
-                          ? ListView.builder(
-                              itemCount: 6,
-                              itemBuilder: (context, index) =>
-                                  const LodingCard())
-                          : controller.articleList.isEmpty
-                              ? Container(
-                                  alignment: Alignment.center,
-                                  child: "No Article!".toLabel())
-                              : ListView.builder(
-                                  itemCount: controller.articleList.length,
-                                  itemBuilder: (context, index) => Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 20, bottom: 15),
-                                    child: MyCard(
-                                      date: controller.articleList[index].date
-                                          .dateTimeFormatString(),
-                                      ontap: () => Get.to(() => BlogDetails(
-                                            title: controller
-                                                .articleList[index].title,
-                                            content: controller
-                                                .articleList[index].content,
-                                          )),
-                                      title:
-                                          controller.articleList[index].title,
-                                      author:
-                                          controller.articleList[index].writer,
-                                      imageLink: fileUrl +
-                                          controller.articleList[index].image,
-                                      tag: controller.articleList[index].tag,
-                                      views: controller.articleList[index].views
-                                          .toString(),
-                                      description:
-                                          controller.articleList[index].slug,
-                                    )
-                                        .animate()
-                                        .fadeIn(duration: 900.ms, delay: 100.ms)
-                                        .shimmer(
-                                            blendMode: BlendMode.srcOver,
-                                            color: Colors.white12)
-                                        .move(
-                                            begin: const Offset(-16, 0),
-                                            curve: Curves.easeOutQuad),
-                                  ),
-                                ),
-                    )),
+                        child: Obx(
+                          () => controller.loadData.value
+                              ? ListView.builder(
+                                  itemCount: 6,
+                                  itemBuilder: (context, index) =>
+                                      const LodingCard())
+                              : controller.articleList.isEmpty
+                                  ? Container(
+                                      alignment: Alignment.center,
+                                      child: "No Article!".toLabel())
+                                  : ListView.builder(
+                                      itemCount: controller.articleList.length,
+                                      itemBuilder: (context, index) => Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 20, bottom: 15),
+                                        child: MyCard(
+                                          date: controller
+                                              .articleList[index].date
+                                              .dateTimeFormatString(),
+                                          ontap: () => Get.to(() => BlogDetails(
+                                                title: controller
+                                                    .articleList[index].title,
+                                                content: controller
+                                                    .articleList[index].content,
+                                              )),
+                                          title: controller
+                                              .articleList[index].title,
+                                          author: controller
+                                              .articleList[index].writer,
+                                          imageLink: controller
+                                              .articleList[index].image,
+                                          tag:
+                                              controller.articleList[index].tag,
+                                          views: controller
+                                              .articleList[index].views
+                                              .toString(),
+                                          description: controller
+                                              .articleList[index].slug,
+                                        )
+                                            .animate()
+                                            .fadeIn(
+                                                duration: 900.ms, delay: 100.ms)
+                                            .shimmer(
+                                                blendMode: BlendMode.srcOver,
+                                                color: Colors.white12)
+                                            .move(
+                                                begin: const Offset(-16, 0),
+                                                curve: Curves.easeOutQuad),
+                                      ),
+                                    ),
+                        )),
                   ],
                 ),
               ),

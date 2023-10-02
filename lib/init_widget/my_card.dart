@@ -31,7 +31,6 @@ class MyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(imageLink);
     return SizedBox(
       height: 203,
       child: Stack(

@@ -67,7 +67,7 @@ class UnSubscribedDetails extends GetView<HoodController> {
                         BlendMode.srcATop,
                       ),
                       child: CachedNetworkImage(
-                        imageUrl: image,
+                        imageUrl:  fileUrl +image,
                         fit: BoxFit.cover,
                         placeholder: (context, url) => Shimmer.fromColors(
                           baseColor: const Color.fromARGB(115, 158, 158, 158),

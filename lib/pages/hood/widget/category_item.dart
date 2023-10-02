@@ -1,4 +1,3 @@
-import 'package:aceprex/services/constants/constant.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -76,7 +75,7 @@ class UnSubscribed extends StatelessWidget {
               shape: BoxShape.rectangle,
             ),
             child: CachedNetworkImage(
-              imageUrl: fileUrl + image,
+              imageUrl:  image,
               placeholder: (context, url) => const MWaiting(),
               errorWidget: (context, url, error) => const Icon(Icons.error),
               fit: BoxFit.fill,

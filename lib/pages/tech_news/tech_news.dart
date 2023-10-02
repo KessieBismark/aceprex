@@ -5,7 +5,7 @@ import '../../init_widget/top_nav.dart';
 import '../../services/constants/color.dart';
 import '../../services/constants/constant.dart';
 import 'component/controller.dart';
-import 'news_View.dart';
+import 'news_view.dart';
 
 class TechNews extends GetView<TechNewsController> {
   const TechNews({super.key});

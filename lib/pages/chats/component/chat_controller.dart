@@ -261,7 +261,7 @@ class ChatPlaceController extends GetxController {
     } catch (e) {
       // ignore: avoid_print
       chatListPull = false;
-      print(e);
+      print.call(e);
       return permission;
     }
   }

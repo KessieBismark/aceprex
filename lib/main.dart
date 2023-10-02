@@ -91,7 +91,7 @@ class _MyAppState extends State<MyApp> {
             // Handle success case
           }
         } catch (e) {
-          print(e);
+          print.call(e);
           // Handle error case
         }
       }
@@ -163,7 +163,7 @@ void callbackDispatcher() {
           }
         }
       } catch (e) {
-        print(e);
+         print.call(e);
       }
     }
 

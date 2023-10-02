@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../services/constants/constant.dart';
 import '../../../services/constants/server.dart';
@@ -20,6 +21,7 @@ class SettingsController extends GetxController {
   final currentP = TextEditingController();
   var imageBytes = ''.obs;
   var img = ''.obs;
+  final Uri pUrl = Uri.parse('https://aceprex.com/privacy-policy');
   Uint8List imgBytes = base64Decode(baseString);
   var imgPath = ''.obs;
   var imgSaved = false.obs;
@@ -127,6 +129,12 @@ class SettingsController extends GetxController {
         print.call(e);
         //  Utils().showError(e.toString(), appName);
       }
+    }
+  }
+
+  Future<void> launchPUrl() async {
+    if (!await launchUrl(pUrl)) {
+      throw Exception('Could not launch $pUrl');
     }
   }
 }
