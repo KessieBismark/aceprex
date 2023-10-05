@@ -82,8 +82,14 @@ class LibraryController extends GetxController
 
   isLibraryIdExists(int libraryId) async {
     checkLdb.value = true;
-    final db = DatabaseHelper.instance;
-    libExist.value = await db.isLibraryIdExists(libraryId);
+    if (libraryId == 0) {
+      libExist.value = false;
+      Utils().showError("File not found");
+    } else {
+      final db = DatabaseHelper.instance;
+      libExist.value = await db.isLibraryIdExists(libraryId);
+    }
+
     checkLdb.value = false;
   }
 
@@ -132,6 +138,8 @@ class LibraryController extends GetxController
       }
     });
     saveID = dataId;
+    print("$title is title");
+
     try {
       NotificationService.showNotification(
           id: createUniqueId(),

@@ -191,7 +191,7 @@ class Hood extends GetView<HoodController> {
                                       ontap: () {
                                         controller.getSubscribed(
                                             controller.hoodList[index].id);
-                                        Get.to(
+                                        Get.to(()=>
                                             Attachments(
                                               authorID: controller
                                                   .hoodList[index].authorID,

@@ -18,20 +18,34 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'services/config/routes.dart';
 import 'services/utils/themes.dart';
 
+const fetchBackground = "backgroundTask";
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  Workmanager().initialize(callbackDispatcher, isInDebugMode: false);
-  Workmanager().registerPeriodicTask(
-    'backgroundTask',
-    'backgroundTask',
+  // Workmanager().initialize(callbackDispatcher, isInDebugMode: false);
+  // Workmanager().registerPeriodicTask(
+  //   'backgroundTask',
+  //   'backgroundTask',
+  //   constraints: Constraints(
+  //       networkType: NetworkType.connected,
+  //       requiresBatteryNotLow: true,
+  //       requiresDeviceIdle: true,
+  //       requiresStorageNotLow: true),
+
+  //   frequency: const Duration(milliseconds: 900000), // Run task every 24 hours
+  // );
+
+   Workmanager().initialize(callbackDispatcher, isInDebugMode: false);
+   Workmanager().registerPeriodicTask(
+    "1",
+    fetchBackground,
+    frequency: const Duration(minutes: 15),
     constraints: Constraints(
         networkType: NetworkType.connected,
-        requiresBatteryNotLow: true,
-        requiresDeviceIdle: true,
-        requiresStorageNotLow: true),
-
-    frequency: const Duration(milliseconds: 900000), // Run task every 24 hours
+        requiresDeviceIdle: false,
+        requiresCharging: false,
+        requiresBatteryNotLow: false,
+        requiresStorageNotLow: false),
   );
 
   sqfliteFfiInit();
@@ -119,54 +133,57 @@ class _MyAppState extends State<MyApp> {
     'vm:entry-point') // Mandatory if the App is obfuscated or using Flutter 3.1+
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String userID = '';
-    List<String> chatMeg = [];
-    if (prefs.containsKey("userID")) {
-      userID = prefs.getString("userID")!;
-      if (prefs.containsKey('chatMeg')) {
-        chatMeg = prefs.getString("chatMeg")!.split(',');
-      }
-      try {
-        var data = {"action": "push_notification", "userID": userID};
-        var response = await Query.queryData(data);
-        if (jsonDecode(response) != 'false') {
-          List<dynamic> jsonData = jsonDecode(response);
-          for (var entry in jsonData) {
-            final date = entry['created_at'];
-            // final id = entry['chatID'];
-            final senderName = entry['senderName'];
-            final message = entry['message'];
-            final avatar = entry['message'] ?? '';
-            final isOnline = entry['message'];
-            final senderID = entry['senderID'].toString();
-            // Display notification
-            if (!chatMeg.contains('$message$date')) {
-              if (userID != senderID) {
-                NotificationService.showNotification(
-                    id: createUniqueId(),
-                    title: senderName,
-                    body: message,
-                    channelKey: 'chat',
-                    groupKey: senderID,
-                    payload: ({
-                      "type": "chat",
-                      "avatar": avatar,
-                      "name": senderName,
-                      "to": senderID.toString(),
-                      "isOnline": isOnline.toString()
-                    }));
+    switch (task) {
+      case fetchBackground:
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String userID = '';
+        List<String> chatMeg = [];
+        if (prefs.containsKey("userID")) {
+          userID = prefs.getString("userID")!;
+          if (prefs.containsKey('chatMeg')) {
+            chatMeg = prefs.getString("chatMeg")!.split(',');
+          }
+          try {
+            var data = {"action": "push_notification", "userID": userID};
+            var response = await Query.queryData(data);
+            if (jsonDecode(response) != 'false') {
+              List<dynamic> jsonData = jsonDecode(response);
+              for (var entry in jsonData) {
+                final date = entry['created_at'];
+                // final id = entry['chatID'];
+                final senderName = entry['senderName'];
+                final message = entry['message'];
+                final avatar = entry['message'] ?? '';
+                final isOnline = entry['message'];
+                final senderID = entry['senderID'].toString();
+                // Display notification
+                if (!chatMeg.contains('$message$date')) {
+                  if (userID != senderID) {
+                    NotificationService.showNotification(
+                        id: createUniqueId(),
+                        title: senderName,
+                        body: message,
+                        channelKey: 'chat',
+                        groupKey: senderID,
+                        payload: ({
+                          "type": "chat",
+                          "avatar": avatar,
+                          "name": senderName,
+                          "to": senderID.toString(),
+                          "isOnline": isOnline.toString()
+                        }));
+                  }
+                }
+                chatMeg.add('$message$date');
+                prefs.setString("chatMeg", chatMeg.join(','));
               }
             }
-            chatMeg.add('$message$date');
-            prefs.setString("chatMeg", chatMeg.join(','));
+          } catch (e) {
+            print.call(e);
           }
         }
-      } catch (e) {
-         print.call(e);
-      }
+        break;
     }
-
     return Future.value(true);
   });
 }

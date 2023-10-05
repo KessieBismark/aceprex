@@ -61,21 +61,21 @@ class NotificationService {
     if (payload['type'] == "chat") {
       AwesomeNotifications().decrementGlobalBadgeCounter();
       Get.to(() => ChatNotifyUI(
-            to: int.parse(payload['to']!),
-            name: payload['name']!,
-            isOnline: int.parse(payload['isOnline']!),
-            avatar: payload['avatar']!,
+            to: int.parse(payload['to']??'0'),
+            name: payload['name']??'',
+            isOnline: int.parse(payload['isOnline']??''),
+            avatar: payload['avatar']??'',
           ));
     } else if (payload['type'] == "library") {
       AwesomeNotifications().decrementGlobalBadgeCounter();
       HomeController().tabIndex.value = 1;
       Get.to(() => LibNotifyLocal(
-            title: payload['title']!,
-            author: payload['author']!,
-            description: payload['description']!,
-            fileLink: payload['fileLink']!,
-            imagPath: payload['image']!,
-            id: int.parse(payload['id']!),
+            title: payload['title']??'',
+            author: payload['author']??'',
+            description: payload['description']??'',
+            fileLink: payload['fileLink']??'',
+            imagPath: payload['image']??'',
+            id: int.parse(payload['id']??'0'),
           ));
     } else if (payload['type'] == "library download") {
       AwesomeNotifications().decrementGlobalBadgeCounter();

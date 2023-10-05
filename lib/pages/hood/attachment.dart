@@ -89,6 +89,7 @@ class Attachments extends GetView<HoodController> {
                 controller.getLikesDislike(controller.subscribedList[index].id);
                 controller.read(controller.subscribedList[index].id);
                 if (controller.subscribedList[index].fileLink.isNotEmpty) {
+                  print("title:${controller.subscribedList[index].title}");
                   Get.to(
                     () => SubscribedView(
                       principal: controller.subscribedList[index].principal,

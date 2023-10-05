@@ -218,11 +218,11 @@ class SubscribedView extends StatelessWidget {
               } else {
                 // final bool hasPermission = await libCon.requestPermissions();
                 // if (hasPermission) {
-                  controller.saveToLibrary(id, fileID, title, imagPath, author,
-                      description, pdfPath);
-                  libCon.savePDF(id.toString(), title, author, description,
-                      pdfPath, imagPath);
-                  libCon.reload();
+                controller.saveToLibrary(
+                    id, fileID, title, imagPath, author, description, pdfPath);
+                libCon.savePDF(id.toString(), title, author, description,
+                    pdfPath, imagPath);
+                libCon.reload();
                 // } else {
                 //   print('permesion error');
                 // }
