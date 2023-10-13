@@ -58,12 +58,13 @@ class ChatNotifyUI extends GetView<ChatPlaceController> {
                 const SizedBox(
                   width: 2,
                 ),
-                Utils.isUrl(avatar!)
+                Utils.isUrl(fileUrl + avatar!)
                     ? InkWell(
-                        onTap: () => ImageViewer(imageUrl:fileUrl + avatar!, tag: name),
+                        onTap: () =>
+                            ImageViewer(imageUrl: fileUrl + avatar!, tag: name),
                         child: CircleAvatar(
                             maxRadius: 20,
-                            backgroundImage: NetworkImage(fileUrl +avatar!)),
+                            backgroundImage: NetworkImage(fileUrl + avatar!)),
                       )
                     : const CircleAvatar(
                         maxRadius: 20,
@@ -148,9 +149,8 @@ class ChatNotifyUI extends GetView<ChatPlaceController> {
                 sent: data.from.toString() == Utils.userID,
                 isSender: data.from.toString() == Utils.userID,
                 seen: data.from.toString() == Utils.userID && data.seen == 1,
-                color: data.from.toString() != Utils.userID
-                    ? grey
-                    : primaryLight,
+                color:
+                    data.from.toString() != Utils.userID ? grey : primaryLight,
                 tail: true,
                 textStyle: const TextStyle(color: Colors.white, fontSize: 16),
               ),
@@ -163,13 +163,14 @@ class ChatNotifyUI extends GetView<ChatPlaceController> {
       transitionOnUserGestures: true,
       tag: data.id,
       child: InkWell(
-        onTap: () => Get.to(() =>
-            ImageViewer(imageUrl:fileUrl + data.attachment!, tag: data.id.toString())),
+        onTap: () => Get.to(() => ImageViewer(
+            imageUrl: fileUrl + data.attachment!, tag: data.id.toString())),
         child: Container(
           height: 170,
           width: 200,
           decoration: BoxDecoration(
-            image: DecorationImage(image: NetworkImage(fileUrl +data.attachment!)),
+            image: DecorationImage(
+                image: NetworkImage(fileUrl + data.attachment!)),
             borderRadius: BorderRadius.circular(20),
             color: (data.from.toString() != Utils.userID ? grey : primaryLight),
           ),

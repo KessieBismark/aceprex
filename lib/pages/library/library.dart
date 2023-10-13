@@ -80,9 +80,18 @@ class Library extends GetView<LibraryController> {
                             : controller.loadData.value
                                 ? onLineListShimmer()
                                 : onLineList()),
-                        Obx(() => controller.loadLocal.value
-                            ? onLineListShimmer()
-                            : onffLineList()),
+                        Obx(
+                          () => !controller.isInternet.value
+                              ? Center(
+                                  child: TextButton(
+                                    child: "Tap to refresh".toLabel(),
+                                    onPressed: () => controller.reload(),
+                                  ),
+                                )
+                              : controller.loadLocal.value
+                                  ? onLineListShimmer()
+                                  : onffLineList(),
+                        )
                       ],
                     ),
                   ),
@@ -140,7 +149,9 @@ class Library extends GetView<LibraryController> {
                       const Center(child: Icon(Icons.error)),
                 ),
               ),
-              title: data.title.toLabel(bold: true, fontsize: 20),
+              title: data.title.toLabel(
+                bold: true,
+              ),
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -151,7 +162,7 @@ class Library extends GetView<LibraryController> {
                 ],
               ),
               trailing: SizedBox(
-                width: 110,
+                width: 100,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -172,7 +183,7 @@ class Library extends GetView<LibraryController> {
                                                 data.title,
                                                 data.author,
                                                 data.description,
-                                               fileUrl +   data.fileLink,
+                                                fileUrl + data.fileLink,
                                                 fileUrl + data.image);
                                           },
                                           icon: const Icon(
@@ -198,8 +209,8 @@ class Library extends GetView<LibraryController> {
                                                   data.title,
                                                   data.author,
                                                   data.description,
-                                                fileUrl +    data.fileLink,
-                                              fileUrl +    data.image);
+                                                  fileUrl + data.fileLink,
+                                                  fileUrl + data.image);
                                             },
                                             icon: const Icon(
                                                 Icons.save_alt_rounded),

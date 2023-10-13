@@ -111,21 +111,23 @@ class ChatList extends GetView<ChatUIController> {
                                           to: data.id,
                                           name: data.name,
                                           isOnline: data.isOnline,
-                                          avatar: fileUrl + data.fromImage!,
+                                          avatar:
+                                              "${fileUrl}users-avatar/${data.fromImage!}",
                                         ));
                                   },
-                                  leading: Utils.isUrl(data.fromImage!)
+                                  leading: Utils.isUrl(
+                                          "${fileUrl}users-avatar/${data.fromImage!}")
                                       ? InkWell(
                                           onTap: () => Get.to(
                                             () => ChatProfile(
                                                 title: data.name,
                                                 image:
-                                                    fileUrl + data.fromImage!),
+                                                    "${fileUrl}users-avatar/${data.fromImage!}"),
                                           ),
                                           child: CircleAvatar(
                                             maxRadius: 20,
                                             backgroundImage: NetworkImage(
-                                                fileUrl + data.fromImage!),
+                                                "${fileUrl}users-avatar/${data.fromImage!}"),
                                           ),
                                         )
                                       : const CircleAvatar(
@@ -210,21 +212,23 @@ class ChatList extends GetView<ChatUIController> {
                                               to: data.id,
                                               name: data.name,
                                               isOnline: data.isOnline,
-                                              avatar: fileUrl + data.fromImage!,
+                                              avatar:
+                                                  "${fileUrl}users-avatar/${data.fromImage!}",
                                             ));
                                       },
-                                      leading: Utils.isUrl(data.fromImage!)
+                                      leading: Utils.isUrl(
+                                              "${fileUrl}users-avatar/${data.fromImage!}")
                                           ? InkWell(
                                               onTap: () => Get.to(
                                                 () => ChatProfile(
                                                     title: data.name,
-                                                    image: fileUrl +
-                                                        data.fromImage!),
+                                                    image:
+                                                        "${fileUrl}users-avatar/${data.fromImage!}"),
                                               ),
                                               child: CircleAvatar(
                                                 maxRadius: 20,
                                                 backgroundImage: NetworkImage(
-                                                    fileUrl + data.fromImage!),
+                                                    "${fileUrl}users-avatar/${data.fromImage!}"),
                                               ),
                                             )
                                           : const CircleAvatar(

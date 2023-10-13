@@ -82,65 +82,63 @@ class Attachments extends GetView<HoodController> {
 
   ListView hoodItems() {
     return ListView.builder(
-        itemCount: controller.subscribedList.length,
-        itemBuilder: (BuildContext context, index) => ListTile(
-              onTap: () {
-                controller.checkSaved(controller.hoodList[index].id.toString());
-                controller.getLikesDislike(controller.subscribedList[index].id);
-                controller.read(controller.subscribedList[index].id);
-                if (controller.subscribedList[index].fileLink.isNotEmpty) {
-                  print("title:${controller.subscribedList[index].title}");
-                  Get.to(
-                    () => SubscribedView(
-                      principal: controller.subscribedList[index].principal,
-                      title: controller.subscribedList[index].title,
-                      fileLink: controller.subscribedList[index].fileLink,
-                      likes: controller.subscribedList[index].likes,
-                      dislike: controller.subscribedList[index].disLike,
-                      comment: controller.subscribedList[index].comment,
-                      id: controller.subscribedList[index].id,
-                      author: controller.subscribedList[index].author,
-                      fileID: controller.subscribedList[index].fileID,
-                      imagPath:
-                          fileUrl + controller.subscribedList[index].image,
-                      pdfPath: controller.subscribedList[index].fileLink,
-                      description: controller.subscribedList[index].describtion,
-                    ),
-                  );
-                } else {
-                  Utils().showError("File link is incorrect");
-                }
-              },
-              leading: Container(
-                height: 50,
-                width: myWidth(context, 7),
-                decoration: BoxDecoration(
-                    color: primaryLight,
-                    // Colors.red[500],
-                    borderRadius: BorderRadius.circular(10)),
-                child: Column(
-                  children: [
-                    '${controller.monthLabels[controller.subscribedList[index].date.month]}'
-                        .toLabel(
-                      color: light,
-                    ),
-                    "${controller.subscribedList[index].date.day}".toLabel(
-                      color: light,
-                    )
-                  ],
-                ).padding3,
+      itemCount: controller.subscribedList.length,
+      itemBuilder: (BuildContext context, index) => ListTile(
+        onTap: () {
+          controller.checkSaved(controller.hoodList[index].id.toString());
+          controller.getLikesDislike(controller.subscribedList[index].id);
+          controller.read(controller.subscribedList[index].id);
+          if (controller.subscribedList[index].fileLink.isNotEmpty) {
+            Get.to(
+              () => SubscribedView(
+                principal: controller.subscribedList[index].principal,
+                title: controller.subscribedList[index].title,
+                fileLink: controller.subscribedList[index].fileLink,
+                likes: controller.subscribedList[index].likes,
+                dislike: controller.subscribedList[index].disLike,
+                comment: controller.subscribedList[index].comment,
+                id: controller.subscribedList[index].id,
+                author: controller.subscribedList[index].author,
+                fileID: controller.subscribedList[index].fileID,
+                imagPath: fileUrl + controller.subscribedList[index].image,
+                pdfPath: fileUrl + controller.subscribedList[index].fileLink,
+                description: controller.subscribedList[index].describtion,
               ),
-              title: controller.subscribedList[index].title.toLabel(bold: true),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  controller.subscribedList[index].author.toLabel(color: grey),
-                  controller.subscribedList[index].describtion
-                      .toLabel(color: grey),
-                ],
+            );
+          } else {
+            Utils().showError("File link is incorrect");
+          }
+        },
+        leading: Container(
+          height: 50,
+          width: myWidth(context, 7),
+          decoration: BoxDecoration(
+              color: primaryLight,
+              // Colors.red[500],
+              borderRadius: BorderRadius.circular(10)),
+          child: Column(
+            children: [
+              '${controller.monthLabels[controller.subscribedList[index].date.month]}'
+                  .toLabel(
+                color: light,
               ),
-              trailing: "${controller.subscribedList[index].date.year}"
-                  .toLabel(color: grey),
-            ).card);
+              "${controller.subscribedList[index].date.day}".toLabel(
+                color: light,
+              )
+            ],
+          ).padding3,
+        ),
+        title: controller.subscribedList[index].title.toLabel(bold: true),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            controller.subscribedList[index].author.toLabel(color: grey),
+            controller.subscribedList[index].describtion.toLabel(color: grey),
+          ],
+        ),
+        trailing: "${controller.subscribedList[index].date.year}"
+            .toLabel(color: grey),
+      ).card,
+    );
   }
 }

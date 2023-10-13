@@ -57,15 +57,20 @@ class LibView extends StatelessWidget {
                             child: IconButton(
                                 color: light,
                                 onPressed: () async {
-                                  libCon.savePDF(id.toString(), title, author,
-                                      description, fileLink, imagPath);
+                                  libCon.savePDF(
+                                      id.toString(),
+                                      title,
+                                      author,
+                                      description,
+                                      fileUrl + fileLink,
+                                      imagPath);
                                 },
                                 icon: const Icon(Icons.save_alt_rounded))),
                   )
           ],
         ),
         body: SfPdfViewer.network(
-        fileUrl +  fileLink,
+          fileUrl + fileLink,
           controller: libCon.pdfController,
           key: libCon.pdfKey,
           enableDoubleTapZooming: true,
@@ -116,15 +121,12 @@ class LibView extends StatelessWidget {
 
           // animation controller
           animation: libCon.animate!,
-
           // On pressed change animation state
           onPress: () => libCon.animateController!.isCompleted
               ? libCon.animateController!.reverse()
               : libCon.animateController!.forward(),
-
           // Floating Action button Icon color
           iconColor: Colors.white,
-
           // Flaoting Action button Icon
           iconData: Icons.group_work,
           backGroundColor: primaryLight,

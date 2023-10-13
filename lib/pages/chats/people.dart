@@ -83,18 +83,21 @@ class PeopleView extends GetView<ChatUIController> {
                                 Get.to(() => ChatUI(
                                     to: data.id,
                                     name: data.name,
-                                    avatar: data.avatar,
+                                    avatar:
+                                        "${fileUrl}users-avatar/${data.avatar}",
                                     isOnline: data.isOnline));
                               },
-                              leading: Utils.isUrl(data.avatar!)
+                              leading: Utils.isUrl(
+                                      "${fileUrl}users-avatar/${data.avatar!}")
                                   ? InkWell(
                                       onTap: () => Get.to(() => ImageViewer(
-                                          imageUrl:fileUrl + data.avatar!,
+                                          imageUrl:
+                                              "${fileUrl}users-avatar/${data.avatar!}",
                                           tag: data.name)),
                                       child: CircleAvatar(
                                           maxRadius: 20,
-                                          backgroundImage:
-                                              NetworkImage(fileUrl +data.avatar!)),
+                                          backgroundImage: NetworkImage(
+                                              "${fileUrl}users-avatar/${data.avatar!}")),
                                     )
                                   : const CircleAvatar(
                                       maxRadius: 20,

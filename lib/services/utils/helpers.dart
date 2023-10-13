@@ -22,7 +22,7 @@ class Utils {
   static var unReadChat = 0.obs;
   static bool isIntroShow = false;
   static List<String> notifyMeg = [];
-  static var imageSet=false.obs; 
+  static var imageSet = false.obs;
 
   static getInto() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -47,7 +47,7 @@ class Utils {
   //           groupKey: groupKey,
   //           body: body,
   //           payload: payload,
-            
+
   //           ));
 
   //   // AwesomeNotifications().setListeners(onActionReceivedMethod: onActionReceivedMethod)  .listen((event) {});
@@ -55,7 +55,10 @@ class Utils {
 
   static bool isUrl(String string) {
     Uri? uri = Uri.tryParse(string);
-    return (uri != null && uri.hasScheme && uri.hasAuthority);
+    return (uri != null &&
+        uri.hasScheme &&
+        uri.hasAuthority &&
+        string != "https://aceprex.com/storage/avatar.png");
   }
 
   static String formatTimeAgo(DateTime dateTime) {
