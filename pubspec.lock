@@ -197,10 +197,10 @@ packages:
     dependency: "direct main"
     description:
       name: dio
-      sha256: ce75a1b40947fea0a0e16ce73337122a86762e38b982e1ccb909daa3b9bc4197
+      sha256: "417e2a6f9d83ab396ec38ff4ea5da6c254da71e4db765ad737a42af6930140b7"
       url: "https://pub.dev"
     source: hosted
-    version: "5.3.2"
+    version: "5.3.3"
   fake_async:
     dependency: transitive
     description:
@@ -632,14 +632,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.2"
-  open_filex:
-    dependency: "direct main"
-    description:
-      name: open_filex
-      sha256: "854aefd72dfd74219dc8c8d1767c34ec1eae64b8399a5be317bddb1ec2108915"
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.3.2"
   path:
     dependency: transitive
     description:
@@ -769,7 +761,7 @@ packages:
     source: hosted
     version: "3.7.3"
   rxdart:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: rxdart
       sha256: "0c7c0cedd93788d996e33041ffecda924cc54389199cde4e6a34b440f50044cb"

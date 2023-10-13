@@ -13,7 +13,6 @@ import 'services/config/binding.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'services/config/routes.dart';
 import 'services/utils/themes.dart';
@@ -35,8 +34,8 @@ void main() async {
   //   frequency: const Duration(milliseconds: 900000), // Run task every 24 hours
   // );
 
-   Workmanager().initialize(callbackDispatcher, isInDebugMode: false);
-   Workmanager().registerPeriodicTask(
+  Workmanager().initialize(callbackDispatcher, isInDebugMode: false);
+  Workmanager().registerPeriodicTask(
     "1",
     fetchBackground,
     frequency: const Duration(minutes: 15),
@@ -50,12 +49,6 @@ void main() async {
 
   sqfliteFfiInit();
   await NotificationService.initializeNotification();
-
-  await Permission.storage.isDenied.then((value) {
-    if (value) {
-      Permission.storage.request();
-    }
-  });
 
   await GetStorage.init();
   AwesomeNotifications().resetGlobalBadge();

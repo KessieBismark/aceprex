@@ -138,13 +138,12 @@ class LibraryController extends GetxController
       }
     });
     saveID = dataId;
-    print("$title is title");
 
     try {
       NotificationService.showNotification(
           id: createUniqueId(),
           title: title,
-          body: 'Downloading Hood',
+          body: 'Downloading Pub',
           channelKey: 'library download',
           notificationLayout: NotificationLayout.ProgressBar,
           payload: ({"type": "library"}));
@@ -185,7 +184,7 @@ class LibraryController extends GetxController
       NotificationService.showNotification(
         id: id,
         title: title,
-        body: 'Hood has been saved to your local library successfully',
+        body: ' has been saved to your local library successfully',
         channelKey: 'library',
         payload: ({
           "type": "library",
