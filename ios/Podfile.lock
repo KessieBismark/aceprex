@@ -31,8 +31,6 @@ PODS:
   - Mantle (2.2.0):
     - Mantle/extobjc (= 2.2.0)
   - Mantle/extobjc (2.2.0)
-  - open_filex (0.0.2):
-    - Flutter
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -63,7 +61,6 @@ DEPENDENCIES:
   - Flutter (from `Flutter`)
   - flutter_image_compress_common (from `.symlinks/plugins/flutter_image_compress_common/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
-  - open_filex (from `.symlinks/plugins/open_filex/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
@@ -92,8 +89,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_image_compress_common/ios"
   image_picker_ios:
     :path: ".symlinks/plugins/image_picker_ios/ios"
-  open_filex:
-    :path: ".symlinks/plugins/open_filex/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
   permission_handler_apple:
@@ -119,7 +114,6 @@ SPEC CHECKSUMS:
   IosAwnCore: edf31913fd18960ebcde7c05912dc860ca2b63b2
   libwebp: 33dc822fbbf4503668d09f7885bbfedc76c45e96
   Mantle: c5aa8794a29a022dfbbfc9799af95f477a69b62d
-  open_filex: 6e26e659846ec990262224a12ef1c528bb4edbe4
   path_provider_foundation: 29f094ae23ebbca9d3d0cec13889cd9060c0e943
   permission_handler_apple: e76247795d700c14ea09e3a2d8855d41ee80a2e6
   SDWebImage: 182830bcddc30cde95fbc60dfe4badc3553d94ba

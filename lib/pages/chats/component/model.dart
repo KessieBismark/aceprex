@@ -12,7 +12,8 @@ class ChatList {
   final int unRead;
 
   ChatList(
-      {required this.chatID,required this.id,
+      {required this.chatID,
+      required this.id,
       required this.name,
       required this.isOnline,
       required this.fromID,
@@ -100,6 +101,18 @@ class ChatMessage {
         date: DateTime.parse(map['created_at']),
         attachment: map['attachment'] ?? '',
         message: map['body'] ?? '');
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'from_id': from,
+      'to_id': to,
+      'seen': seen,
+      'created_at': date.toIso8601String(),
+      'attachment': attachment,
+      'body': message,
+    };
   }
 }
 

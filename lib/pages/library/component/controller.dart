@@ -15,7 +15,7 @@ import '../../../services/utils/helpers.dart';
 import '../../../services/utils/notify.dart';
 import '../../../services/utils/query.dart';
 import '../../startup/startup.dart';
-import 'local_db.dart';
+import '../../../services/database/local_db.dart';
 import 'model.dart';
 
 class LibraryController extends GetxController
