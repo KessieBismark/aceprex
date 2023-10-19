@@ -34,8 +34,8 @@ class CommentsScreen extends GetView<HoodController> {
               Icons.arrow_back_ios,
               color: light,
             )),
-        backgroundColor:primaryColor,
-        title: title.toLabel(color: light),
+        backgroundColor: primaryColor,
+        title: title.toAutoLabel(color: light),
       ),
       body: RefreshIndicator(
         onRefresh: () async {
@@ -127,7 +127,10 @@ class CommentWidget extends StatelessWidget {
                 ),
           title: Text(
             comment.username,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+            style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 15,
+                overflow: TextOverflow.ellipsis),
           ),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -136,6 +139,7 @@ class CommentWidget extends StatelessWidget {
                 comment.comment,
                 style: TextStyle(
                     color: ThemeService().isSavedDarkMode() ? lightGrey : dark),
+                    
               ),
               Align(
                 alignment: Alignment.bottomRight,

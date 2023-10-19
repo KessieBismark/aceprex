@@ -41,6 +41,7 @@ dependencies:
   intl: ^0.18.1
   lottie: ^2.4.0
   mime: ^1.0.4
+  path: ^1.8.3
   path_provider: ^2.0.15
   permission_handler: ^10.3.0
   shared_preferences: ^2.1.2

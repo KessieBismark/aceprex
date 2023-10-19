@@ -6,6 +6,8 @@ import 'package:path_provider/path_provider.dart';
 import '../../pages/library/component/model.dart';
 import 'model.dart';
 import 'online_db.dart';
+import 'package:image/image.dart' as img;
+import 'package:http/http.dart' as http;
 
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._();
@@ -56,9 +58,7 @@ class DatabaseHelper {
         text TEXT NULL,
         attachment BLOB NULL,
         timestamp TEXT,
-        sync TINYINT DEFAULT 0,s
-        FOREIGN KEY (senderId) REFERENCES users (id),
-        FOREIGN KEY (receiverId) REFERENCES users (id)
+        sync TINYINT DEFAULT 0
       )
     ''');
   }
@@ -66,6 +66,52 @@ class DatabaseHelper {
   Future<int> insertPDF(PDFModel pdf) async {
     final db = await database;
     return await db.insert('pdfs', pdf.toMap());
+  }
+
+  Future<void> insertOrUpdateUser(User user) async {
+    final db = await database;
+
+    // Check if the user ID exists in the table.
+    final userExists = await isUserIdExists(user.id!);
+
+    // If the user ID does not exist, insert the user.
+    if (!userExists) {
+      Uint8List compressedProfilePicture =
+          await downloadAndCompressImage(user.picture!);
+
+      await db.insert(
+        'users',
+        {
+          'id': user.id,
+          'username': user.username,
+          'profilePictureBytes': compressedProfilePicture,
+        },
+      );
+    }
+  }
+
+  Future<bool> isUserIdExists(int userId) async {
+    final db = await database;
+    final result =
+        await db.rawQuery('SELECT 1 FROM users WHERE id = ?', [userId]);
+    return result.isNotEmpty;
+  }
+
+  Future<Uint8List> downloadAndCompressImage(String imageUrl) async {
+    final response = await http.get(Uri.parse(imageUrl));
+
+    if (response.statusCode == 200) {
+      final Uint8List imageData = response.bodyBytes;
+
+      // Use the 'image' package to compress the image (adjust quality as needed).
+      final img.Image image = img.decodeImage(imageData)!;
+      final Uint8List compressedImage =
+          img.encodeJpg(image, quality: 80); // Adjust quality as needed.
+
+      return compressedImage;
+    } else {
+      throw Exception('Failed to download the image: ${response.statusCode}');
+    }
   }
 
   Future<List<PDFModel>> getPDFs() async {
@@ -86,8 +132,6 @@ class DatabaseHelper {
         [libraryId]);
     return Sqflite.firstIntValue(result) == 1;
   }
-
-  //  for chat queries
 
   // Users CRUD operations
 
@@ -196,9 +240,10 @@ class DatabaseHelper {
       try {
         // Push the message to the online database.
         await onlineService.pushChatMessage(
-            from: chatMessage.senderId.toString(),
-            to: chatMessage.receiverId.toString(),
-            message: chatMessage.text!, );
+          from: chatMessage.senderId.toString(),
+          to: chatMessage.receiverId.toString(),
+          message: chatMessage.text!,
+        );
 
         // Update the 'sync' status in the local database to 1 to mark it as synchronized.
         await markMessageAsSynchronized(chatMessage);

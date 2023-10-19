@@ -4,14 +4,15 @@ class User {
   final int? id;
   final String username;
   final Uint8List? profilePictureBytes; // Store image data as Uint8List
-
-  User({this.id, required this.username, this.profilePictureBytes});
+  final String? picture;
+  User({this.id,this.picture, required this.username, this.profilePictureBytes});
 
   Map<String, dynamic> toMap() {
     return {
       'id': id,
       'username': username,
       'profilePictureBytes': profilePictureBytes,
+
     };
   }
 

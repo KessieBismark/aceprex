@@ -41,6 +41,7 @@ class LibraryController extends GetxController
   String? saveID;
   var isDeleteOnline = false.obs;
   int? deleteOnline;
+  
   @override
   void onInit() {
     super.onInit();
@@ -138,7 +139,6 @@ class LibraryController extends GetxController
       }
     });
     saveID = dataId;
-    print(pdfPath);
     try {
       NotificationService.showNotification(
           id: createUniqueId(),

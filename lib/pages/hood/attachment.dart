@@ -25,7 +25,7 @@ class Attachments extends GetView<HoodController> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: primaryColor,
-        title: hood.toLabel(color: light),
+        title: hood.toAutoLabel(color: light),
         leading: IconButton(
             onPressed: () => Get.back(),
             icon: const Icon(Icons.arrow_back_ios)),
@@ -119,25 +119,25 @@ class Attachments extends GetView<HoodController> {
           child: Column(
             children: [
               '${controller.monthLabels[controller.subscribedList[index].date.month]}'
-                  .toLabel(
+                  .toAutoLabel(
                 color: light,
               ),
-              "${controller.subscribedList[index].date.day}".toLabel(
+              "${controller.subscribedList[index].date.day}".toAutoLabel(
                 color: light,
               )
             ],
           ).padding3,
         ),
-        title: controller.subscribedList[index].title.toLabel(bold: true),
+        title: controller.subscribedList[index].title.toAutoLabel(bold: true),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            controller.subscribedList[index].author.toLabel(color: grey),
-            controller.subscribedList[index].describtion.toLabel(color: grey),
+            controller.subscribedList[index].author.toAutoLabel(color: grey),
+            controller.subscribedList[index].describtion.toAutoLabel(color: grey),
           ],
         ),
         trailing: "${controller.subscribedList[index].date.year}"
-            .toLabel(color: grey),
+            .toAutoLabel(color: grey),
       ).card,
     );
   }

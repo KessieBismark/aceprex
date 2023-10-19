@@ -36,7 +36,7 @@ class Hood extends GetView<HoodController> {
               child: ListView(
                 children: [
                   TopBar(
-                    title: "Hood",
+                    title: "Research",
                     widget: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -55,7 +55,7 @@ class Hood extends GetView<HoodController> {
                       : controller.unSubscribedList.isNotEmpty
                           ? Align(
                                   alignment: Alignment.topLeft,
-                                  child: "New Pub(s)"
+                                  child: "New Publication(s)"
                                       .toLabel(bold: true, fontsize: 17))
                               .padding9
                           : Container()),
@@ -147,7 +147,7 @@ class Hood extends GetView<HoodController> {
                   Align(
                     alignment: Alignment.topLeft,
                     child:
-                        "Subscribed Pub(s)".toLabel(bold: true, fontsize: 17),
+                        "Subscribed Publication(s)".toLabel(bold: true, fontsize: 17),
                   ).margin9,
                   Obx(
                     () => !controller.isInternet.value

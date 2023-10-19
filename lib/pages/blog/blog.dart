@@ -21,7 +21,7 @@ class Blog extends GetView<ArticleController> {
       body: Column(
         children: [
           TopBar(
-            title: "Features",
+            title: "Articles",
             widget: Column(
               children: [
                 Row(

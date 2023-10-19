@@ -99,10 +99,16 @@ class MyCard extends StatelessWidget {
                         child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          "Tag: ${tag!}",
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                        // Text(
+                        SizedBox(
+                            width: MediaQuery.of(context).size.width / 1.5,
+                            child: Text(
+                              "Tag: ${tag!}",
+                              overflow: TextOverflow.ellipsis,
+                            )),
+
+                        //   overflow: TextOverflow.ellipsis,
+                        // ),
                         Row(
                           children: [
                             const FaIcon(
