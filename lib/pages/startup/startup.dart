@@ -56,7 +56,7 @@ class StartUp extends GetView<ArticleController> {
                               ),
                             ),
                             Tab(
-                              child: "Features".toLabel(
+                              child: "Articles".toLabel(
                                 color: light,
                               ),
                             ),

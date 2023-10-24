@@ -82,6 +82,7 @@ class ChatUI extends GetView<ChatPlaceController> {
                         style: TextStyle(
                             color: light,
                             fontSize: 16,
+                            overflow: TextOverflow.ellipsis,
                             fontWeight: FontWeight.w600),
                       ),
                       const SizedBox(
@@ -164,8 +165,8 @@ class ChatUI extends GetView<ChatPlaceController> {
       transitionOnUserGestures: true,
       tag: data.id,
       child: InkWell(
-        onTap: () => Get.to(() => ImageViewer(
-            imageUrl: fileUrl + data.attachment!, tag: data.id.toString())),
+        onTap: () => Get.to(() =>
+            ImageViewer(imageUrl: data.attachment!, tag: data.id.toString())),
         child: Container(
           height: 170,
           width: 200,

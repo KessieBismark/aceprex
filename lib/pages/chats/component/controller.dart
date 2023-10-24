@@ -35,9 +35,8 @@ class ChatUIController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    saveHeadChats();
-    saveLocalChats();
-    //getChats();
+
+    getChats();
     getPeople();
     getUnreadChats();
     startTimer(); // Start the timer
@@ -49,8 +48,7 @@ class ChatUIController extends GetxController {
     timer = Timer.periodic(const Duration(seconds: 5), (_) {
       Utils.checkInternet().then((value) {
         if (value) {
-          saveHeadChats();
-          //getChats();
+          getChats();
           getUnreadChats();
         }
       });
@@ -127,84 +125,73 @@ class ChatUIController extends GetxController {
     });
   }
 
-  Future<void> saveHeadChats() async {
-    fetchchatMessages().then((value) {
-      chatListData.clear();
-      chatList.clear();
-      chatList.addAll(value);
+  // Future<void> saveHeadChats() async {
+  //   fetchchatMessages().then((value) {
+  //     chatListData.clear();
+  //     chatList.clear();
+  //     chatList.addAll(value);
 
-      for (int i = 0; i < chatList.length; i++) {
-        if (chatList[i].fromID == int.parse(Utils.userID)) {
-          db.insertOrUpdateUser(User(
-              username: chatList[i].name,
-              id: chatList[i].toID,
-              picture: chatList[i].fromImage));
-          print(chatList[i].name);
-        } else {
-          db.insertOrUpdateUser(User(
-              username: chatList[i].name,
-              id: chatList[i].fromID,
-              picture: chatList[i].fromImage));
-          print(chatList[i].name);
-        }
-      }
+  //     for (int i = 0; i < chatList.length; i++) {
+  //       if (chatList[i].fromID == int.parse(Utils.userID)) {
+  //         db.insertOrUpdateUser(User(
+  //             username: chatList[i].name,
+  //             id: chatList[i].toID,
+  //             picture: chatList[i].fromImage));
+  //         print(chatList[i].name);
+  //       } else {
+  //         db.insertOrUpdateUser(User(
+  //             username: chatList[i].name,
+  //             id: chatList[i].fromID,
+  //             picture: chatList[i].fromImage));
+  //         print(chatList[i].name);
+  //       }
+  //     }
 
-      chatListData = chatList;
-      chatLoad.value = true;
-      chatLoad.value = false;
-    });
-  }
+  //     chatListData = chatList;
+  //     chatLoad.value = true;
+  //     chatLoad.value = false;
+  //   });
+  // }
+
+
 
   Future<void> getChats() async {
     fetchchatMessages().then((value) {
       // final chatMessages = await fetchchatMessages();
       chatListData.clear();
       chatList.clear();
+
       chatList.addAll(value);
 
+      for (int i = 0; i < chatList.length; i++) {
+        if (chatList[i].lastMessageSeen == 0 &&
+            !Utils.notifyMeg.contains(
+                ('${chatList[i].lastMessage}${chatList[i].lastDate}'))) {
+          if (Utils.userID != chatList[i].fromID.toString()) {
+            NotificationService.showNotification(
+                id: chatList[i].chatID,
+                title: chatList[i].name,
+                body: chatList[i].lastMessage!.isEmpty
+                    ? 'image file'
+                    : chatList[i].lastMessage!,
+                channelKey: 'chat',
+                payload: ({
+                  "type": "chat",
+                  "avatar": chatList[i].fromImage!,
+                  "name": chatList[i].name,
+                  "to": chatList[i].fromID.toString(),
+                  "isOnline": chatList[i].isOnline.toString()
+                }));
+          }
+          Utils.notifyMeg
+              .add('${chatList[i].lastMessage}${chatList[i].lastDate}');
+        }
+      }
       chatListData = chatList;
       chatLoad.value = true;
       chatLoad.value = false;
     });
   }
-
-  // Future<void> getChats() async {
-  //   fetchchatMessages().then((value) {
-  //     // final chatMessages = await fetchchatMessages();
-  //     chatListData.clear();
-  //     chatList.clear();
-
-  //     chatList.addAll(value);
-
-  //     for (int i = 0; i < chatList.length; i++) {
-  //       if (chatList[i].lastMessageSeen == 0 &&
-  //           !Utils.notifyMeg.contains(
-  //               ('${chatList[i].lastMessage}${chatList[i].lastDate}'))) {
-  //         if (Utils.userID != chatList[i].fromID.toString()) {
-  //           NotificationService.showNotification(
-  //               id: chatList[i].chatID,
-  //               title: chatList[i].name,
-  //               body: chatList[i].lastMessage!.isEmpty
-  //                   ? 'image file'
-  //                   : chatList[i].lastMessage!,
-  //               channelKey: 'chat',
-  //               payload: ({
-  //                 "type": "chat",
-  //                 "avatar": chatList[i].fromImage!,
-  //                 "name": chatList[i].name,
-  //                 "to": chatList[i].fromID.toString(),
-  //                 "isOnline": chatList[i].isOnline.toString()
-  //               }));
-  //         }
-  //         Utils.notifyMeg
-  //             .add('${chatList[i].lastMessage}${chatList[i].lastDate}');
-  //       }
-  //     }
-  //     chatListData = chatList;
-  //     chatLoad.value = true;
-  //     chatLoad.value = false;
-  //   });
-  // }
 
   Future<List<ChatList>> fetchchatMessages() async {
     var permission = <ChatList>[];
@@ -257,29 +244,29 @@ class ChatUIController extends GetxController {
     }
   }
 
-  Future<void> saveLocalChats() async {
-    List<User> users = <User>[];
-    users = await db.getUsers();
-    Uint8List? attach;
-    for (int i = 0; i < users.length; i++) {
-      chatPerson.clear();
-      fetchChatPerson(users[i].id!).then((value) async {
-        chatPerson.addAll(value);
-        for (int j = 0; j < chatPerson.length; j++) {
-          attach = await fetchImageAsUint8List(chatPerson[i].attachment!);
-          print(chatPerson[i].message);
-          db.insertChatMessage(
-            LocalChatMessage(
-                senderId: chatPerson[i].from,
-                receiverId: chatPerson[i].to,
-                timestamp: chatPerson[i].date,
-                text: chatPerson[i].message,
-                attachmentBytes: attach),
-          );
-        }
-      });
-    }
-  }
+  // Future<void> saveLocalChats() async {
+  //   List<User> users = <User>[];
+  //   users = await db.getUsers();
+  //   Uint8List? attach;
+  //   for (int i = 0; i < users.length; i++) {
+  //     chatPerson.clear();
+  //     fetchChatPerson(users[i].id!).then((value) async {
+  //       chatPerson.addAll(value);
+  //       for (int j = 0; j < chatPerson.length; j++) {
+  //         attach = await fetchImageAsUint8List(chatPerson[i].attachment!);
+  //         print(chatPerson[i].message);
+  //         db.insertChatMessage(
+  //           LocalChatMessage(
+  //               senderId: chatPerson[i].from,
+  //               receiverId: chatPerson[i].to,
+  //               timestamp: chatPerson[i].date,
+  //               text: chatPerson[i].message,
+  //               attachmentBytes: attach),
+  //         );
+  //       }
+  //     });
+  //   }
+  // }
 
   Future<List<ChatMessage>> fetchChatPerson(int person) async {
     var permission = <ChatMessage>[];
@@ -306,16 +293,16 @@ class ChatUIController extends GetxController {
     }
   }
 
-  Future<Uint8List?> fetchImageAsUint8List(String imageUrl) async {
-    final response = await http.get(Uri.parse(imageUrl));
+  // Future<Uint8List?> fetchImageAsUint8List(String imageUrl) async {
+  //   final response = await http.get(Uri.parse(imageUrl));
 
-    if (response.statusCode == 200) {
-      // Convert the response body (image data) to Uint8List
-      Uint8List uint8List = Uint8List.fromList(response.bodyBytes);
-      return uint8List;
-    } else {
-      // Handle the error or return null in case of failure
-      throw Exception('Failed to load image: $imageUrl');
-    }
-  }
+  //   if (response.statusCode == 200) {
+  //     // Convert the response body (image data) to Uint8List
+  //     Uint8List uint8List = Uint8List.fromList(response.bodyBytes);
+  //     return uint8List;
+  //   } else {
+  //     // Handle the error or return null in case of failure
+  //     throw Exception('Failed to load image: $imageUrl');
+  //   }
+  // }
 }

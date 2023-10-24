@@ -41,7 +41,7 @@ class LibraryController extends GetxController
   String? saveID;
   var isDeleteOnline = false.obs;
   int? deleteOnline;
-  
+
   @override
   void onInit() {
     super.onInit();
@@ -143,7 +143,7 @@ class LibraryController extends GetxController
       NotificationService.showNotification(
           id: createUniqueId(),
           title: title,
-          body: 'Downloading Pub',
+          body: 'Downloading Publication',
           channelKey: 'library download',
           notificationLayout: NotificationLayout.ProgressBar,
           payload: ({"type": "library"}));
@@ -184,7 +184,8 @@ class LibraryController extends GetxController
       NotificationService.showNotification(
         id: id,
         title: title,
-        body: ' has been saved to your local library successfully',
+        body:
+            '$title research has been saved to your local library successfully',
         channelKey: 'library',
         payload: ({
           "type": "library",

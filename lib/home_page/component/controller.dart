@@ -6,13 +6,12 @@ import '../../services/constants/color.dart';
 import '../../services/widgets/button.dart';
 
 class HomeController extends GetxController with WidgetsBindingObserver {
-
-
   var tabIndex = 0.obs;
 
   @override
   void onInit() {
     super.onInit();
+
     AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
       if (!isAllowed) {
         Get.defaultDialog(
@@ -39,7 +38,4 @@ class HomeController extends GetxController with WidgetsBindingObserver {
     tabIndex.value = index;
     // update();
   }
-
-
 }
-

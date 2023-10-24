@@ -206,6 +206,7 @@ class Library extends GetView<LibraryController> {
                                               controller.deleteOnline = data.id;
                                               controller.savePDF(
                                                   data.id.toString(),
+                                                  
                                                   data.title,
                                                   data.author,
                                                   data.description,

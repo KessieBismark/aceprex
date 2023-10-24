@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:typed_data';
+import 'package:aceprex/services/constants/constant.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -98,7 +99,7 @@ class DatabaseHelper {
   }
 
   Future<Uint8List> downloadAndCompressImage(String imageUrl) async {
-    final response = await http.get(Uri.parse(imageUrl));
+    final response = await http.get(Uri.parse(fileUrl + imageUrl));
 
     if (response.statusCode == 200) {
       final Uint8List imageData = response.bodyBytes;
