@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'dart:typed_data';
-
+import 'package:aceprex/services/widgets/waiting.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:image/image.dart' as imgg;
 
 import '../../../services/constants/constant.dart';
 import '../../../services/constants/server.dart';
@@ -39,30 +40,34 @@ class SettingsController extends GetxController {
         return;
       }
     });
-    final result = await ImagePicker().pickImage(
+    final selectedresult = await ImagePicker().pickImage(
       imageQuality: 70,
       maxWidth: 1440,
       source: ImageSource.gallery,
     );
 
-    if (result != null) {
-      imgBytes = await result.readAsBytes();
-      img.value = result.name;
-      imgPath.value = result.path;
+    if (selectedresult != null) {
+      imgBytes = await selectedresult.readAsBytes();
+      img.value = selectedresult.name;
+      imgPath.value = selectedresult.path;
       try {
+        uploadFeed();
         var request = http.MultipartRequest("POST", Uri.parse(Api.url));
         request.fields['userID'] = Utils.userID;
         request.fields['action'] = "upload_profile";
-
+        final compressedImageBytes = await compressImage(imgBytes);
         request.files.addAll([
-          http.MultipartFile.fromBytes("image", imgBytes, filename: img.value),
+          http.MultipartFile.fromBytes("image", compressedImageBytes,
+              filename: img.value),
         ]);
         var response = await request.send();
         var reponseData = await response.stream.toBytes();
         var result = String.fromCharCodes(reponseData);
         if (jsonDecode(result) == 'false') {
+          Get.back();
           Utils().showError(jsonDecode(result));
         } else {
+          // Future.delayed(const Duration(seconds: 10), () async {
           var data = jsonDecode(result);
           Utils.userAvatar.value = 'users-avatar/$data';
           SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -71,14 +76,25 @@ class SettingsController extends GetxController {
           imgSaved.value = true;
           imgSaved.value = false;
           imgSet.value = true;
+          Get.back();
 
           Utils().showInfo(saved);
+
+          ///  });
         }
       } catch (e) {
+        Get.back();
         print.call(e);
         // Utils().showError(e.toString(), appName);
       }
     }
+  }
+
+  uploadFeed() {
+    Get.defaultDialog(
+        barrierDismissible: false,
+        title: "Uploading Image",
+        content: const MWaiting());
   }
 
   clearData() {
@@ -129,6 +145,25 @@ class SettingsController extends GetxController {
         print.call(e);
         //  Utils().showError(e.toString(), appName);
       }
+    }
+  }
+
+  Future<List<int>> compressImage(List<int> imageBytes) async {
+    try {
+      // Load the image using the image package
+      final pic = imgg.decodeImage(Uint8List.fromList(imageBytes));
+
+      // Resize the image (adjust the dimensions as needed)
+      final resizedImage = imgg.copyResize(pic!, width: 800);
+
+      // Encode the image to JPEG format with a specific quality (adjust as needed)
+      final compressedImageData = imgg.encodeJpg(resizedImage, quality: 70);
+
+      return compressedImageData;
+    } catch (e) {
+      print("Image compression error: $e");
+      // If compression fails, return the original image bytes
+      return imageBytes;
     }
   }
 

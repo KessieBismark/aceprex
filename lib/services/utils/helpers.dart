@@ -1,7 +1,8 @@
+import 'dart:io';
 import 'dart:math';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/color.dart';
@@ -33,6 +34,9 @@ class Utils {
     return result;
   }
 
+  static int chatID() {
+    return DateTime.now().millisecondsSinceEpoch ~/ 1000;
+  }
   // static sendNotification(
   //     {required String title,
   //     required channelKey,
@@ -59,6 +63,11 @@ class Utils {
         uri.hasScheme &&
         uri.hasAuthority &&
         string != "https://aceprex.com/storage/avatar.png");
+  }
+
+  static Future<bool> isFileExist(String filePath) {
+    File file = File(filePath);
+    return file.exists();
   }
 
   static String formatTimeAgo(DateTime dateTime) {
@@ -99,7 +108,9 @@ class Utils {
   }
 
   static Future<bool> checkInternet() async {
-    return await InternetConnectionChecker().hasConnection;
+    final connectivityResult = await Connectivity().checkConnectivity();
+    return connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi;
   }
 
   static getLogin() async {

@@ -1,14 +1,12 @@
 import '../../services/utils/helpers.dart';
 import '../../services/widgets/extension.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
 import '../../services/constants/color.dart';
 import '../../services/constants/constant.dart';
 import '../../services/widgets/button.dart';
 import 'component/controller.dart';
-
 
 class Notifications extends GetView<NotificationController> {
   const Notifications({
@@ -26,39 +24,39 @@ class Notifications extends GetView<NotificationController> {
         ),
         title: "Notification".toLabel(color: light),
         elevation: 0,
-        actions: [
-          //searchTextField(context),
-          Obx(() => controller.getUnread.value
-              ? IconButton(
-                  onPressed: () {
-                    controller.loadData.value = true;
-                    controller.notifyList = controller.notify;
-                    controller.loadData.value = false;
-                    controller.getUnread.value = false;
-                  },
-                  icon: Icon(
-                    FontAwesomeIcons.filter,
-                    size: 20,
-                    color: light,
-                  ),
-                )
-              : IconButton(
-                  onPressed: () {
-                    controller.loadData.value = true;
-                    controller.notifyList = controller.notify.where((data) {
-                      var status = data.status.toLowerCase();
-                      controller.loadData.value = false;
-                      controller.getUnread.value = true;
-                      return status.contains('unread'.toLowerCase());
-                    }).toList();
-                    controller.loadData.value = false;
-                  },
-                  icon: Icon(
-                    Icons.filter_list,
-                    color: light,
-                  ),
-                ))
-        ],
+        // actions: [
+        //   //searchTextField(context),
+        //   Obx(() => controller.getUnread.value
+        //       ? IconButton(
+        //           onPressed: () {
+        //             controller.loadData.value = true;
+        //             controller.notifyList = controller.notify;
+        //             controller.loadData.value = false;
+        //             controller.getUnread.value = false;
+        //           },
+        //           icon: Icon(
+        //             FontAwesomeIcons.filter,
+        //             size: 20,
+        //             color: light,
+        //           ),
+        //         )
+        //       : IconButton(
+        //           onPressed: () {
+        //             controller.loadData.value = true;
+        //             controller.notifyList = controller.notify.where((data) {
+        //               var status = data.status.toLowerCase();
+        //               controller.loadData.value = false;
+        //               controller.getUnread.value = true;
+        //               return status.contains('unread'.toLowerCase());
+        //             }).toList();
+        //             controller.loadData.value = false;
+        //           },
+        //           icon: Icon(
+        //             Icons.filter_list,
+        //             color: light,
+        //           ),
+        //         ))
+        // ],
       ),
       body: RefreshIndicator(
           onRefresh: () async {
@@ -68,8 +66,7 @@ class Notifications extends GetView<NotificationController> {
               ? ListView.builder(
                   itemCount: controller.notifyList.length,
                   itemBuilder: (BuildContext context, index) {
-                    controller.month =
-                        controller.notifyList[index].date.month;
+                    controller.month = controller.notifyList[index].date.month;
                     return Column(
                       children: [
                         index == 0
@@ -78,14 +75,10 @@ class Notifications extends GetView<NotificationController> {
                                 indent: 70,
                               ),
                         index == 0
-                            ?
-                                  "${Utils.myMonth(controller.notifyList[index].date.month)}, ${controller.notifyList[index].date.year}"
-                                      .toLabel(color: lightGrey)
-                               
-                            : controller.notifyList[index - 1].date
-                                        .month !=
-                                    controller
-                                        .notifyList[index].date.month
+                            ? "${Utils.myMonth(controller.notifyList[index].date.month)}, ${controller.notifyList[index].date.year}"
+                                .toLabel(color: lightGrey)
+                            : controller.notifyList[index - 1].date.month !=
+                                    controller.notifyList[index].date.month
                                 ? "${Utils.myMonth(controller.notifyList[index].date.month)}, ${controller.notifyList[index].date.year}"
                                     .toLabel(color: lightGrey)
                                 : Container(),
@@ -98,8 +91,7 @@ class Notifications extends GetView<NotificationController> {
                                 controller.notifyList[index].message,
                                 controller.notifyList[index].date);
                             controller.updateRead(
-                                controller.notifyList[index].id,
-                                index);
+                                controller.notifyList[index].id, index);
                           },
                           leading: Container(
                             height: 50,
@@ -107,59 +99,45 @@ class Notifications extends GetView<NotificationController> {
                             decoration: BoxDecoration(
                                 color: primaryLight,
                                 // Colors.red[500],
-                                borderRadius:
-                                    BorderRadius.circular(10)),
+                                borderRadius: BorderRadius.circular(10)),
                             child: Column(
                               children: [
                                 "${controller.weekdayLabels[controller.notifyList[index].date.weekday]}"
                                     .toLabel(
                                         color: light,
-                                        bold: controller
-                                                        .notifyList[
-                                                            index]
+                                        bold: controller.notifyList[index]
                                                         .status ==
                                                     "read" ||
-                                                controller.readIDS
-                                                    .contains(controller
-                                                        .notifyList[
-                                                            index]
-                                                        .id)
+                                                controller.readIDS.contains(
+                                                    controller
+                                                        .notifyList[index].id)
                                             ? false
                                             : true),
                                 "${controller.notifyList[index].date.day}"
                                     .toLabel(
                                         color: light,
-                                        bold: controller
-                                                        .notifyList[
-                                                            index]
+                                        bold: controller.notifyList[index]
                                                         .status ==
                                                     "read" ||
-                                                controller.readIDS
-                                                    .contains(controller
-                                                        .notifyList[
-                                                            index]
-                                                        .id)
+                                                controller.readIDS.contains(
+                                                    controller
+                                                        .notifyList[index].id)
                                             ? false
                                             : true)
                               ],
                             ).padding3,
                           ),
-                          title: controller.notifyList[index].title
-                              .toLabel(
-                                  bold: controller.notifyList[index]
-                                                  .status ==
-                                              "read" ||
-                                          controller.readIDS.contains(
-                                              controller
-                                                  .notifyList[index]
-                                                  .id)
-                                      ? false
-                                      : true),
+                          title: controller.notifyList[index].title.toLabel(
+                              bold: controller.notifyList[index].status ==
+                                          "read" ||
+                                      controller.readIDS.contains(
+                                          controller.notifyList[index].id)
+                                  ? false
+                                  : true),
                           subtitle: controller.notifyList[index].hood
                               .toLabel(color: grey),
-                          trailing:
-                              "${controller.notifyList[index].date.year}"
-                                  .toLabel(color: grey),
+                          trailing: "${controller.notifyList[index].date.year}"
+                              .toLabel(color: grey),
                         ),
                       ],
                     );
@@ -182,15 +160,10 @@ class Notifications extends GetView<NotificationController> {
                                     indent: 70,
                                   ),
                             index == 0
-                                ?
-                                      
-                                      "${Utils.myMonth(controller.notifyList[index].date.month)}, ${controller.notifyList[index].date.year}"
-                                          .toLabel(color: lightGrey)
-                                     
-                                : controller.notifyList[index - 1]
-                                            .date.month !=
-                                        controller.notifyList[index]
-                                            .date.month
+                                ? "${Utils.myMonth(controller.notifyList[index].date.month)}, ${controller.notifyList[index].date.year}"
+                                    .toLabel(color: lightGrey)
+                                : controller.notifyList[index - 1].date.month !=
+                                        controller.notifyList[index].date.month
                                     ? "${Utils.myMonth(controller.notifyList[index].date.month)}, ${controller.notifyList[index].date.year}"
                                         .toLabel(color: lightGrey)
                                     : Container(),
@@ -198,76 +171,56 @@ class Notifications extends GetView<NotificationController> {
                               onTap: () {
                                 viewMessageDialog(
                                     context,
-                                    controller
-                                        .notifyList[index].title,
+                                    controller.notifyList[index].title,
                                     controller.notifyList[index].hood,
-                                    controller
-                                        .notifyList[index].message,
-                                    controller
-                                        .notifyList[index].date);
+                                    controller.notifyList[index].message,
+                                    controller.notifyList[index].date);
                                 controller.updateRead(
-                                    controller.notifyList[index].id,
-                                    index);
+                                    controller.notifyList[index].id, index);
                               },
                               leading: Container(
                                 height: 50,
                                 width: myWidth(context, 7),
                                 decoration: BoxDecoration(
                                     color: primaryLight,
-                                    borderRadius:
-                                        BorderRadius.circular(10)),
+                                    borderRadius: BorderRadius.circular(10)),
                                 child: Column(
                                   children: [
                                     "${controller.weekdayLabels[controller.notifyList[index].date.weekday]}"
                                         .toLabel(
                                             color: light,
-                                            bold: controller
-                                                            .notifyList[
-                                                                index]
+                                            bold: controller.notifyList[index]
                                                             .status ==
                                                         "read" ||
-                                                    controller.readIDS
-                                                        .contains(controller
-                                                            .notifyList[
-                                                                index]
+                                                    controller.readIDS.contains(
+                                                        controller
+                                                            .notifyList[index]
                                                             .id)
                                                 ? false
                                                 : true),
                                     "${controller.notifyList[index].date.day}"
                                         .toLabel(
                                             color: light,
-                                            bold: controller
-                                                            .notifyList[
-                                                                index]
+                                            bold: controller.notifyList[index]
                                                             .status ==
                                                         "read" ||
-                                                    controller.readIDS
-                                                        .contains(controller
-                                                            .notifyList[
-                                                                index]
+                                                    controller.readIDS.contains(
+                                                        controller
+                                                            .notifyList[index]
                                                             .id)
                                                 ? false
                                                 : true)
                                   ],
                                 ).padding3,
                               ),
-                              title: controller
-                                  .notifyList[index].title
-                                  .toLabel(
-                                      bold: controller
-                                                      .notifyList[
-                                                          index]
-                                                      .status ==
-                                                  "read" ||
-                                              controller.readIDS
-                                                  .contains(controller
-                                                      .notifyList[
-                                                          index]
-                                                      .id)
-                                          ? false
-                                          : true),
-                              subtitle: controller
-                                  .notifyList[index].hood
+                              title: controller.notifyList[index].title.toLabel(
+                                  bold: controller.notifyList[index].status ==
+                                              "read" ||
+                                          controller.readIDS.contains(
+                                              controller.notifyList[index].id)
+                                      ? false
+                                      : true),
+                              subtitle: controller.notifyList[index].hood
                                   .toLabel(color: grey),
                               trailing:
                                   "${controller.notifyList[index].date.year}"

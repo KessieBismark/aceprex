@@ -1,42 +1,28 @@
 class ChatList {
-  final int chatID;
   final int id;
   final String name;
   final int isOnline;
   final int fromID;
   final int toID;
   final String? fromImage;
-  final int lastMessageSeen;
-  final String? lastMessage;
-  final DateTime lastDate;
-  final int unRead;
 
-  ChatList(
-      {required this.chatID,
-      required this.id,
-      required this.name,
-      required this.isOnline,
-      required this.fromID,
-      required this.toID,
-      this.fromImage,
-      required this.lastMessageSeen,
-      this.lastMessage,
-      required this.lastDate,
-      required this.unRead});
+  ChatList({
+    required this.id,
+    required this.name,
+    required this.isOnline,
+    required this.fromID,
+    required this.toID,
+    this.fromImage,
+  });
 
   factory ChatList.fromJson(Map<String, dynamic> map) {
     return ChatList(
-      chatID: map['chatID'],
       id: map['id'],
-      unRead: map['unread'],
       fromID: map['from_id'],
       toID: map['to_id'],
       name: map['name'],
       isOnline: map['is_online'],
       fromImage: map['avatar'] ?? '',
-      lastMessageSeen: map['lastMessageSeen'],
-      lastMessage: map['lastMessage'] ?? '',
-      lastDate: DateTime.parse(map['lastDate']),
     );
   }
 }
@@ -82,6 +68,8 @@ class ChatMessage {
   final DateTime date;
   final String? attachment;
   final String? message;
+  final String? name;
+  final int? isOnline;
 
   ChatMessage(
       {required this.id,
@@ -90,6 +78,8 @@ class ChatMessage {
       required this.seen,
       required this.date,
       this.attachment,
+      this.name,
+      this.isOnline,
       required this.message});
 
   factory ChatMessage.fromJson(Map<String, dynamic> map) {
@@ -100,7 +90,9 @@ class ChatMessage {
         seen: map['seen'],
         date: DateTime.parse(map['created_at']),
         attachment: map['attachment'] ?? '',
-        message: map['body'] ?? '');
+        message: map['body'] ?? '',
+        name: map['name'] ?? '',
+        isOnline: map['isOnline'] ?? 0);
   }
 
   Map<String, dynamic> toMap() {
@@ -110,8 +102,10 @@ class ChatMessage {
       'to_id': to,
       'seen': seen,
       'created_at': date.toIso8601String(),
-      'attachment': attachment,
-      'body': message,
+      'attachment': attachment ?? '',
+      'body': message ?? '',
+      'name': name ?? '',
+      'isOnline': isOnline ?? 0,
     };
   }
 }
@@ -183,5 +177,17 @@ class ChatList2 {
         message: map['body'],
         fromAvatar: map['fromAvatar'],
         toAvatar: map['toAvatar']);
+  }
+}
+
+class Online {
+  final int id;
+  final String name;
+  final int isOnline;
+
+  Online({required this.id, required this.name, required this.isOnline});
+
+  factory Online.fromJson(Map<String, dynamic> map) {
+    return Online(id: map['id'], name: map['name'], isOnline: map['is_online']);
   }
 }

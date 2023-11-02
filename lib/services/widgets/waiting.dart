@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 import 'extension.dart';
 
@@ -7,7 +10,9 @@ class MWaiting extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const CupertinoActivityIndicator().center;
+    return Platform.isIOS
+        ? const CupertinoActivityIndicator().center
+        : const CircularProgressIndicator().center;
   }
 }
 

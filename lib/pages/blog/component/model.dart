@@ -20,6 +20,7 @@ class ArticleModel {
   final String tag;
   final DateTime date;
   final int views;
+  final String? source;
 
   ArticleModel(
       {required this.id,
@@ -31,6 +32,7 @@ class ArticleModel {
       required this.image,
       required this.tag,
       required this.date,
+      this.source,
       required this.views});
 
   factory ArticleModel.fromJson(Map<String, dynamic> map) {
@@ -43,6 +45,7 @@ class ArticleModel {
         content: map['content'],
         image: map['image'],
         tag: map['tag'],
+        source: map['source'] ?? '',
         date: DateTime.parse(map['created_at']),
         views: map['views']);
   }

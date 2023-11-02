@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:aceprex/services/database/local_db.dart';
 import 'package:aceprex/services/utils/themes.dart';
 
 import '../../services/widgets/waiting.dart';
@@ -16,6 +17,8 @@ import '../../services/widgets/shimmer_placeholders.dart';
 import 'component/controller.dart';
 import 'component/file_view.dart';
 import 'component/file_view_local.dart';
+
+final db = DatabaseHelper.instance;
 
 class Library extends GetView<LibraryController> {
   const Library({super.key});
@@ -117,17 +120,21 @@ class Library extends GetView<LibraryController> {
             width: double.infinity,
             height: 80,
             widget: ListTile(
-              onTap: () => Get.to(
-                () => LibView(
-                  title: data.title,
-                  id: data.id,
-                  fileID: data.fileID,
-                  imagPath: data.image,
-                  fileLink: data.fileLink,
-                  author: data.author,
-                  description: data.description,
-                ),
-              ),
+              onTap: () async {
+                int page = await db.getLastPageOnline(data.id);
+                Get.to(
+                  () => LibView(
+                    title: data.title,
+                    id: data.id,
+                    page: page,
+                    fileID: data.fileID,
+                    imagPath: data.image,
+                    fileLink: data.fileLink,
+                    author: data.author,
+                    description: data.description,
+                  ),
+                );
+              },
               leading: SizedBox(
                 width: 80,
                 child: CachedNetworkImage(
@@ -206,7 +213,6 @@ class Library extends GetView<LibraryController> {
                                               controller.deleteOnline = data.id;
                                               controller.savePDF(
                                                   data.id.toString(),
-                                                  
                                                   data.title,
                                                   data.author,
                                                   data.description,
@@ -261,16 +267,20 @@ class Library extends GetView<LibraryController> {
             width: double.infinity,
             height: 80,
             widget: ListTile(
-              onTap: () => Get.to(
-                () => LibViewLocal(
-                  title: data.title,
-                  id: data.id!,
-                  imagPath: data.imagePath,
-                  fileLink: data.pdfPath,
-                  author: data.author,
-                  description: data.description,
-                ),
-              ),
+              onTap: () async {
+                int page = await db.getLastPageLibrary(data.id!);
+                Get.to(
+                  () => LibViewLocal(
+                    title: data.title,
+                    id: data.id!,
+                    page: page,
+                    imagPath: data.imagePath,
+                    fileLink: data.pdfPath,
+                    author: data.author,
+                    description: data.description,
+                  ),
+                );
+              },
               leading:
                   SizedBox(width: 80, child: Image.file(File(data.imagePath))),
               title: data.title.toLabel(bold: true, fontsize: 20),

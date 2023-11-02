@@ -1,3 +1,9 @@
+import 'package:aceprex/pages/pdf_view/pdf_text_view.dart';
+import 'package:aceprex/services/database/local_db.dart';
+import 'package:aceprex/services/database/model.dart';
+import 'package:flutter/services.dart';
+import 'package:read_pdf_text/read_pdf_text.dart';
+
 import '../../services/constants/constant.dart';
 import '../library/component/controller.dart';
 import '../../services/widgets/button.dart';
@@ -13,6 +19,7 @@ import '../../services/utils/helpers.dart';
 import 'comment.dart';
 
 final controller = Get.find<HoodController>();
+final db = DatabaseHelper.instance;
 
 class SubscribedView extends StatelessWidget {
   final String title;
@@ -26,12 +33,14 @@ class SubscribedView extends StatelessWidget {
   final int dislike;
   final int comment;
   final int principal;
+  final int? page;
   final int id;
   const SubscribedView(
       {super.key,
       required this.title,
       required this.fileLink,
       required this.likes,
+      this.page = 1,
       required this.dislike,
       required this.comment,
       required this.id,
@@ -136,7 +145,47 @@ class SubscribedView extends StatelessWidget {
                       ).padding6,
               ),
             ),
-          ).padding9
+          ).padding9,
+          IconButton(
+                  onPressed: () async {
+                    try {
+                      List<String> textList = <String>[];
+                      Get.defaultDialog(
+                          title: "",
+                          barrierDismissible: false,
+                          content: const Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text("Processing file for easy reading."),
+                              Text("(text only)"),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              MWaiting()
+                            ],
+                          ));
+                      String docFile =
+                          await db.downloadAndSavePdf(id, fileUrl + fileLink);
+                      if (docFile.isEmpty) {
+                        Get.back();
+                        Utils().showError("Could not process file.");
+                      } else {
+                        textList =
+                            await ReadPdfText.getPDFtextPaginated(docFile);
+                        Get.back();
+                        Get.to(() => ClearText(
+                              title: title,
+                              textList: textList,
+                              initialPage: page!,
+                            ));
+                      }
+                    } on PlatformException {
+                      Get.back();
+                      print('Failed to get PDF text.');
+                    }
+                  },
+                  icon: const Icon(Icons.zoom_out_map))
+              .padding9
         ],
       ),
       body: SfPdfViewer.network(
@@ -144,7 +193,14 @@ class SubscribedView extends StatelessWidget {
         controller: controller.pdfViewerController,
         key: controller.pdfViewerKey,
         enableDoubleTapZooming: true,
+        onDocumentLoaded: (PdfDocumentLoadedDetails detail) {
+          controller.pdfViewerController?.jumpToPage(page!);
+        },
         canShowScrollHead: true,
+        onPageChanged: (PdfPageChangedDetails details) async {
+          await db.insertOrUpdateOnlinePdf(
+              OpenedPdf(pdfInfoId: id, lastPageRead: details.newPageNumber));
+        },
         currentSearchTextHighlightColor: Colors.yellow.withOpacity(0.6),
         otherSearchTextHighlightColor: Colors.yellow.withOpacity(0.3),
       ),

@@ -1,6 +1,7 @@
+import 'package:aceprex/services/database/model.dart';
+
 import '../../home_page/component/controller.dart';
 import '../../services/constants/constant.dart';
-import 'component/model.dart';
 import 'image_viewer.dart';
 import '../../services/utils/helpers.dart';
 import '../../services/widgets/extension.dart';
@@ -27,7 +28,7 @@ class ChatNotifyUI extends GetView<ChatPlaceController> {
 
   @override
   Widget build(BuildContext context) {
-    controller.getUserChat(to);
+    controller.getUserChat(int.parse("${Utils.userID}$to"));
     controller.setSeen(to);
     controller.startChatTimer(to);
 
@@ -122,35 +123,37 @@ class ChatNotifyUI extends GetView<ChatPlaceController> {
   }
 
   chatSpace() {
-    return GroupedListView<ChatMessage, DateTime>(
+    return GroupedListView<LocalChatMessage, DateTime>(
       reverse: true,
       order: GroupedListOrder.DESC,
       floatingHeader: true,
       elements: controller.chatData,
-      groupBy: (data) =>
-          DateTime(data.date.year, data.date.month, data.date.day),
+      groupBy: (data) => DateTime(
+          data.timestamp.year, data.timestamp.month, data.timestamp.day),
       groupHeaderBuilder: (data) => Align(
         alignment: Alignment.topCenter,
-        child: data.date.day == DateTime.now().day &&
-                data.date.month == DateTime.now().month &&
-                data.date.year == DateTime.now().year
+        child: data.timestamp.day == DateTime.now().day &&
+                data.timestamp.month == DateTime.now().month &&
+                data.timestamp.year == DateTime.now().year
             ? "Today".toLabel(color: lightGrey)
-            : "${controller.weekdayLabels[data.date.weekday]}  ${data.date.day} ${Utils.myMonth(data.date.month)}, ${data.date.year}"
+            : "${controller.weekdayLabels[data.timestamp.weekday]}  ${data.timestamp.day} ${Utils.myMonth(data.timestamp.month)}, ${data.timestamp.year}"
                 .toLabel(color: lightGrey),
       ),
       itemBuilder: (context, data) => Align(
-        alignment: data.from.toString() != Utils.userID
+        alignment: data.senderId.toString() != Utils.userID
             ? Alignment.centerLeft
             : Alignment.centerRight,
-        child: data.attachment!.isNotEmpty && data.message!.isEmpty
+        child: data.attachment!.isNotEmpty && data.text!.isEmpty
             ? showAttachment(data)
             : BubbleSpecialThree(
-                text: data.message!,
-                sent: data.from.toString() == Utils.userID,
-                isSender: data.from.toString() == Utils.userID,
-                seen: data.from.toString() == Utils.userID && data.seen == 1,
-                color:
-                    data.from.toString() != Utils.userID ? grey : primaryLight,
+                text: data.text!,
+                sent: data.senderId.toString() == Utils.userID,
+                isSender: data.senderId.toString() == Utils.userID,
+                seen:
+                    data.senderId.toString() == Utils.userID && data.seen == 1,
+                color: data.senderId.toString() != Utils.userID
+                    ? grey
+                    : primaryLight,
                 tail: true,
                 textStyle: const TextStyle(color: Colors.white, fontSize: 16),
               ),
@@ -158,24 +161,36 @@ class ChatNotifyUI extends GetView<ChatPlaceController> {
     );
   }
 
-  Hero showAttachment(ChatMessage data) {
+  Hero showAttachment(LocalChatMessage data) {
+    final imageNames = controller.extractImageNames(data.attachment!);
+
     return Hero(
       transitionOnUserGestures: true,
-      tag: data.id,
+      tag: data.id!,
       child: InkWell(
-        onTap: () => Get.to(() => ImageViewer(
-            imageUrl: fileUrl + data.attachment!, tag: data.id.toString())),
-        child: Container(
-          height: 170,
-          width: 200,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-                image: NetworkImage(fileUrl + data.attachment!)),
-            borderRadius: BorderRadius.circular(20),
-            color: (data.from.toString() != Utils.userID ? grey : primaryLight),
-          ),
+        onTap: () => Get.to(() =>
+            ImageViewer(imageUrl: data.attachment!, tag: data.id.toString())),
+        child: ListView.builder(
+          scrollDirection: Axis.vertical,
+          itemCount: imageNames.length,
+          itemBuilder: (context, index) {
+            final imageName = imageNames[index];
+            return Container(
+              height: 170,
+              width: 200,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: NetworkImage("$fileUrl/attachments/$imageName"),
+                ),
+                borderRadius: BorderRadius.circular(20),
+                color: (data.senderId.toString() != Utils.userID
+                    ? grey
+                    : primaryLight),
+              ),
+            ).hMargin3.vPadding9;
+          },
         ),
-      ).hMargin3.vPadding9,
+      ),
     );
   }
 
@@ -219,7 +234,12 @@ class ChatNotifyUI extends GetView<ChatPlaceController> {
             child: TextField(
               maxLines: null,
               onSubmitted: (text) {
-                controller.sendMessage(text, to);
+                controller.sendMessage(
+                    message: text.trim(),
+                    to: to,
+                    name: name,
+                    online: isOnline,
+                    picture: avatar);
               },
               controller: controller.messageController,
               decoration: const InputDecoration(
@@ -239,7 +259,11 @@ class ChatNotifyUI extends GetView<ChatPlaceController> {
                     onPressed: () {
                       if (controller.messageController.text.trim().isNotEmpty) {
                         controller.sendMessage(
-                            controller.messageController.text, to);
+                            message: controller.messageController.text.trim(),
+                            to: to,
+                            name: name,
+                            online: isOnline,
+                            picture: avatar);
                       }
                     },
                     backgroundColor: primaryLight,

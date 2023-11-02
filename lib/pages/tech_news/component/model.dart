@@ -6,6 +6,7 @@ class TechModel {
   final String content;
   final String image;
   final DateTime date;
+  final String? source;
 
   TechModel({
     required this.id,
@@ -14,6 +15,7 @@ class TechModel {
     required this.slug,
     required this.content,
     required this.image,
+    this.source,
     required this.date,
   });
 
@@ -25,6 +27,7 @@ class TechModel {
       slug: map['slug'],
       content: map['content'],
       image: map['image'],
+      source: map['source'] ?? '',
       date: DateTime.parse(map['created_at']),
     );
   }

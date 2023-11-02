@@ -33,7 +33,8 @@ class TopBar extends StatelessWidget {
                   () => Utils.imageSet.value
                       ? CircleAvatar(
                           maxRadius: 20,
-                          backgroundImage: AssetImage(Utils.userAvatar.value))
+                          backgroundImage:
+                              NetworkImage(fileUrl + Utils.userAvatar.value))
                       : Utils.isUrl(fileUrl + Utils.userAvatar.value)
                           ? CircleAvatar(
                               maxRadius: 20,

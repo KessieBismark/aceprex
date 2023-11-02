@@ -1,3 +1,5 @@
+import 'package:aceprex/services/constants/constant.dart';
+
 import '../hood/widget/hero_widgt.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +33,7 @@ class ImageViewer extends StatelessWidget {
           trans: true,
           child: Center(
             child: CachedNetworkImage(
-              imageUrl: imageUrl,
+              imageUrl: "$fileUrl/attachments/$imageUrl",
               fit: BoxFit.contain,
               placeholder: (context, url) => const CircularProgressIndicator(),
               errorWidget: (context, url, error) => const Icon(Icons.error),

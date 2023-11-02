@@ -1,5 +1,8 @@
 import 'dart:io';
 
+import 'package:aceprex/services/database/local_db.dart';
+import 'package:aceprex/services/database/model.dart';
+
 import '../../../home_page/component/controller.dart';
 import '../../hood/component/controller.dart';
 import 'controller.dart';
@@ -11,6 +14,7 @@ import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import '../../../services/constants/color.dart';
 
 final libCon = Get.find<LibraryController>();
+final db = DatabaseHelper.instance;
 
 class LibNotifyLocal extends StatelessWidget {
   const LibNotifyLocal({
@@ -20,6 +24,7 @@ class LibNotifyLocal extends StatelessWidget {
     required this.id,
     required this.imagPath,
     required this.author,
+    
     required this.description,
   });
 
@@ -60,6 +65,11 @@ class LibNotifyLocal extends StatelessWidget {
         key: controller.pdfViewerKey,
         enableDoubleTapZooming: true,
         canShowScrollHead: true,
+        
+        onPageChanged: (PdfPageChangedDetails details) async {
+          await db.insertOrUpdateOpenedPdf(
+              OpenedPdf(pdfInfoId: id, lastPageRead: details.newPageNumber));
+        },
         currentSearchTextHighlightColor: Colors.yellow.withOpacity(0.6),
         otherSearchTextHighlightColor: Colors.yellow.withOpacity(0.3),
       ),

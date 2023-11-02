@@ -75,21 +75,16 @@ class StartUp extends GetView<ArticleController> {
                           techCon.getData();
                         },
                         child: Obx(() => !techCon.isInternet.value
-                            ? Expanded(
-                                child: Center(
-                                  child: TextButton(
-                                    child: "Tap to refresh".toLabel(),
-                                    onPressed: () => techCon.reload(),
-                                  ),
+                            ? Center(
+                                child: TextButton(
+                                  child: "No News Article! Tap to refresh"
+                                      .toLabel(),
+                                  onPressed: () => techCon.reload(),
                                 ),
                               )
                             : techCon.loadData.value
                                 ? const NewsViewShimmer()
-                                : techCon.techNewsList.isEmpty
-                                    ? Container(
-                                        alignment: Alignment.center,
-                                        child: "No News Article!".toLabel())
-                                    : NewsView(data: techCon.techNewsList))),
+                                : NewsView(data: techCon.techNewsList))),
                     RefreshIndicator(
                         onRefresh: () async {
                           controller.getData();
@@ -101,9 +96,13 @@ class StartUp extends GetView<ArticleController> {
                                   itemBuilder: (context, index) =>
                                       const LodingCard())
                               : controller.articleList.isEmpty
-                                  ? Container(
-                                      alignment: Alignment.center,
-                                      child: "No Article!".toLabel())
+                                  ? Center(
+                                      child: TextButton(
+                                        child: "No Article! Tap to refresh"
+                                            .toLabel(),
+                                        onPressed: () => controller.getData(),
+                                      ),
+                                    )
                                   : ListView.builder(
                                       itemCount: controller.articleList.length,
                                       itemBuilder: (context, index) => Padding(

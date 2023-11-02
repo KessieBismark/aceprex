@@ -84,13 +84,16 @@ class Attachments extends GetView<HoodController> {
     return ListView.builder(
       itemCount: controller.subscribedList.length,
       itemBuilder: (BuildContext context, index) => ListTile(
-        onTap: () {
+        onTap: () async {
           controller.checkSaved(controller.hoodList[index].id.toString());
           controller.getLikesDislike(controller.subscribedList[index].id);
           controller.read(controller.subscribedList[index].id);
           if (controller.subscribedList[index].fileLink.isNotEmpty) {
+            int page =
+                await db.getLastPageOnline(controller.subscribedList[index].id);
             Get.to(
               () => SubscribedView(
+                page: page,
                 principal: controller.subscribedList[index].principal,
                 title: controller.subscribedList[index].title,
                 fileLink: controller.subscribedList[index].fileLink,
@@ -133,7 +136,8 @@ class Attachments extends GetView<HoodController> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             controller.subscribedList[index].author.toAutoLabel(color: grey),
-            controller.subscribedList[index].describtion.toAutoLabel(color: grey),
+            controller.subscribedList[index].describtion
+                .toAutoLabel(color: grey),
           ],
         ),
         trailing: "${controller.subscribedList[index].date.year}"

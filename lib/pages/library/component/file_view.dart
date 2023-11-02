@@ -1,3 +1,11 @@
+import 'package:aceprex/pages/pdf_view/pdf_text_view.dart';
+import 'package:aceprex/services/database/local_db.dart';
+import 'package:aceprex/services/database/model.dart';
+import 'package:aceprex/services/utils/helpers.dart';
+import 'package:aceprex/services/widgets/extension.dart';
+import 'package:flutter/services.dart';
+import 'package:read_pdf_text/read_pdf_text.dart';
+
 import '../../../services/constants/constant.dart';
 import '../../../services/widgets/waiting.dart';
 
@@ -9,6 +17,7 @@ import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import '../../../services/constants/color.dart';
 
 final libCon = Get.find<LibraryController>();
+final db = DatabaseHelper.instance;
 
 class LibView extends StatelessWidget {
   final String title;
@@ -16,6 +25,7 @@ class LibView extends StatelessWidget {
   final int fileID;
   final String imagPath;
   final String author;
+  final int? page;
   final String description;
   final int id;
   const LibView({
@@ -23,6 +33,7 @@ class LibView extends StatelessWidget {
     required this.title,
     required this.fileLink,
     required this.id,
+    this.page = 1,
     required this.fileID,
     required this.imagPath,
     required this.author,
@@ -40,10 +51,7 @@ class LibView extends StatelessWidget {
                 Icons.arrow_back_ios,
                 color: light,
               )),
-          title: Text(
-            title,
-            style: TextStyle(color: light),
-          ),
+          title: title.toAutoLabel(),
           elevation: 0,
           backgroundColor: primaryColor,
           actions: <Widget>[
@@ -55,18 +63,53 @@ class LibView extends StatelessWidget {
                         : Tooltip(
                             message: "Save to phone",
                             child: IconButton(
-                                color: light,
-                                onPressed: () async {
-                                  libCon.savePDF(
-                                      id.toString(),
-                                      title,
-                                      author,
-                                      description,
-                                      fileUrl + fileLink,
-                                      imagPath);
-                                },
-                                icon: const Icon(Icons.save_alt_rounded))),
-                  )
+                              color: light,
+                              onPressed: () async {
+                                libCon.savePDF(id.toString(), title, author,
+                                    description, fileUrl + fileLink, imagPath);
+                              },
+                              icon: const Icon(Icons.save_alt_rounded),
+                            ),
+                          ),
+                  ).padding9,
+            IconButton(
+                onPressed: () async {
+                  try {
+                    List<String> textList = <String>[];
+                    Get.defaultDialog(
+                        title: "",
+                        barrierDismissible: false,
+                        content: const Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text("Processing file for easy reading."),
+                            Text("(text only)"),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            MWaiting()
+                          ],
+                        ));
+                    String docFile =
+                        await db.downloadAndSavePdf(id, fileUrl + fileLink);
+                    if (docFile.isEmpty) {
+                      Get.back();
+                      Utils().showError("Could not process file.");
+                    } else {
+                      textList = await ReadPdfText.getPDFtextPaginated(docFile);
+                      Get.back();
+                      Get.to(() => ClearText(
+                            title: title,
+                            textList: textList,
+                            initialPage: page!,
+                          ));
+                    }
+                  } on PlatformException {
+                    Get.back();
+                    print('Failed to get PDF text.');
+                  }
+                },
+                icon: const Icon(Icons.zoom_out_map))
           ],
         ),
         body: SfPdfViewer.network(
@@ -74,7 +117,14 @@ class LibView extends StatelessWidget {
           controller: libCon.pdfController,
           key: libCon.pdfKey,
           enableDoubleTapZooming: true,
+          onDocumentLoaded: (PdfDocumentLoadedDetails detail) {
+            libCon.pdfController?.jumpToPage(page!);
+          },
           canShowScrollHead: true,
+          onPageChanged: (PdfPageChangedDetails details) async {
+            await db.insertOrUpdateOnlinePdf(
+                OpenedPdf(pdfInfoId: id, lastPageRead: details.newPageNumber));
+          },
           currentSearchTextHighlightColor: Colors.yellow.withOpacity(0.6),
           otherSearchTextHighlightColor: Colors.yellow.withOpacity(0.3),
         ),

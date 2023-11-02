@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data';
 import 'package:aceprex/services/database/local_db.dart';
 import 'package:aceprex/services/database/model.dart';
-import 'package:http/http.dart' as http;
-import '../../../services/isolate_services/notification.dart';
+import 'package:aceprex/services/database/receive.dart';
+import 'package:aceprex/services/database/send.dart';
+import 'package:aceprex/services/isolate_services/notification.dart';
 
 import '../../../services/utils/helpers.dart';
 import 'package:flutter/material.dart';
@@ -13,8 +13,13 @@ import '../../../services/utils/query.dart';
 import 'model.dart';
 
 class ChatUIController extends GetxController {
-  List<ChatList> chatList = <ChatList>[];
-  List<ChatList> chatListData = <ChatList>[];
+  List<LocalChatMessage> chatList = <LocalChatMessage>[];
+  List<LocalChatMessage> chatListData = <LocalChatMessage>[].obs;
+  List<ChatHead> chatHead = <ChatHead>[];
+  List<ChatHead> chatHeadData = <ChatHead>[].obs;
+
+  List<ChatList> onlineChatList = <ChatList>[];
+
   List<ChatModel> chats = <ChatModel>[];
   List<ChatMessage> chatPerson = <ChatMessage>[];
   var chatLoad = false.obs;
@@ -27,55 +32,52 @@ class ChatUIController extends GetxController {
 
   var getUnread = false.obs;
 
-  // var chatChanges = ''.obs;
   List<ChatList> sortedList = [];
   ScrollController scrollController = ScrollController();
   Timer? timer;
-
+  Timer? hTimer;
   @override
   void onInit() {
     super.onInit();
-
-    getChats();
+    saveHeadChats();
+    getChatHead();
     getPeople();
-    getUnreadChats();
     startTimer(); // Start the timer
+    headTimer();
   }
 
   void startTimer() {
     // Fetch messages every 2 seconds
-
-    timer = Timer.periodic(const Duration(seconds: 5), (_) {
-      Utils.checkInternet().then((value) {
+    timer?.cancel();
+    timer = Timer.periodic(const Duration(seconds: 3), (_) {
+      getChatHead();
+      Utils.checkInternet().then((value) async {
         if (value) {
-          getChats();
-          getUnreadChats();
+          //saveHeadChats();
+          saveChats();
         }
       });
     });
   }
 
-  getUnreadChats() async {
-    try {
-      var query = {
-        "action": "get_Uread_Count",
-        "userID": Utils.userID,
-      };
-      var result = await Query.queryData(query);
-      if (jsonDecode(result) == 'false') {
-      } else {
-        var data = jsonDecode(result);
-        Utils.unReadChat.value = data[0]['count'];
-      }
-    } catch (e) {
-      print.call(e);
-    }
+  void headTimer() {
+    // Fetch messages every 2 seconds
+    hTimer?.cancel();
+    hTimer = Timer.periodic(const Duration(seconds: 20), (_) {
+      Utils.checkInternet().then((value) async {
+        if (value) {
+          saveHeadChats();
+          await SendChat().synchronizeChatMessages();
+        }
+      });
+    });
   }
 
   @override
   void onClose() {
     super.onClose();
     timer?.cancel();
+    hTimer?.cancel();
   }
 
   Map<int, String> weekdayLabels = {
@@ -89,120 +91,147 @@ class ChatUIController extends GetxController {
   };
 
 // chatlist codes---------------------------------------------------------------
+
+  Future<void> saveHeadChats() async {
+    String? ids = await db.getGroupConcatForUserId();
+    fetchchatMessages(ids).then((value) async {
+      onlineChatList.clear();
+      onlineChatList.addAll(value);
+      for (int i = 0; i < onlineChatList.length; i++) {
+        await db.insertOrUpdateUser(User(
+            username: onlineChatList[i].name,
+            id: onlineChatList[i].id,
+            online: onlineChatList[i].isOnline,
+            profilePicture: onlineChatList[i].fromImage));
+      }
+      onlineChatList.clear();
+    });
+    saveChats();
+    List<Online> statisticList = [];
+    fetchStatis(ids).then((value) async {
+      statisticList.clear();
+      statisticList.addAll(value);
+      for (int i = 0; i < onlineChatList.length; i++) {
+        await SendChat()
+            .onLineStatus(onlineChatList[i].isOnline, onlineChatList[i].id);
+      }
+      statisticList.clear();
+    });
+  }
+
   Future<void> saveChats() async {
-    fetchchatMessages().then((value) {
-      // final chatMessages = await fetchchatMessages();
-      chatListData.clear();
-      chatList.clear();
-      chatList.addAll(value);
-      for (int i = 0; i < chatList.length; i++) {
-        if (chatList[i].lastMessageSeen == 0 &&
-            !Utils.notifyMeg.contains(
-                ('${chatList[i].lastMessage}${chatList[i].lastDate}'))) {
-          if (Utils.userID != chatList[i].fromID.toString()) {
+    int id = await db.getMaxId();
+    List<ChatMessage> list = [];
+    await ReceiveChat().getMyChatList(id).then((value) async {
+      list.addAll(value);
+      if (list.isNotEmpty) {
+        for (int i = 0; i < list.length; i++) {
+          if (Utils.userID == list[i].to.toString()) {
+            await SendChat().insertChatMessage(LocalChatMessage(
+                receiverId: list[i].to,
+                senderId: list[i].from,
+                text: list[i].message,
+                attachment: list[i].attachment,
+                seen: list[i].seen,
+                timestamp: list[i].date,
+                sync: 1,
+                userID: int.parse("${Utils.userID}${list[i].from}"),
+                id: list[i].id));
+          } else {
+            await SendChat().insertChatMessage(LocalChatMessage(
+                receiverId: list[i].to,
+                senderId: list[i].from,
+                text: list[i].message,
+                attachment: list[i].attachment,
+                seen: list[i].seen,
+                sync: 1,
+                timestamp: list[i].date,
+                userID: int.parse("${Utils.userID}${list[i].to}"),
+                id: list[i].id));
+          }
+          if (Utils.userID != list[i].from.toString()) {
             NotificationService.showNotification(
-                id: chatList[i].chatID,
-                title: chatList[i].name,
-                body: chatList[i].lastMessage!.isEmpty
-                    ? 'image file'
-                    : chatList[i].lastMessage!,
+                id: list[i].id,
+                title: list[i].name!,
+                groupKey: "${Utils.userID}${list[i].to}",
+                body:
+                    list[i].message!.isEmpty ? 'Image File' : list[i].message!,
                 channelKey: 'chat',
                 payload: ({
                   "type": "chat",
-                  "avatar": chatList[i].fromImage!,
-                  "name": chatList[i].name,
-                  "to": chatList[i].fromID.toString(),
-                  "isOnline": chatList[i].isOnline.toString()
+                  "name": list[i].name!,
+                  "to": list[i].from.toString(),
+                  "isOnline": list[i].isOnline.toString()
                 }));
           }
-          Utils.notifyMeg
-              .add('${chatList[i].lastMessage}${chatList[i].lastDate}');
         }
       }
-      chatListData = chatList;
-      chatLoad.value = true;
-      chatLoad.value = false;
     });
   }
 
-  // Future<void> saveHeadChats() async {
-  //   fetchchatMessages().then((value) {
-  //     chatListData.clear();
-  //     chatList.clear();
-  //     chatList.addAll(value);
-
-  //     for (int i = 0; i < chatList.length; i++) {
-  //       if (chatList[i].fromID == int.parse(Utils.userID)) {
-  //         db.insertOrUpdateUser(User(
-  //             username: chatList[i].name,
-  //             id: chatList[i].toID,
-  //             picture: chatList[i].fromImage));
-  //         print(chatList[i].name);
-  //       } else {
-  //         db.insertOrUpdateUser(User(
-  //             username: chatList[i].name,
-  //             id: chatList[i].fromID,
-  //             picture: chatList[i].fromImage));
-  //         print(chatList[i].name);
-  //       }
-  //     }
-
-  //     chatListData = chatList;
-  //     chatLoad.value = true;
-  //     chatLoad.value = false;
-  //   });
-  // }
-
-
-
-  Future<void> getChats() async {
-    fetchchatMessages().then((value) {
-      // final chatMessages = await fetchchatMessages();
-      chatListData.clear();
-      chatList.clear();
-
-      chatList.addAll(value);
-
-      for (int i = 0; i < chatList.length; i++) {
-        if (chatList[i].lastMessageSeen == 0 &&
-            !Utils.notifyMeg.contains(
-                ('${chatList[i].lastMessage}${chatList[i].lastDate}'))) {
-          if (Utils.userID != chatList[i].fromID.toString()) {
-            NotificationService.showNotification(
-                id: chatList[i].chatID,
-                title: chatList[i].name,
-                body: chatList[i].lastMessage!.isEmpty
-                    ? 'image file'
-                    : chatList[i].lastMessage!,
-                channelKey: 'chat',
-                payload: ({
-                  "type": "chat",
-                  "avatar": chatList[i].fromImage!,
-                  "name": chatList[i].name,
-                  "to": chatList[i].fromID.toString(),
-                  "isOnline": chatList[i].isOnline.toString()
-                }));
-          }
-          Utils.notifyMeg
-              .add('${chatList[i].lastMessage}${chatList[i].lastDate}');
+  Future<void> getChatHead() async {
+    try {
+      chatHead.clear();
+      List<User> users = await db.getUsers();
+      for (int i = 0; i < users.length; i++) {
+        LocalChatMessage? chat = await db.getMostRecentChatMessage(
+            int.parse("${Utils.userID}${users[i].id}"));
+        if (chat != null) {
+          int unRead = await db
+              .countUnseenMessages(int.parse("${Utils.userID}${users[i].id}"));
+          chatHead.add(ChatHead(
+              id: users[i].id!,
+              name: users[i].username,
+              profile: users[i].profilePicture!,
+              isOnline: users[i].online,
+              from: chat.senderId,
+              to: chat.receiverId,
+              attachment: chat.attachment,
+              lastMessage: chat.text,
+              unSeenCount: unRead,
+              timeStamp: chat.timestamp,
+              seen: chat.seen));
         }
       }
-      chatListData = chatList;
-      chatLoad.value = true;
-      chatLoad.value = false;
-    });
+      chatHeadData.clear();
+      chatHead.sort((a, b) => b.timeStamp.compareTo(a.timeStamp));
+      chatHeadData.addAll(chatHead);
+    } catch (e) {
+      print.call(e.toString());
+    }
   }
 
-  Future<List<ChatList>> fetchchatMessages() async {
+  Future<List<ChatList>> fetchchatMessages(String? list) async {
     var permission = <ChatList>[];
     try {
-      var data = {"action": "get_chat2", "userID": Utils.userID};
+      var data = {"action": "get_chat2", "userID": Utils.userID, "list": list};
+      var result = await Query.queryData(data);
+      var empJson = json.decode(result);
+
+      if (empJson == 'false') {
+      } else {
+        for (var empJson in empJson) {
+          permission.add(ChatList.fromJson(empJson));
+        }
+      }
+      return permission;
+    } catch (e) {
+      // ignore: avoid_print
+      print(e);
+      return permission;
+    }
+  }
+
+  Future<List<Online>> fetchStatis(String? list) async {
+    var permission = <Online>[];
+    try {
+      var data = {"action": "get_online_status", "list": list};
       var result = await Query.queryData(data);
       var empJson = json.decode(result);
       if (empJson == 'false') {
       } else {
         for (var empJson in empJson) {
-          permission.add(ChatList.fromJson(empJson));
+          permission.add(Online.fromJson(empJson));
         }
       }
       return permission;
@@ -244,30 +273,6 @@ class ChatUIController extends GetxController {
     }
   }
 
-  // Future<void> saveLocalChats() async {
-  //   List<User> users = <User>[];
-  //   users = await db.getUsers();
-  //   Uint8List? attach;
-  //   for (int i = 0; i < users.length; i++) {
-  //     chatPerson.clear();
-  //     fetchChatPerson(users[i].id!).then((value) async {
-  //       chatPerson.addAll(value);
-  //       for (int j = 0; j < chatPerson.length; j++) {
-  //         attach = await fetchImageAsUint8List(chatPerson[i].attachment!);
-  //         print(chatPerson[i].message);
-  //         db.insertChatMessage(
-  //           LocalChatMessage(
-  //               senderId: chatPerson[i].from,
-  //               receiverId: chatPerson[i].to,
-  //               timestamp: chatPerson[i].date,
-  //               text: chatPerson[i].message,
-  //               attachmentBytes: attach),
-  //         );
-  //       }
-  //     });
-  //   }
-  // }
-
   Future<List<ChatMessage>> fetchChatPerson(int person) async {
     var permission = <ChatMessage>[];
     try {
@@ -292,17 +297,4 @@ class ChatUIController extends GetxController {
       return permission;
     }
   }
-
-  // Future<Uint8List?> fetchImageAsUint8List(String imageUrl) async {
-  //   final response = await http.get(Uri.parse(imageUrl));
-
-  //   if (response.statusCode == 200) {
-  //     // Convert the response body (image data) to Uint8List
-  //     Uint8List uint8List = Uint8List.fromList(response.bodyBytes);
-  //     return uint8List;
-  //   } else {
-  //     // Handle the error or return null in case of failure
-  //     throw Exception('Failed to load image: $imageUrl');
-  //   }
-  // }
 }

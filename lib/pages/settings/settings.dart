@@ -53,7 +53,7 @@ class Settings extends GetView<SettingsController> {
                         ? CircleAvatar(
                             maxRadius: 70,
                             backgroundImage:
-                                AssetImage(fileUrl + Utils.userAvatar.value),
+                                NetworkImage(fileUrl + Utils.userAvatar.value),
                           )
                         : Utils.isUrl(fileUrl + Utils.userAvatar.value)
                             ? InkWell(

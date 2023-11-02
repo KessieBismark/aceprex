@@ -2,6 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:aceprex/pages/startup/startup.dart';
+import 'package:aceprex/services/database/local_db.dart';
+import 'package:aceprex/services/database/receive.dart';
+import 'package:aceprex/services/database/send.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
@@ -10,22 +13,22 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../../services/constants/server.dart';
+import '../../../services/database/model.dart';
 import '../../../services/utils/helpers.dart';
 import '../../../services/utils/query.dart';
 import 'model.dart';
 
 class ChatPlaceController extends GetxController {
-  List<ChatMessage> chatData = <ChatMessage>[];
+  List<LocalChatMessage> chatData = <LocalChatMessage>[];
   Timer? chatTimer;
+  final send = SendChat();
   var isSendMessage = false.obs;
   final messageController = TextEditingController();
   var chatBool = false.obs;
-  bool chatDataPull = false;
   bool chatListPull = false;
   var isSendFile = false.obs;
   var isDownload = false.obs;
-
-  //var chatLength = 0.obs;
+  final db = DatabaseHelper.instance;
 
   @override
   void onInit() {
@@ -49,42 +52,28 @@ class ChatPlaceController extends GetxController {
   @override
   void onClose() {
     super.onClose();
+    ChatPlaceController().dispose();
     chatTimer?.cancel();
   }
 
   void startChatTimer(int person) {
     // Fetch messages every 2 seconds
     chatTimer?.cancel();
-    chatTimer = Timer.periodic(const Duration(seconds: 2), (_) {
+    chatTimer = Timer.periodic(const Duration(seconds: 3), (_) {
+      getUserChat(int.parse("${Utils.userID}$person"));
       Utils.checkInternet().then((value) {
         if (value) {
-          if (!chatDataPull && !chatDataPull) {
-            getUserChat(person);
-          }
+          setSeen(person);
+          getUpdateLocalSeen();
         }
       });
     });
   }
 
-  getUserChat(int person) {
-    fetchChatPerson(person).then((value) {
-      chatData.clear();
-      if (value.isNotEmpty) {
-        chatData.addAll(value);
-        // chatData.sort((a, b) => b.date.compareTo(a.date));
-        // if (chatData.isNotEmpty) {
-        //   chatChanges.value = chatData.join(',');
-        // } else {
-        //   chatData.clear();
-        // }
-        // chatLength.value = chatData.length;
-        chatBool.value = true;
-        chatBool.value = false;
-        setSeen(person);
-      }
-
-      chatDataPull = false;
-    });
+  getUserChat(int userID) async {
+    chatData = await db.getChatMessages(userID);
+    chatBool.value = true;
+    chatBool.value = false;
   }
 
   Future<void> downloadImage(String imageUrl) async {
@@ -108,27 +97,95 @@ class ChatPlaceController extends GetxController {
     }
   }
 
-  sendMessage(String message, int to) async {
-    Utils.checkInternet().then((value) {
-      if (!value) {
-        Utils().showError("There's no internet connection");
-        return;
-      }
-    });
+  List<String> extractImageNames(String jsonStr) {
+    final List<String> imageNames = [];
 
     try {
-      isSendMessage.value = true;
+      final Map<String, dynamic> jsonData = json.decode(jsonStr);
+
+      jsonData.forEach((key, value) {
+        if (value is String) {
+          imageNames.add(value);
+        }
+      });
+    } catch (e) {
+      // Handle invalid JSON
+    }
+
+    return imageNames;
+  }
+
+  sendMessage(
+      {String? message,
+      required int to,
+      String? name,
+      required int online,
+      String? picture}) async {
+    int cid = Utils.chatID();
+    LocalChatMessage data = LocalChatMessage(
+        id: cid,
+        senderId: int.parse(Utils.userID),
+        receiverId: to,
+        seen: 0,
+        sync: 0,
+        text: message,
+        timestamp: DateTime.now(),
+        userID: int.parse("${Utils.userID}$to"));
+    await db.insertOrUpdateUser(
+        User(username: name!, id: to, online: online, profilePicture: picture));
+    await SendChat().insertChatMessage(data);
+    getUserChat(int.parse("${Utils.userID}$to"));
+    messageController.clear();
+    Utils.checkInternet().then((value) {
+      if (value) {
+        sendChatOnline(
+            message: message,
+            to: to,
+            cid: cid,
+            date: DateTime.now(),
+            data: data);
+      }
+    });
+  }
+
+  sendFile({dynamic file, String? attachment, required int to}) async {
+    int cid = Utils.chatID();
+    LocalChatMessage data = LocalChatMessage(
+        id: cid,
+        senderId: int.parse(Utils.userID),
+        receiverId: to,
+        seen: 0,
+        attachment: attachment,
+        timestamp: DateTime.now(),
+        userID: int.parse("${Utils.userID}$to"));
+    await SendChat().insertChatMessage(data);
+    getUserChat(int.parse("${Utils.userID}$to"));
+    Utils.checkInternet().then((value) {
+      if (value) {
+        insertImage(file, to);
+      }
+    });
+  }
+
+  sendChatOnline(
+      {String? message,
+      required int to,
+      required int cid,
+      required DateTime date,
+      required LocalChatMessage data}) async {
+    try {
       var query = {
         "action": "send_chat_message",
+        "cid": cid.toString(),
         "from": Utils.userID,
         "to": to.toString(),
-        "message": message.replaceAll('\n', ' '),
+        "message": message!.replaceAll('\n', ' '),
+        'date': date.toString()
       };
       var result = await Query.queryData(query);
       if (jsonDecode(result) == 'true') {
         isSendMessage.value = false;
-        getUserChat(to);
-        messageController.clear();
+        await SendChat().markMessageAsSynchronized(cid);
       } else {
         Utils().showError("Sorry, something went wrong!");
         isSendMessage.value = false;
@@ -141,12 +198,16 @@ class ChatPlaceController extends GetxController {
   }
 
   setSeen(int from) async {
+    await SendChat().markAllSeenMessage(
+        int.parse("${Utils.userID}$from"), int.parse(Utils.userID));
     Utils.checkInternet().then((value) {
-      if (!value) {
-        // Utils().showError("There's no internet connection");
-        return;
+      if (value) {
+        setOnline(from);
       }
     });
+  }
+
+  setOnline(int from) async {
     try {
       var query = {
         "action": "set_chat_to_read",
@@ -171,19 +232,11 @@ class ChatPlaceController extends GetxController {
       source: ImageSource.gallery,
     );
     if (result != null) {
-      insertImage(result, toID);
-      // final bytes = await result.readAsBytes();
-      // final image = await decodeImageFromList(bytes);
+      sendFile(file: result, attachment: result.path, to: toID);
     }
   }
 
   getUnreadChats() async {
-    // Utils.checkInternet().then((value) {
-    //   if (!value) {
-    //     Utils().showError("There's no internet connection");
-    //     return;
-    //   }
-    // });
     try {
       var query = {
         "action": "get_Uread_Count",
@@ -213,9 +266,10 @@ class ChatPlaceController extends GetxController {
       var request = http.MultipartRequest("POST", Uri.parse(Api.url));
       request.fields['from'] = Utils.userID;
       request.fields['to'] = toID.toString();
+      request.fields['date'] = DateTime.now().toString();
       request.fields['action'] = "send_image";
       String fileName = file.name;
-      List<int> fileBytes = await file.readAsBytes();
+      List<int> fileBytes = await SendChat().compressImage(file.readAsBytes());
       request.files.add(
         http.MultipartFile.fromBytes(
           'image',
@@ -230,7 +284,7 @@ class ChatPlaceController extends GetxController {
 
       if (jsonDecode(result) == 'true') {
         isSendFile.value = false;
-        getUserChat(toID);
+        getUserChat(int.parse("${Utils.userID}$toID"));
       }
       isSendFile.value = false;
     } catch (e) {
@@ -260,9 +314,21 @@ class ChatPlaceController extends GetxController {
       return permission;
     } catch (e) {
       // ignore: avoid_print
-      chatListPull = false;
       print.call(e);
       return permission;
     }
+  }
+
+  getUpdateLocalSeen() async {
+    int lastID = await SendChat().getLastId();
+    List<ChatMessage> list = [];
+    ReceiveChat().getSeen(int.parse(Utils.userID), lastID).then((value) async {
+      list.addAll(value);
+      if (list.isNotEmpty) {
+        for (int i = 0; i < list.length; i++) {
+          await SendChat().markSeenMessage(list[i].id);
+        }
+      }
+    });
   }
 }

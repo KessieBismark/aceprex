@@ -19,291 +19,163 @@ class ChatList extends GetView<ChatUIController> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        extendBody: true,
-        resizeToAvoidBottomInset: true,
-        body: GestureDetector(
-          onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
-          child: Column(
-            children: [
-              TopBar(
-                title: "Chats",
-                widget: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(
-                      height: 3,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        searchTextField(context),
-                        IconButton(
-                          onPressed: () {
-                            controller.getPeople();
-                            Get.to(
-                              () => const PeopleView(),
-                            );
-                          },
-                          icon: Icon(
-                            FontAwesomeIcons.penToSquare,
-                            color: light,
-                            size: 20,
-                          ),
-                        ),
-                        Obx(
-                          () => controller.getUnread.value
-                              ? IconButton(
-                                  onPressed: () {
-                                    controller.chatLoad.value = true;
-                                    controller.chatListData =
-                                        controller.chatList;
-                                    controller.chatLoad.value = false;
-                                    controller.getUnread.value = false;
-                                    controller.startTimer();
-                                  },
-                                  icon: Icon(
-                                    FontAwesomeIcons.filter,
-                                    size: 20,
-                                    color: light,
-                                  ),
-                                )
-                              : IconButton(
-                                  onPressed: () {
-                                    controller.chatLoad.value = true;
-                                    controller.chatListData =
-                                        controller.chatList.where((data) {
-                                      var status = data.lastMessageSeen;
-                                      controller.chatLoad.value = false;
-                                      controller.getUnread.value = true;
-                                      return status
-                                          .toString()
-                                          .contains('0'.toLowerCase());
-                                    }).toList();
-                                    controller.timer!.cancel();
-                                    controller.chatLoad.value = false;
-                                  },
-                                  icon: Icon(
-                                    Icons.filter_list,
-                                    color: light,
-                                  ),
-                                ),
-                        ),
-                      ],
-                    ).hMargin9.hMargin9,
-                    const SizedBox(
-                      height: 15,
-                    ),
-                  ],
+          extendBody: true,
+          resizeToAvoidBottomInset: true,
+          body: GestureDetector(
+            onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+            child: Column(
+              children: [
+                TopBar(
+                  title: "Chats",
+                  widget: Container(),
                 ),
-              ),
-              Flexible(
-                child: Obx(
-                  () => controller.chatLoad.value
-                      ? ListView.builder(
-                          itemCount: controller.chatListData.length,
-                          itemBuilder: (BuildContext context, index) {
-                            final data = controller.chatListData[index];
-                            return Column(
-                              children: [
-                                ListTile(
-                                  onTap: () {
-                                    Get.to(() => ChatUI(
-                                          to: data.id,
-                                          name: data.name,
-                                          isOnline: data.isOnline,
-                                          avatar:
-                                              "${fileUrl}users-avatar/${data.fromImage!}",
-                                        ));
-                                  },
-                                  leading: Utils.isUrl(
-                                          "${fileUrl}users-avatar/${data.fromImage!}")
-                                      ? InkWell(
-                                          onTap: () => Get.to(
-                                            () => ChatProfile(
-                                                title: data.name,
-                                                image:
-                                                    "${fileUrl}users-avatar/${data.fromImage!}"),
-                                          ),
-                                          child: CircleAvatar(
-                                            maxRadius: 20,
-                                            backgroundImage: NetworkImage(
-                                                "${fileUrl}users-avatar/${data.fromImage!}"),
-                                          ),
-                                        )
-                                      : const CircleAvatar(
-                                          maxRadius: 20,
-                                          backgroundImage: AssetImage(
-                                              'assets/images/profile.png'),
-                                        ),
-                                  title: Text(
-                                    data.name.capitalize!,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16),
-                                  ),
-                                  subtitle: Text(
-                                    data.lastMessage!,
-                                    style: TextStyle(color: grey),
-                                  ),
-                                  trailing: data.lastMessageSeen != 1 &&
-                                          data.toID.toString() == Utils.userID
-                                      ? Column(
-                                          children: [
-                                            Text(
-                                              Utils.chatFormatTimeAgo(
-                                                  data.lastDate),
-                                              style: TextStyle(
-                                                  color: data.lastMessageSeen !=
-                                                              1 &&
-                                                          data.toID
-                                                                  .toString() ==
-                                                              Utils.userID
-                                                      ? primaryLight
-                                                      : grey,
-                                                  fontSize: 12),
-                                            ),
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                            data.unRead > 0
-                                                ? Badge(
-                                                    backgroundColor:
-                                                        primaryLight,
-                                                    label: data.unRead
-                                                        .toString()
-                                                        .toLabel(),
-                                                  )
-                                                : Container()
-                                          ],
-                                        )
-                                      : Column(
-                                          children: [
-                                            Text(
-                                              Utils.chatFormatTimeAgo(
-                                                  data.lastDate),
-                                              style: TextStyle(
-                                                  color: grey, fontSize: 12),
-                                            ),
-                                            const Spacer()
-                                          ],
-                                        ),
-                                ),
-                                const Divider(
-                                  indent: 70,
-                                ),
-                              ],
-                            );
-                          },
-                        )
-                      : controller.chatList.isEmpty
-                          ? Container(
-                              alignment: Alignment.center,
-                              child: "Lets start chatting!!!".toLabel(),
-                            )
-                          : ListView.builder(
-                              itemCount: controller.chatListData.length,
-                              itemBuilder: (BuildContext context, index) {
-                                final data = controller.chatListData[index];
-                                return Column(
-                                  children: [
-                                    ListTile(
-                                      onTap: () {
-                                        Get.to(() => ChatUI(
+                Flexible(
+                  child: Obx(
+                    () => controller.chatHeadData.isEmpty
+                        ? Container(
+                            alignment: Alignment.center,
+                            child: "Lets start chatting!!!".toLabel(),
+                          )
+                        : ListView.builder(
+                            itemCount: controller.chatHeadData.length,
+                            itemBuilder: (BuildContext context, index) {
+                              final data = controller.chatHeadData[index];
+                              return Column(
+                                children: [
+                                  ListTile(
+                                    onTap: () {
+                                      Future.delayed(
+                                          const Duration(milliseconds: 4), () {
+                                        return Get.to(() => ChatUI(
                                               to: data.id,
                                               name: data.name,
                                               isOnline: data.isOnline,
                                               avatar:
-                                                  "${fileUrl}users-avatar/${data.fromImage!}",
+                                                  "${fileUrl}users-avatar/${data.profile}",
                                             ));
-                                      },
-                                      leading: Utils.isUrl(
-                                              "${fileUrl}users-avatar/${data.fromImage!}")
-                                          ? InkWell(
-                                              onTap: () => Get.to(
-                                                () => ChatProfile(
-                                                    title: data.name,
-                                                    image:
-                                                        "${fileUrl}users-avatar/${data.fromImage!}"),
-                                              ),
-                                              child: CircleAvatar(
+                                      });
+                                    },
+                                    leading: SizedBox(
+                                      width: 50,
+                                      child: InkWell(
+                                        onTap: () => Get.to(
+                                          () => ChatProfile(
+                                            title: data.name,
+                                            image: data.profile,
+                                          ),
+                                        ),
+                                        child: Utils.isUrl(
+                                                "${fileUrl}users-avatar/${data.profile}")
+                                            ? InkWell(
+                                                onTap: () => Get.to(
+                                                  () => ChatProfile(
+                                                      title: data.name,
+                                                      image:
+                                                          "${fileUrl}users-avatar/${data.profile}"),
+                                                ),
+                                                child: CircleAvatar(
+                                                  maxRadius: 20,
+                                                  backgroundImage: NetworkImage(
+                                                      "${fileUrl}users-avatar/${data.profile}"),
+                                                ),
+                                              )
+                                            : const CircleAvatar(
                                                 maxRadius: 20,
-                                                backgroundImage: NetworkImage(
-                                                    "${fileUrl}users-avatar/${data.fromImage!}"),
+                                                backgroundImage: AssetImage(
+                                                    'assets/images/profile.png'),
                                               ),
-                                            )
-                                          : const CircleAvatar(
-                                              maxRadius: 20,
-                                              backgroundImage: AssetImage(
-                                                  'assets/images/profile.png'),
-                                            ),
-                                      title: Text(
-                                        data.name.capitalize!,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16),
                                       ),
-                                      subtitle: Text(
-                                        data.lastMessage!,
-                                        style: TextStyle(color: grey),
-                                      ),
-                                      trailing: data.lastMessageSeen != 1 &&
-                                              data.toID.toString() ==
-                                                  Utils.userID
-                                          ? Column(
-                                              children: [
-                                                Text(
-                                                  Utils.chatFormatTimeAgo(
-                                                      data.lastDate),
-                                                  style: TextStyle(
-                                                      color: data.lastMessageSeen !=
-                                                                  1 &&
-                                                              data.toID
-                                                                      .toString() ==
-                                                                  Utils.userID
-                                                          ? primaryLight
-                                                          : grey,
-                                                      fontSize: 12),
-                                                ),
-                                                const SizedBox(
-                                                  height: 10,
-                                                ),
-                                                data.unRead > 0
-                                                    ? Badge(
-                                                        backgroundColor:
-                                                            primaryLight,
-                                                        label: data.unRead
-                                                            .toString()
-                                                            .toLabel(),
-                                                      )
-                                                    : Container()
-                                              ],
-                                            )
-                                          : Column(
-                                              children: [
-                                                Text(
-                                                  Utils.chatFormatTimeAgo(
-                                                      data.lastDate),
-                                                  style: TextStyle(
-                                                      color: grey,
-                                                      fontSize: 12),
-                                                ),
-                                                const Spacer()
-                                              ],
-                                            ),
                                     ),
-                                    const Divider(
-                                      indent: 70,
+                                    title: Text(
+                                      data.name.capitalize!,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16),
                                     ),
-                                  ],
-                                );
-                              },
-                            ),
+                                    subtitle: data.lastMessage!.isEmpty &&
+                                            data.attachment!.isNotEmpty
+                                        ? Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                                const Icon(Icons.image),
+                                                SizedBox(
+                                                  width: myWidth(context, 2),
+                                                  child: "Image".toAutoLabel(),
+                                                ),
+                                              ])
+                                        : Text(
+                                            data.lastMessage!,
+                                            style: TextStyle(color: grey),
+                                          ),
+                                    trailing: data.seen != 1 &&
+                                            data.to.toString() == Utils.userID
+                                        ? Column(
+                                            children: [
+                                              Text(
+                                                Utils.chatFormatTimeAgo(
+                                                    data.timeStamp),
+                                                style: TextStyle(
+                                                    color: data.seen != 1 &&
+                                                            data.to.toString() ==
+                                                                Utils.userID
+                                                        ? primaryLight
+                                                        : grey,
+                                                    fontSize: 12),
+                                              ),
+                                              const SizedBox(
+                                                height: 10,
+                                              ),
+                                              data.unSeenCount! > 0
+                                                  ? Badge(
+                                                      backgroundColor:
+                                                          primaryLight,
+                                                      label: data.unSeenCount
+                                                          .toString()
+                                                          .toLabel(),
+                                                    )
+                                                  : Container()
+                                            ],
+                                          )
+                                        : Column(
+                                            children: [
+                                              Text(
+                                                Utils.chatFormatTimeAgo(
+                                                    data.timeStamp),
+                                                style: TextStyle(
+                                                    color: grey, fontSize: 12),
+                                              ),
+                                              const Spacer()
+                                            ],
+                                          ),
+                                  ),
+                                  const Divider(
+                                    indent: 70,
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              controller.getPeople();
+              Get.to(() => const PeopleView());
+            },
+            backgroundColor: primaryColor, // Set the background color
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(50), // Set the border radius
+            ),
+            child: Icon(
+              FontAwesomeIcons.penToSquare,
+              size: 20,
+              color: light, // Set the icon color
+            ),
+          )),
     );
   }
 }
@@ -311,31 +183,23 @@ class ChatList extends GetView<ChatUIController> {
 SizedBox searchTextField(BuildContext context) {
   final controller = Get.find<ChatUIController>();
   return SizedBox(
-    width: myWidth(context, 1.7),
+    width: myWidth(context, 1.4),
     height: 40,
     child: TextField(
       style: TextStyle(color: light),
       controller: controller.searchController,
       onChanged: (text) {
+        controller.timer?.cancel();
         if (text.isNotEmpty) {
           controller.isSearching.value = true;
-          controller.chatLoad.value = true;
-          Future.delayed(const Duration(microseconds: 300)).then(
-            (value) {
-              controller.chatListData = controller.chatList.where(
-                (data) {
-                  var title = data.name.toLowerCase();
-                  return title.contains(text.toLowerCase());
-                },
-              ).toList();
-            },
-          );
-          controller.chatLoad.value = false;
+          controller.chatHeadData.clear();
+          controller.chatHeadData.addAll(controller.chatHead.where((data) {
+            var title = data.name.toLowerCase();
+            return title.contains(text.toLowerCase());
+          }));
         } else {
-          controller.chatLoad.value = true;
           controller.isSearching.value = false;
-          controller.chatLoad.value = false;
-          controller.startTimer();
+          controller.chatHeadData = controller.chatHead;
         }
       },
       decoration: InputDecoration(
@@ -344,8 +208,9 @@ SizedBox searchTextField(BuildContext context) {
               ? IconButton(
                   onPressed: () {
                     controller.chatLoad.value = true;
-                    controller.chatListData = controller.chatList;
                     controller.searchController.clear();
+                    // controller.chatHeadData.clear();
+                    controller.chatHeadData = controller.chatHead;
                     controller.isSearching.value = false;
                     controller.chatLoad.value = false;
                   },
@@ -364,7 +229,7 @@ SizedBox searchTextField(BuildContext context) {
         contentPadding:
             const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
         hintText: 'Enter any keyword',
-        hintStyle: const TextStyle(color: Colors.grey),
+        hintStyle: TextStyle(color: light),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30.0),
           borderSide: BorderSide.none, // Remove the border edges

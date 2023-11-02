@@ -21,37 +21,6 @@ const fetchBackground = "backgroundTask";
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  Workmanager().initialize(callbackDispatcher);
-
-  //await initService();
-
-  // Workmanager().registerPeriodicTask(
-  //   "periodic-task-identifier",
-  //   "simplePeriodicTask",
-  //   constraints: Constraints(
-  //       networkType: NetworkType.connected,
-  //       requiresDeviceIdle: false,
-  //       requiresCharging: false,
-  //       requiresBatteryNotLow: false,
-  //       requiresStorageNotLow: false),
-  //   frequency: const Duration(minutes: 15), // Adjust the frequency as needed
-  // );
-
-  // Workmanager().initialize(callbackDispatcher, isInDebugMode: false);
-  // Workmanager().registerPeriodicTask(
-  //   'backgroundTask', 'fetchNewData',
-  //   constraints: Constraints(
-  //       networkType: NetworkType.connected,
-  //       requiresDeviceIdle: false,
-  //       requiresCharging: false,
-  //       requiresBatteryNotLow: false,
-  //       requiresStorageNotLow: false),
-  //   initialDelay: const Duration(seconds: 5),
-
-  //   // inputData: <String,dynamic >{}
-  //   // frequency: const Duration(milliseconds: 900000), // Run task every 24 hours
-  // );
-
   Workmanager().initialize(callbackDispatcher, isInDebugMode: false);
   Workmanager().registerPeriodicTask(
     "1",
@@ -70,7 +39,15 @@ void main() async {
 
   await GetStorage.init();
   AwesomeNotifications().resetGlobalBadge();
+  String filePath =
+      '/data/user/0/com.asmiksoft.aceprex/app_flutter/profiles/5.jpg';
+  File file = File(filePath);
 
+  if (file.existsSync()) {
+    print('The file exists.');
+  } else {
+    print('The file does not exist.');
+  }
   runApp(const MyApp());
 }
 
@@ -228,3 +205,5 @@ class MyHttpOverrides extends HttpOverrides {
           (X509Certificate cert, String host, int port) => true;
   }
 }
+
+// ALTER TABLE `ch_messages` ADD `cid` INT NOT NULL AUTO_INCREMENT AFTER `id`, ADD UNIQUE `cid` (`cid`);
