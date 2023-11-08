@@ -24,6 +24,7 @@ class Utils {
   static bool isIntroShow = false;
   static List<String> notifyMeg = [];
   static var imageSet = false.obs;
+  static int lastPageIndex = 1;
 
   static getInto() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -146,7 +147,6 @@ class Utils {
   static logOut() async {
     uid.value = '';
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    // await prefs.clear();
     await prefs.remove('userID');
     await prefs.remove('userEmail');
     await prefs.remove('userName');

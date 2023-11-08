@@ -21,7 +21,6 @@ class ReceiveChat {
 
       var result = await Query.queryData(data);
       var empJson = json.decode(result);
-      print(result);
       if (empJson == 'false') {
       } else {
         for (var empJson in empJson) {

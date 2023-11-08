@@ -23,23 +23,28 @@ class ClearText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: primaryColor,
-          title: title.toAutoLabel(),
-          actions: [
-            Obx(() => Slider(
-                  value: ttsController.fontSize.value,
-                  min: 10.0, // Minimum font size
-                  max: 40.0, // Maximum font size
-                  onChanged: (value) {
-                    ttsController.setFontSize(value);
-                  },
-                )),
-          ],
-        ),
-        body: Obx(() => ttsController.fontChanged.value
+      appBar: AppBar(
+        backgroundColor: primaryColor,
+        title: title.toAutoLabel(),
+        actions: [
+          Obx(
+            () => Slider(
+              value: ttsController.fontSize.value,
+              min: 10.0, // Minimum font size
+              max: 40.0, // Maximum font size
+              onChanged: (value) {
+                ttsController.setFontSize(value);
+              },
+            ),
+          ),
+        ],
+      ),
+      body: Obx(
+        () => ttsController.fontChanged.value
             ? displaySeciton()
-            : displaySeciton()));
+            : displaySeciton(),
+      ),
+    );
   }
 
   ListView displaySeciton() {

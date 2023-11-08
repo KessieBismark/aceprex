@@ -51,7 +51,7 @@ class StartUp extends GetView<ArticleController> {
                           indicatorColor: primaryLight,
                           tabs: [
                             Tab(
-                              child: "News".toLabel(
+                              child: "24 News".toLabel(
                                 color: light,
                               ),
                             ),

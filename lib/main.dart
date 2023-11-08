@@ -21,33 +21,26 @@ const fetchBackground = "backgroundTask";
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  Workmanager().initialize(callbackDispatcher, isInDebugMode: false);
-  Workmanager().registerPeriodicTask(
-    "1",
-    fetchBackground,
-    frequency: const Duration(minutes: 15),
-    constraints: Constraints(
-        networkType: NetworkType.connected,
-        requiresDeviceIdle: false,
-        requiresCharging: false,
-        requiresBatteryNotLow: false,
-        requiresStorageNotLow: false),
-  );
+  Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
+  // Workmanager().registerPeriodicTask(
+  //   "1",
+  //   fetchBackground,
+  //   frequency: const Duration(minutes: 15),
+  //   constraints: Constraints(
+  //       networkType: NetworkType.connected,
+  //       requiresDeviceIdle: false,
+  //       requiresCharging: false,
+  //       requiresBatteryNotLow: false,
+  //       requiresStorageNotLow: false),
+  // );
+//  Workmanager().registerOneOffTask("1", fetchBackground);
 
   sqfliteFfiInit();
   await NotificationService.initializeNotification();
 
   await GetStorage.init();
   AwesomeNotifications().resetGlobalBadge();
-  String filePath =
-      '/data/user/0/com.asmiksoft.aceprex/app_flutter/profiles/5.jpg';
-  File file = File(filePath);
 
-  if (file.existsSync()) {
-    print('The file exists.');
-  } else {
-    print('The file does not exist.');
-  }
   runApp(const MyApp());
 }
 
@@ -168,6 +161,7 @@ void callbackDispatcher() {
         print.call(e);
       }
     }
+
     return Future.value(true);
   });
 }

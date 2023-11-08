@@ -89,11 +89,11 @@ class Attachments extends GetView<HoodController> {
           controller.getLikesDislike(controller.subscribedList[index].id);
           controller.read(controller.subscribedList[index].id);
           if (controller.subscribedList[index].fileLink.isNotEmpty) {
-            int page =
+            Utils.lastPageIndex =
                 await db.getLastPageOnline(controller.subscribedList[index].id);
             Get.to(
               () => SubscribedView(
-                page: page,
+                page: Utils.lastPageIndex,
                 principal: controller.subscribedList[index].principal,
                 title: controller.subscribedList[index].title,
                 fileLink: controller.subscribedList[index].fileLink,

@@ -159,7 +159,7 @@ class ChatHead {
       lastMessage: map['last_message'] ?? '',
       timeStamp: DateTime.parse(map['time_stamp'] ?? DateTime.now()),
       unSeenCount: map['unseen'],
-      attachment: map['attachment'],
+      attachment: map['attachment'] ?? '',
       seen: map['seen'],
     );
   }

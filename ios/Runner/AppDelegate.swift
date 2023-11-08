@@ -9,7 +9,7 @@ import workmanager
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     // In AppDelegate.application method
-    WorkmanagerPlugin.registerTask(withIdentifier: "task-identifier")
+    WorkmanagerPlugin.registerTask(withIdentifier: "backgroundTask")
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }

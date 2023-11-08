@@ -176,12 +176,12 @@ class SubscribedView extends StatelessWidget {
                         Get.to(() => ClearText(
                               title: title,
                               textList: textList,
-                              initialPage: page!,
+                              initialPage: Utils.lastPageIndex,
                             ));
                       }
                     } on PlatformException {
                       Get.back();
-                      print('Failed to get PDF text.');
+                      Utils().showError('Failed to get PDF text.');
                     }
                   },
                   icon: const Icon(Icons.zoom_out_map))
@@ -200,6 +200,7 @@ class SubscribedView extends StatelessWidget {
         onPageChanged: (PdfPageChangedDetails details) async {
           await db.insertOrUpdateOnlinePdf(
               OpenedPdf(pdfInfoId: id, lastPageRead: details.newPageNumber));
+          Utils.lastPageIndex = details.newPageNumber;
         },
         currentSearchTextHighlightColor: Colors.yellow.withOpacity(0.6),
         otherSearchTextHighlightColor: Colors.yellow.withOpacity(0.3),

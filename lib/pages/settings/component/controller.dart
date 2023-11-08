@@ -103,6 +103,36 @@ class SettingsController extends GetxController {
     currentP.clear();
   }
 
+  deleteAccount() async {
+    Utils.checkInternet().then((value) {
+      if (!value) {
+        Utils().showError("There's no internet connection");
+        return;
+      }
+    });
+
+    try {
+      isSave.value = true;
+      var query = {
+        "action": "delete-user",
+        "userID": Utils.userID,
+      };
+      var result = await Query.queryData(query);
+      if (jsonDecode(result) == 'true') {
+        isSave.value = false;
+        clearData();
+        Utils.logOut();
+      } else {
+        Utils().showError("Sorry, something went wrong!");
+        isSave.value = false;
+      }
+    } catch (e) {
+      isSave.value = false;
+      print.call(e);
+      //  Utils().showError(e.toString(), appName);
+    }
+  }
+
   changePassword() async {
     Utils.checkInternet().then((value) {
       if (!value) {

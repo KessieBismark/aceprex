@@ -1,3 +1,4 @@
+import 'package:aceprex/services/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -99,7 +100,9 @@ class Settings extends GetView<SettingsController> {
                     controller.clearData();
                     Get.to(() => const ChangePassword());
                   },
-                  leading: const Icon(Icons.lock),
+                  leading: const Icon(
+                    Icons.lock,
+                  ),
                   title: const Text("Change Password"),
                 ),
                 const Divider(),
@@ -107,6 +110,15 @@ class Settings extends GetView<SettingsController> {
                   onTap: () => Utils.logOut(),
                   leading: const Icon(Icons.exit_to_app),
                   title: const Text("Sign Out"),
+                ),
+                const Divider(),
+                ListTile(
+                  onTap: () => deleteData(),
+                  leading: const Icon(
+                    Icons.delete_forever,
+                    color: Colors.red,
+                  ),
+                  title: const Text("Delete Account"),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -157,51 +169,35 @@ class Settings extends GetView<SettingsController> {
     );
   }
 
-  // changePassword() {
-  //   return Get.defaultDialog(
-  //     title: "Change Password",
-  //     content: Form(
-  //       key: controller.skey,
-  //       child: Column(
-  //         children: [
-  //           MEdit(
-  //             hint: "Enter current password",
-  //             password: true,
-  //             controller: controller.currentP,
-  //             validate: Utils.validator,
-  //           ).padding9,
-  //           MEdit(
-  //             hint: "Enter new password",
-  //             password: true,
-  //             controller: controller.newP,
-  //             validate: Utils.validator,
-  //           ).padding9,
-  //           MEdit(
-  //             hint: "Confirm new password",
-  //             password: true,
-  //             controller: controller.cP,
-  //             validate: Utils.validator,
-  //           ).padding9,
-  //           const Divider(),
-  //           Row(
-  //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //             children: [
-  //               Obx(
-  //                 () => MButton(
-  //                   onTap: () => controller.changePassword(),
-  //                   type: ButtonType.save,
-  //                   isLoading: controller.isSave.value,
-  //                 ),
-  //               ),
-  //               MButton(
-  //                 onTap: () => Get.back(),
-  //                 type: ButtonType.cancel,
-  //               )
-  //             ],
-  //           ).padding9
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  //}
+  deleteData() {
+    return Get.defaultDialog(
+      title: "Account Deletion",
+      content: Form(
+        key: controller.skey,
+        child: Column(
+          children: [
+            const Text(
+                "Deleting your account is a process that cannot be reversed. Are you sure you want to delete your account?"),
+            const Divider(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Obx(
+                  () => MButton(
+                    onTap: () => controller.deleteAccount(),
+                    type: ButtonType.delete,
+                    isLoading: controller.isSave.value,
+                  ),
+                ),
+                MButton(
+                  onTap: () => Get.back(),
+                  type: ButtonType.cancel,
+                )
+              ],
+            ).padding9
+          ],
+        ),
+      ),
+    );
+  }
 }

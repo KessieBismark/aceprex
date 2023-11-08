@@ -20,7 +20,7 @@ class TechNews extends GetView<TechNewsController> {
         child: Column(
           children: [
             TopBar(
-              title: "News",
+              title: "24 News",
               widget: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

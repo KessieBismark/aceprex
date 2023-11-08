@@ -59,7 +59,7 @@ class ChangePassword extends GetView<SettingsController> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Obx(() => MButton(
-                              onTap: () => controller.changePassword(),
+                              onTap: () => controller.deleteAccount(),
                               type: ButtonType.save,
                               isLoading: controller.isSave.value,
                             )),
