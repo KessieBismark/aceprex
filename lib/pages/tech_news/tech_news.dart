@@ -43,14 +43,12 @@ class TechNews extends GetView<TechNewsController> {
                 },
                 child: Obx(
                   () => !controller.isInternet.value
-                      ? Expanded(
-                          child: Center(
-                            child: TextButton(
-                              child: "Tap to refresh".toLabel(),
-                              onPressed: () => controller.reload(),
-                            ),
-                          ),
-                        )
+                      ? Center(
+                        child: TextButton(
+                          child: "Tap to refresh".toLabel(),
+                          onPressed: () => controller.reload(),
+                        ),
+                      )
                       : controller.loadData.value
                           ? const NewsViewShimmer()
                           : controller.techNewsList.isEmpty
