@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
-
 import '../../init_widget/top_nav.dart';
 import '../../services/constants/color.dart';
 import '../../services/constants/constant.dart';
@@ -29,7 +28,19 @@ class Hood extends GetView<HoodController> {
         child: SafeArea(
           child: Scaffold(
             extendBody: true,
-            body: GestureDetector(
+            body:
+                // UpgradeAlert(
+                //   upgrader: Upgrader(
+                //     canDismissDialog: false,
+                //     showIgnore: false,
+                //     showLater: false,
+                //     durationUntilAlertAgain: const Duration(days: 1),
+                //     dialogStyle: Platform.isIOS
+                //         ? UpgradeDialogStyle.cupertino
+                //         : UpgradeDialogStyle.material,
+                //   ),
+                //   child:
+                GestureDetector(
               onTap: () {
                 FocusScope.of(context).requestFocus(FocusNode());
               },
@@ -103,10 +114,8 @@ class Hood extends GetView<HoodController> {
                                                 .unSubscribedList[index].date,
                                             title: controller
                                                 .unSubscribedList[index].title,
-                                            image: 
-                                                controller
-                                                    .unSubscribedList[index]
-                                                    .image,
+                                            image: controller
+                                                .unSubscribedList[index].image,
                                             author: controller
                                                 .unSubscribedList[index].author,
                                             rating: controller
@@ -146,8 +155,8 @@ class Hood extends GetView<HoodController> {
                               : Container()),
                   Align(
                     alignment: Alignment.topLeft,
-                    child:
-                        "Subscribed Publication(s)".toLabel(bold: true, fontsize: 17),
+                    child: "Subscribed Publication(s)"
+                        .toLabel(bold: true, fontsize: 17),
                   ).margin9,
                   Obx(
                     () => !controller.isInternet.value
@@ -191,15 +200,15 @@ class Hood extends GetView<HoodController> {
                                       ontap: () {
                                         controller.getSubscribed(
                                             controller.hoodList[index].id);
-                                        Get.to(()=>
-                                            Attachments(
-                                              authorID: controller
-                                                  .hoodList[index].authorID,
-                                              hood: controller
-                                                  .hoodList[index].name,
-                                              hoodID:
-                                                  controller.hoodList[index].id,
-                                            ),
+                                        Get.to(
+                                            () => Attachments(
+                                                  authorID: controller
+                                                      .hoodList[index].authorID,
+                                                  hood: controller
+                                                      .hoodList[index].name,
+                                                  hoodID: controller
+                                                      .hoodList[index].id,
+                                                ),
                                             transition: Transition.fadeIn);
                                       },
                                       title: controller.hoodList[index].name,
@@ -225,6 +234,7 @@ class Hood extends GetView<HoodController> {
                 ],
               ),
             ),
+            //),
           ),
         ));
 
