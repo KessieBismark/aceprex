@@ -47,7 +47,7 @@ class Hood extends GetView<HoodController> {
               child: ListView(
                 children: [
                   TopBar(
-                    title: "Research",
+                    title: "Insight Reports",
                     widget: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -61,102 +61,110 @@ class Hood extends GetView<HoodController> {
                       ],
                     ),
                   ),
-                  Obx(() => controller.loadSub.value
-                      ? Container()
-                      : controller.unSubscribedList.isNotEmpty
-                          ? Align(
-                                  alignment: Alignment.topLeft,
-                                  child: "New Publication(s)"
-                                      .toLabel(bold: true, fontsize: 17))
-                              .padding9
-                          : Container()),
-                  Obx(() => controller.loadSub.value
-                      ? SizedBox(
-                          height: 126,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: 4,
-                            itemBuilder: (BuildContext context, index) =>
-                                categoryItemShimmer(context).margin9,
-                          ),
-                        )
-                      : !controller.isInternet.value
-                          ? Container()
-                          : controller.unSubscribedList.isNotEmpty
-                              ? SizedBox(
-                                  width: double.infinity,
-                                  height: 126,
-                                  child: ListView.builder(
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount:
-                                        controller.unSubscribedList.length,
-                                    itemBuilder:
-                                        (BuildContext context, index) => Hero(
-                                      transitionOnUserGestures: true,
-                                      tag:
-                                          controller.unSubscribedList[index].id,
-                                      child: CategoryItem(
-                                        subscribe: () => controller.subscribe(
-                                          controller.unSubscribedList[index].id,
-                                          controller
-                                              .unSubscribedList[index].title,
-                                          controller.unSubscribedList[index]
-                                              .principal,
-                                        ),
-                                        onTap: () => Get.to(
-                                          () => UnSubscribedDetails(
-                                            id: controller
+                  Obx(
+                    () => controller.loadSub.value
+                        ? Container()
+                        : controller.unSubscribedList.isNotEmpty
+                            ? Align(
+                                    alignment: Alignment.topLeft,
+                                    child: "New Studies"
+                                        .toLabel(bold: true, fontsize: 17))
+                                .padding9
+                            : Container(),
+                  ),
+                  Obx(
+                    () => controller.loadSub.value
+                        ? SizedBox(
+                            height: 126,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: 4,
+                              itemBuilder: (BuildContext context, index) =>
+                                  categoryItemShimmer(context).margin9,
+                            ),
+                          )
+                        : !controller.isInternet.value
+                            ? Container()
+                            : controller.unSubscribedList.isNotEmpty
+                                ? SizedBox(
+                                    width: double.infinity,
+                                    height: 126,
+                                    child: ListView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount:
+                                          controller.unSubscribedList.length,
+                                      itemBuilder:
+                                          (BuildContext context, index) => Hero(
+                                        transitionOnUserGestures: true,
+                                        tag: controller
+                                            .unSubscribedList[index].id,
+                                        child: CategoryItem(
+                                          subscribe: () => controller.subscribe(
+                                            controller
                                                 .unSubscribedList[index].id,
-                                            comment: controller
-                                                .unSubscribedList[index]
-                                                .comment,
-                                            date: controller
-                                                .unSubscribedList[index].date,
-                                            title: controller
+                                            controller
                                                 .unSubscribedList[index].title,
-                                            image: controller
-                                                .unSubscribedList[index].image,
-                                            author: controller
-                                                .unSubscribedList[index].author,
-                                            rating: controller
-                                                .unSubscribedList[index].rate,
-                                            description: controller
-                                                .unSubscribedList[index]
-                                                .description,
-                                            principal: controller
-                                                .unSubscribedList[index]
+                                            controller.unSubscribedList[index]
                                                 .principal,
                                           ),
-                                          //transition: Transition.fadeIn
-                                        ),
-                                        title: controller
-                                            .unSubscribedList[index].title,
-                                        author: controller
-                                            .unSubscribedList[index].author,
-                                        rate: controller
-                                            .unSubscribedList[index].rate,
-                                        image: fileUrl +
-                                            controller
-                                                .unSubscribedList[index].image,
-                                      )
-                                          .animate()
-                                          .fadeIn(
-                                              duration: 900.ms, delay: 100.ms)
-                                          .shimmer(
-                                              blendMode: BlendMode.srcOver,
-                                              color: Colors.white12)
-                                          .move(
-                                              begin: const Offset(-16, 0),
-                                              curve: Curves.easeOutQuad)
-                                          .margin9,
+                                          onTap: () => Get.to(
+                                            () => UnSubscribedDetails(
+                                              id: controller
+                                                  .unSubscribedList[index].id,
+                                              comment: controller
+                                                  .unSubscribedList[index]
+                                                  .comment,
+                                              date: controller
+                                                  .unSubscribedList[index].date,
+                                              title: controller
+                                                  .unSubscribedList[index]
+                                                  .title,
+                                              image: controller
+                                                  .unSubscribedList[index]
+                                                  .image,
+                                              author: controller
+                                                  .unSubscribedList[index]
+                                                  .author,
+                                              rating: controller
+                                                  .unSubscribedList[index].rate,
+                                              description: controller
+                                                  .unSubscribedList[index]
+                                                  .description,
+                                              principal: controller
+                                                  .unSubscribedList[index]
+                                                  .principal,
+                                            ),
+                                            //transition: Transition.fadeIn
+                                          ),
+                                          title: controller
+                                              .unSubscribedList[index].title,
+                                          author: controller
+                                              .unSubscribedList[index].author,
+                                          rate: controller
+                                              .unSubscribedList[index].rate,
+                                          image: fileUrl +
+                                              controller.unSubscribedList[index]
+                                                  .image,
+                                        )
+                                            .animate()
+                                            .fadeIn(
+                                                duration: 900.ms, delay: 100.ms)
+                                            .shimmer(
+                                                blendMode: BlendMode.srcOver,
+                                                color: Colors.white12)
+                                            .move(
+                                                begin: const Offset(-16, 0),
+                                                curve: Curves.easeOutQuad)
+                                            .margin9,
+                                      ),
                                     ),
-                                  ),
-                                )
-                              : Container()),
+                                  )
+                                : Container(),
+                  ),
                   Align(
                     alignment: Alignment.topLeft,
-                    child: "Subscribed Publication(s)"
-                        .toLabel(bold: true, fontsize: 17),
+                    child:
+                        "Subscribed Studies".toLabel(bold: true, fontsize: 17),
                   ).margin9,
                   Obx(
                     () => !controller.isInternet.value

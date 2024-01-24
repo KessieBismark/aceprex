@@ -184,7 +184,7 @@ class SubscribedView extends StatelessWidget {
                       Utils().showError('Failed to get PDF text.');
                     }
                   },
-                  icon: const Icon(Icons.zoom_out_map))
+                  icon: Icon(Icons.zoom_out_map, color: light))
               .padding9
         ],
       ),
@@ -233,17 +233,17 @@ class SubscribedView extends StatelessWidget {
             },
           ),
           //Floating action menu item
-          Bubble(
-            title: "Bookmark",
-            iconColor: Colors.white,
-            bubbleColor: primaryLight,
-            icon: Icons.bookmark,
-            titleStyle: const TextStyle(fontSize: 14, color: Colors.white),
-            onPress: () {
-              controller.pdfViewerKey.currentState?.openBookmarkView();
-              controller.animationController!.reverse();
-            },
-          ),
+          // Bubble(
+          //   title: "Bookmark",
+          //   iconColor: Colors.white,
+          //   bubbleColor: primaryLight,
+          //   icon: Icons.bookmark,
+          //   titleStyle: const TextStyle(fontSize: 14, color: Colors.white),
+          //   onPress: () {
+          //     controller.pdfViewerKey.currentState?.openBookmarkView();
+          //     controller.animationController!.reverse();
+          //   },
+          // ),
         ],
         // animation controller
         animation: controller.animation!,

@@ -54,7 +54,7 @@ class LibViewLocal extends StatelessWidget {
                 Icons.arrow_back_ios,
                 color: light,
               )),
-          title: title.toAutoLabel(),
+          title: title.toAutoLabel(color: light),
           actions: [
             IconButton(
                 onPressed: () async {
@@ -74,7 +74,7 @@ class LibViewLocal extends StatelessWidget {
                             MWaiting()
                           ],
                         ));
-                    String docFile = await db.downloadAndSavePdf(id, fileLink);
+                    String docFile = fileLink;
                     if (docFile.isEmpty) {
                       Get.back();
                       Utils().showError("Could not process file.");
@@ -92,7 +92,7 @@ class LibViewLocal extends StatelessWidget {
                     print('Failed to get PDF text.');
                   }
                 },
-                icon: const Icon(Icons.zoom_out_map))
+                icon: Icon(Icons.zoom_out_map, color: light))
           ],
           elevation: 0,
           backgroundColor: primaryColor,

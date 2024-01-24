@@ -71,9 +71,6 @@ class HoodController extends GetxController
     getHood();
   }
 
-
-
-
   checkSaved(String fileID) async {
     Utils.checkInternet().then((value) {
       if (!value) {
@@ -87,6 +84,7 @@ class HoodController extends GetxController
         "userID": Utils.userID,
         "attachment": fileID,
       };
+      print(query);
       var result = await Query.queryData(query);
       if (jsonDecode(result) == 'true') {
         inLibrary.value = true;
@@ -353,7 +351,10 @@ class HoodController extends GetxController
         "userName": Utils.userName,
         "hood": title
       };
+      print(query);
+
       var result = await Query.queryData(query);
+      print(result);
       if (jsonDecode(result) == 'true') {
         subBool.value = false;
         Utils().showInfo("You have subscribed to $title.");

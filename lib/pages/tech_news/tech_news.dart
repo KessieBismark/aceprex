@@ -20,7 +20,7 @@ class TechNews extends GetView<TechNewsController> {
         child: Column(
           children: [
             TopBar(
-              title: "24 News",
+              title: "24",
               widget: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -44,17 +44,17 @@ class TechNews extends GetView<TechNewsController> {
                 child: Obx(
                   () => !controller.isInternet.value
                       ? Center(
-                        child: TextButton(
-                          child: "Tap to refresh".toLabel(),
-                          onPressed: () => controller.reload(),
-                        ),
-                      )
+                          child: TextButton(
+                            child: "Tap to refresh".toLabel(),
+                            onPressed: () => controller.reload(),
+                          ),
+                        )
                       : controller.loadData.value
                           ? const NewsViewShimmer()
                           : controller.techNewsList.isEmpty
                               ? Container(
                                   alignment: Alignment.center,
-                                  child: "No News Article!".toLabel())
+                                  child: "No record found!".toLabel())
                               : NewsView(data: controller.techNewsList),
                 ),
               ),

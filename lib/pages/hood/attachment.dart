@@ -28,7 +28,7 @@ class Attachments extends GetView<HoodController> {
         title: hood.toAutoLabel(color: light),
         leading: IconButton(
             onPressed: () => Get.back(),
-            icon: const Icon(Icons.arrow_back_ios)),
+            icon: Icon(Icons.arrow_back_ios, color: light)),
       ),
       body: RefreshIndicator(
         onRefresh: () async {
@@ -85,7 +85,7 @@ class Attachments extends GetView<HoodController> {
       itemCount: controller.subscribedList.length,
       itemBuilder: (BuildContext context, index) => ListTile(
         onTap: () async {
-          controller.checkSaved(controller.hoodList[index].id.toString());
+          controller.checkSaved(controller.subscribedList[index].id.toString());
           controller.getLikesDislike(controller.subscribedList[index].id);
           controller.read(controller.subscribedList[index].id);
           if (controller.subscribedList[index].fileLink.isNotEmpty) {

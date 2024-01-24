@@ -88,8 +88,7 @@ ThemeData lightTheme = ThemeData.light().copyWith(
       hintStyle: TextStyle(color: dark), labelStyle: TextStyle(color: dark)),
   scaffoldBackgroundColor: mygrey,
   canvasColor: mygrey,
-  // useMaterial3: true,
-  //  buttonTheme: const ButtonThemeData(textTheme: ButtonTextTheme.primary),
+
 
   textTheme: GoogleFonts.poppinsTextTheme().apply(bodyColor: dark),
   pageTransitionsTheme: const PageTransitionsTheme(builders: {
@@ -101,8 +100,7 @@ ThemeData lightTheme = ThemeData.light().copyWith(
 
 ThemeData darkTheme = ThemeData.dark().copyWith(
   scaffoldBackgroundColor: dark,
-//useMaterial3: true,
-  // buttonTheme: const ButtonThemeData(textTheme: ButtonTextTheme.primary),
+
 
   textTheme: GoogleFonts.poppinsTextTheme().apply(bodyColor: light),
   pageTransitionsTheme: const PageTransitionsTheme(builders: {

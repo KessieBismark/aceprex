@@ -116,73 +116,103 @@ class Library extends GetView<LibraryController> {
         controller.isLibraryIdExists(data.id);
         return Material(
           elevation: 3,
-          child: GlassContainer(
-            width: double.infinity,
-            height: 80,
-            widget: ListTile(
-              onTap: () async {
-                int page = await db.getLastPageOnline(data.id);
-                Get.to(
-                  () => LibView(
-                    title: data.title,
-                    id: data.id,
-                    page: page,
-                    fileID: data.fileID,
-                    imagPath: data.image,
-                    fileLink: data.fileLink,
-                    author: data.author,
-                    description: data.description,
-                  ),
-                );
-              },
-              leading: SizedBox(
-                width: 80,
-                child: CachedNetworkImage(
-                  imageUrl: fileUrl + data.image,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => Shimmer.fromColors(
-                    baseColor: const Color.fromARGB(115, 158, 158, 158),
-                    highlightColor: Colors.grey.shade100,
-                    enabled: true,
-                    child: Container(
-                      height: myHeight(context, 2),
-                      width: double.infinity,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                      ),
+          child:
+              //  GlassContainer(
+              //   width: double.infinity,
+              //   height: 80,
+              //   widget:
+              ListTile(
+            contentPadding: const EdgeInsets.only(left: 5),
+            onTap: () async {
+              int page = await db.getLastPageOnline(data.id);
+              Get.to(
+                () => LibView(
+                  title: data.title,
+                  id: data.id,
+                  page: page,
+                  fileID: data.fileID,
+                  imagPath: data.image,
+                  fileLink: data.fileLink,
+                  author: data.author,
+                  description: data.description,
+                ),
+              );
+            },
+            leading: SizedBox(
+              width: 80,
+              height: 100,
+              child: CachedNetworkImage(
+                imageUrl: fileUrl + data.image,
+                fit: BoxFit.fill,
+                placeholder: (context, url) => Shimmer.fromColors(
+                  baseColor: const Color.fromARGB(115, 158, 158, 158),
+                  highlightColor: Colors.grey.shade100,
+                  enabled: true,
+                  child: Container(
+                    height: myHeight(context, 2),
+                    width: double.infinity,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
                     ),
                   ),
-                  errorWidget: (context, url, error) =>
-                      const Center(child: Icon(Icons.error)),
                 ),
+                errorWidget: (context, url, error) =>
+                    const Center(child: Icon(Icons.error)),
               ),
-              title: data.title.toLabel(
-                bold: true,
-              ),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            ),
+            title: data.title.toLabel(
+              bold: true,
+            ),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  data.author,
+                  style: const TextStyle(color: primaryLight),
+                ),
+              ],
+            ),
+            trailing: SizedBox(
+              width: 100,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    data.author,
-                    style: const TextStyle(color: primaryLight),
-                  ),
-                ],
-              ),
-              trailing: SizedBox(
-                width: 100,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Obx(
-                      () => controller.checkLdb.value
-                          ? controller.checkLocalDB(data.id)
-                              ? Container()
-                              : Obx(() => controller.saveLocal.value &&
-                                      controller.deleteOnline == data.id
-                                  ? const MWaiting()
-                                  : Tooltip(
-                                      message: "Save to phone",
-                                      child: IconButton(
+                  Obx(
+                    () => controller.checkLdb.value
+                        ? controller.checkLocalDB(data.id)
+                            ? Container()
+                            : Obx(() => controller.saveLocal.value &&
+                                    controller.deleteOnline == data.id
+                                ? const MWaiting()
+                                : Tooltip(
+                                    message: "Save to phone",
+                                    child: IconButton(
+                                        onPressed: () async {
+                                          controller.deleteOnline = data.id;
+                                          controller.savePDF(
+                                              data.id.toString(),
+                                              data.title,
+                                              data.author,
+                                              data.description,
+                                              fileUrl + data.fileLink,
+                                              fileUrl + data.image);
+                                        },
+                                        icon:
+                                            const Icon(Icons.save_alt_rounded)),
+                                  ))
+                        : controller.checkLocalDB(data.id)
+                            ? Container()
+                            : Obx(
+                                () => controller.saveLocal.value &&
+                                        controller.deleteOnline == data.id
+                                    ? const MWaiting()
+                                    : Tooltip(
+                                        message: "Save to phone",
+                                        child: IconButton(
+                                          color:
+                                              ThemeService().isSavedDarkMode()
+                                                  ? light
+                                                  : dark,
                                           onPressed: () async {
                                             controller.deleteOnline = data.id;
                                             controller.savePDF(
@@ -194,57 +224,30 @@ class Library extends GetView<LibraryController> {
                                                 fileUrl + data.image);
                                           },
                                           icon: const Icon(
-                                              Icons.save_alt_rounded)),
-                                    ))
-                          : controller.checkLocalDB(data.id)
-                              ? Container()
-                              : Obx(
-                                  () => controller.saveLocal.value &&
-                                          controller.deleteOnline == data.id
-                                      ? const MWaiting()
-                                      : Tooltip(
-                                          message: "Save to phone",
-                                          child: IconButton(
-                                            color:
-                                                ThemeService().isSavedDarkMode()
-                                                    ? light
-                                                    : dark,
-                                            onPressed: () async {
-                                              controller.deleteOnline = data.id;
-                                              controller.savePDF(
-                                                  data.id.toString(),
-                                                  data.title,
-                                                  data.author,
-                                                  data.description,
-                                                  fileUrl + data.fileLink,
-                                                  fileUrl + data.image);
-                                            },
-                                            icon: const Icon(
-                                                Icons.save_alt_rounded),
-                                          ),
+                                              Icons.save_alt_rounded),
                                         ),
-                                ),
-                    ),
-                    Obx(
-                      () => controller.isDeleteOnline.value &&
-                              controller.deleteOnline == data.id
-                          ? const MWaiting()
-                          : IconButton(
-                              onPressed: () {
-                                controller.deleteOnlineLib(
-                                    data.id, data.fileID);
-                              },
-                              icon: const Icon(
-                                Icons.delete,
-                                color: Colors.red,
+                                      ),
                               ),
+                  ),
+                  Obx(
+                    () => controller.isDeleteOnline.value &&
+                            controller.deleteOnline == data.id
+                        ? const MWaiting()
+                        : IconButton(
+                            onPressed: () {
+                              controller.deleteOnlineLib(data.id, data.fileID);
+                            },
+                            icon: const Icon(
+                              Icons.delete,
+                              color: Colors.red,
                             ),
-                    ),
-                  ],
-                ),
+                          ),
+                  ),
+                ],
               ),
             ),
           ),
+          // ),
         )
             .animate()
             .fadeIn(duration: 900.ms, delay: 200.ms)
@@ -263,52 +266,55 @@ class Library extends GetView<LibraryController> {
         final data = controller.pdfsData[index];
         return Material(
           elevation: 3,
-          child: GlassContainer(
-            width: double.infinity,
-            height: 80,
-            widget: ListTile(
-              onTap: () async {
-                int page = await db.getLastPageLibrary(data.id!);
-                Get.to(
-                  () => LibViewLocal(
-                    title: data.title,
-                    id: data.id!,
-                    page: page,
-                    imagPath: data.imagePath,
-                    fileLink: data.pdfPath,
-                    author: data.author,
-                    description: data.description,
-                  ),
-                );
-              },
-              leading:
-                  SizedBox(width: 80, child: Image.file(File(data.imagePath))),
-              title: data.title.toLabel(bold: true, fontsize: 20),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    data.author,
-                    style: const TextStyle(color: primaryLight),
-                  ),
-                ],
-              ),
-              trailing: Obx(
-                () =>
-                    controller.isDelete.value && controller.deleteID == data.id!
-                        ? const MWaiting()
-                        : IconButton(
-                            onPressed: () {
-                              controller.deletePDF(
-                                  data.id!, data.pdfPath, data.imagePath);
-                            },
-                            icon: const Icon(
-                              Icons.delete,
-                              color: Colors.red,
-                            ),
-                          ),
-              ),
+          child:
+              //  GlassContainer(
+              //   width: double.infinity,
+              //   height: 80,
+              //   widget:
+              ListTile(
+            contentPadding: const EdgeInsets.only(left: 5),
+
+            onTap: () async {
+              int page = await db.getLastPageLibrary(data.id!);
+              Get.to(
+                () => LibViewLocal(
+                  title: data.title,
+                  id: data.id!,
+                  page: page,
+                  imagPath: data.imagePath,
+                  fileLink: data.pdfPath,
+                  author: data.author,
+                  description: data.description,
+                ),
+              );
+            },
+            leading:
+                SizedBox(width: 80, child: Image.file(File(data.imagePath))),
+            title: data.title.toLabel(bold: true, fontsize: 20),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  data.author,
+                  style: const TextStyle(color: primaryLight),
+                ),
+              ],
             ),
+            trailing: Obx(
+              () => controller.isDelete.value && controller.deleteID == data.id!
+                  ? const MWaiting()
+                  : IconButton(
+                      onPressed: () {
+                        controller.deletePDF(
+                            data.id!, data.pdfPath, data.imagePath);
+                      },
+                      icon: const Icon(
+                        Icons.delete,
+                        color: Colors.red,
+                      ),
+                    ),
+            ),
+            //    ),
           ),
         )
             .animate()

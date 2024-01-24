@@ -43,7 +43,7 @@ class StartUp extends GetView<ArticleController> {
                 child: Container(
                   color: primaryColor,
                   child: TopBarStartUP(
-                    title: "Articles",
+                    title: "Informative Publications",
                     widget: Column(
                       children: [
                         TabBar(
@@ -51,12 +51,12 @@ class StartUp extends GetView<ArticleController> {
                           indicatorColor: primaryLight,
                           tabs: [
                             Tab(
-                              child: "24 News".toLabel(
+                              child: "24".toLabel(
                                 color: light,
                               ),
                             ),
                             Tab(
-                              child: "Articles".toLabel(
+                              child: "Now & Next".toLabel(
                                 color: light,
                               ),
                             ),
@@ -77,7 +77,7 @@ class StartUp extends GetView<ArticleController> {
                         child: Obx(() => !techCon.isInternet.value
                             ? Center(
                                 child: TextButton(
-                                  child: "No News Article! Tap to refresh"
+                                  child: "No record found! Tap to refresh"
                                       .toLabel(),
                                   onPressed: () => techCon.reload(),
                                 ),
@@ -98,7 +98,7 @@ class StartUp extends GetView<ArticleController> {
                               : controller.articleList.isEmpty
                                   ? Center(
                                       child: TextButton(
-                                        child: "No Article! Tap to refresh"
+                                        child: "No record found! Tap to refresh"
                                             .toLabel(),
                                         onPressed: () => controller.getData(),
                                       ),

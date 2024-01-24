@@ -71,25 +71,28 @@ class MButton extends StatelessWidget {
                                                   : type == ButtonType.search
                                                       ? Icons.search
                                                       : Icons.help_center,
-                              size: 15),
+                              size: 15,
+                              color: light),
                       const SizedBox(
                         width: 5,
                       ),
                       title != null
-                          ? title!.toLabel()
+                          ? title!.toLabel(color: light)
                           : type == ButtonType.save
-                              ? 'Save'.toLabel()
+                              ? 'Save'.toLabel(color: light)
                               : type == ButtonType.cancel
-                                  ? 'Cancel'.toLabel()
+                                  ? 'Cancel'.toLabel(color: light)
                                   : type == ButtonType.close
-                                      ? 'Close'.toLabel()
+                                      ? 'Close'.toLabel(color: light)
                                       : type == ButtonType.delete
-                                          ? 'Delete'.toLabel()
+                                          ? 'Delete'.toLabel(color: light)
                                           : type == ButtonType.add
-                                              ? 'New'.toLabel()
+                                              ? 'New'.toLabel(color: light)
                                               : type == ButtonType.search
-                                                  ? 'Search'.toLabel()
-                                                  : (title)!.toLabel(),
+                                                  ? 'Search'
+                                                      .toLabel(color: light)
+                                                  : (title)!
+                                                      .toLabel(color: light),
                     ],
                   )
                 : icon != null
@@ -100,10 +103,10 @@ class MButton extends StatelessWidget {
                           const SizedBox(
                             width: 5,
                           ),
-                          (title)!.toLabel()
+                          (title)!.toLabel(color: light)
                         ],
                       )
-                    : (title)!.toLabel(),
+                    : (title)!.toLabel(color: light),
           );
   }
 }

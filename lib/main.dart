@@ -54,7 +54,6 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   late AppLifecycleObserver lifecycleObserver;
 
-
   @override
   void initState() {
     super.initState();

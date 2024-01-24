@@ -89,6 +89,8 @@ class GlassContainer extends StatelessWidget {
                 const Color((0xFFC0C0C0)).withOpacity(0.5),
               ],
       ),
+      // margin: EdgeInsets.zero, // Ensure no margin
+      // padding: EdgeInsets.zero, // Ensure no padding
       child: widget,
     );
   }

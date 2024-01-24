@@ -29,8 +29,8 @@ class SController extends GetxController {
         try {
           var query = {
             "action": "signup",
-            "email": email.text,
-            "name": username.text,
+            "email": email.text.trim(),
+            "name": username.text.trim(),
             "password": pass.text
           };
           var response = await Query.queryData(query);

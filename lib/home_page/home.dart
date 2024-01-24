@@ -1,3 +1,4 @@
+import 'package:double_tap_to_exit/double_tap_to_exit.dart';
 import '../pages/tech_news/tech_news.dart';
 import 'component/controller.dart';
 import '../services/constants/color.dart';
@@ -17,54 +18,62 @@ class Home extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBody: true,
-      appBar: AppBar(
-        toolbarHeight: 0,
-        elevation: 0,
-        leading: Container(),
-        backgroundColor: primaryColor,
+    return DoubleTapToExit(
+      snackBar: const SnackBar(
+        content: Text("Tap again to exit !"),
       ),
-      body: Obx(
-        () => IndexedStack(
+      child: Scaffold(
+        extendBody: true,
+        appBar: AppBar(
+          toolbarHeight: 0,
+          elevation: 0,
+          leading: Container(),
+          backgroundColor: primaryColor,
+        ),
+        body: Obx(
+          () => IndexedStack(
+            index: controller.tabIndex.value,
+            children: const [
+              Hood(),
+              Library(),
+              TechNews(),
+              Blog(),
+              ChatList(),
+            ],
+          ),
+        ),
+        bottomNavigationBar: CurvedNavigationBar(
           index: controller.tabIndex.value,
-          children: const [
-            Hood(),
-            Library(),
-            TechNews(),
-            Blog(),
-            ChatList(),
+          height: 50,
+          backgroundColor: trans,
+          animationDuration: const Duration(milliseconds: 300),
+          color: primaryColor,
+          onTap: (value) => controller.changeTabIndex(value),
+          items: [
+            Tooltip(
+                message: "Hood",
+                child: Icon(Icons.book_online, color: light, size: 20)),
+            Tooltip(
+                message: "Libraries",
+                child:
+                    Icon(Icons.download_for_offline, color: light, size: 20)),
+            Tooltip(
+                message: "Tech News",
+                child: Icon(Icons.newspaper, color: light, size: 20)),
+            Tooltip(
+                message: "Artciles",
+                child: Icon(Icons.article, color: light, size: 20)),
+            Tooltip(
+                message: "Chat",
+                child: Obx(() => Utils.unReadChat.value == 0
+                    ? Icon(Icons.chat_bubble, color: light, size: 20)
+                    : Badge(
+                        label:
+                            "${Utils.unReadChat.value}".toLabel(color: light),
+                        child:
+                            Icon(Icons.chat_bubble, color: light, size: 20)))),
           ],
         ),
-      ),
-      bottomNavigationBar: CurvedNavigationBar(
-        index: controller.tabIndex.value,
-        height: 50,
-        backgroundColor: trans,
-        animationDuration: const Duration(milliseconds: 300),
-        color: primaryColor,
-        onTap: (value) => controller.changeTabIndex(value),
-        items: [
-          Tooltip(
-              message: "Hood",
-              child: Icon(Icons.book_online, color: light, size: 20)),
-          Tooltip(
-              message: "Libraries",
-              child: Icon(Icons.download_for_offline, color: light, size: 20)),
-          Tooltip(
-              message: "Tech News",
-              child: Icon(Icons.newspaper, color: light, size: 20)),
-          Tooltip(
-              message: "Artciles",
-              child: Icon(Icons.article, color: light, size: 20)),
-          Tooltip(
-              message: "Chat",
-              child: Obx(() => Utils.unReadChat.value == 0
-                  ? Icon(Icons.chat_bubble, color: light, size: 20)
-                  : Badge(
-                      label: "${Utils.unReadChat.value}".toLabel(color: light),
-                      child: Icon(Icons.chat_bubble, color: light, size: 20)))),
-        ],
       ),
     );
   }

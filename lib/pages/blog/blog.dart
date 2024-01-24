@@ -21,7 +21,7 @@ class Blog extends GetView<ArticleController> {
       body: Column(
         children: [
           TopBar(
-            title: "Articles",
+            title: "Now & Next",
             widget: Column(
               children: [
                 Row(
@@ -144,7 +144,7 @@ class Blog extends GetView<ArticleController> {
                         : controller.articleList.isEmpty
                             ? Container(
                                 alignment: Alignment.center,
-                                child: "No Article!".toLabel())
+                                child: "No record found!".toLabel())
                             : ListView.builder(
                                 itemCount: controller.articleList.length,
                                 itemBuilder: (context, index) => Padding(

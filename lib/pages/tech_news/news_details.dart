@@ -20,15 +20,19 @@ class NewDetails extends StatelessWidget {
           onPressed: () {
             Navigator.pop(context);
           },
-          icon:  Icon(
+          icon: Icon(
             Icons.arrow_back_ios,
-            color:light,
+            color: light,
           ),
         ),
       ),
       body: SafeArea(
         child: ListView(
           children: [
+            const Text(
+              "Disclaimer",
+              style: TextStyle(color: Colors.red),
+            ).padding9,
             const SizedBox(
               height: 10,
             ),

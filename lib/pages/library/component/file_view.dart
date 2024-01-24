@@ -51,7 +51,7 @@ class LibView extends StatelessWidget {
                 Icons.arrow_back_ios,
                 color: light,
               )),
-          title: title.toAutoLabel(),
+          title: title.toAutoLabel(color: light),
           elevation: 0,
           backgroundColor: primaryColor,
           actions: <Widget>[
@@ -109,7 +109,7 @@ class LibView extends StatelessWidget {
                     print('Failed to get PDF text.');
                   }
                 },
-                icon: const Icon(Icons.zoom_out_map))
+                icon: Icon(Icons.zoom_out_map, color: light))
           ],
         ),
         body: SfPdfViewer.network(
